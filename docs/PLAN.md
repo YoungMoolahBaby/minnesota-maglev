@@ -21,12 +21,22 @@ from the one before with measurements.
   equally (no St. Paul-left-out problem), no downtown tunnels ($68.9 bn vs $73.3 bn P50 for the
   spine), and one hub works for two systems. MSP stays a stop for airport - Rochester trips.
   The St. Cloud line also starts at the hub. Kept as a variant: `downtown_minneapolis`.
+- **2026-11-03, sibling systems side by side** (Jon): the next generation goes right beside the
+  current one in the same corridor, not on a separate route. Why: it matches how construction
+  works (build beside, shift service over, rebuild the old one, like a freeway rebuild); one land
+  deal, one review, shared stations, power and maintenance access; and two generations running side
+  by side is a visible showcase for innovation. Cost: both share one corridor's hazards (a flood,
+  ice storm or tornado can hit both), and building next to a live line needs separation or slow
+  orders. Jon (2026-11-03): shared hazards go into the planning (docs/HAZARDS.md, shared corridor),
+  and the systems sit far enough apart to build either without much limitation on the other:
+  `land.reserve.construction_separation` = 50 m between rights-of-way (~70 m centre to centre),
+  sized to crane and piling-rig fall zones (placeholder).
 - **Two-system corridor (in the model since 2026-11-03, held on the spine):** reserve land for a
-  second system beside the first (45 m extra in the country, 12 m in cities) and build city
+  second system beside the first (B's own right-of-way + 50 m separation in the country, 12 m in cities) and build city
   structures, long-bridge foundations and stations for two from day one; build system A, run it
   while the next generation (B) goes up beside it, then alternate. Lines opt in with
-  `reserve_second_system: true`; the report prices it for every line. Spine: P50 $7.5 bn (~11% of
-  the line). The rural land strip is cheap (~$0.6 bn with contingency); the build-for-two
+  `reserve_second_system: true`; the report prices it for every line. Spine: P50 $8.1 bn (~12% of
+  the line). The land is cheap (~$1.0 bn with contingency); the build-for-two
   provisions in cities and stations are most of it, and `costs.reserve.urban_provision` (30%,
   placeholder) is the number to research. Open: Minnesota eminent-domain limits on taking land for
   a future system (options, willing sellers, farm leaseback), one environmental review for both

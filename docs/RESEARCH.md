@@ -42,7 +42,7 @@ When an item is done: update the parameter's value/range/conf/source, tick it he
 ## Second-system reserve
 
 16. [ ] Second-system reserve: construction separation needed beside a live maglev
-    (`land.reserve.width_rural`), cost of building city structures for two (`costs.reserve.urban_provision`),
+    (`land.reserve.construction_separation`, crane and piling-rig fall zones, launching gantries), cost of building city structures for two (`costs.reserve.urban_provision`),
     Minnesota law on acquiring land for a future system (Minn. Stat. ch. 117), corridor-preservation
     precedents (official mapping, rail banking, utility corridors).
 

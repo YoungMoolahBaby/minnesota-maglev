@@ -38,16 +38,18 @@ First run (2026-11-03, all numbers concept-stage, see the report for the caveats
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve | 389 | 1 h 10 | $77 bn ($65 - 89 bn) |
-| Network through phase 2 | 1,022 | | $175 bn ($150 - 204 bn) |
-| Everything incl. Chicago | 1,997 | | $335 bn ($287 - 392 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve | 389 | 1 h 10 | $77 bn ($66 - 90 bn) |
+| Network through phase 2 | 1,022 | | $176 bn ($150 - 205 bn) |
+| Everything incl. Chicago | 1,997 | | $336 bn ($287 - 392 bn) |
 
-The spine holds land for a **second system** beside it (build the next generation while this one
-runs, then alternate): P50 $7.5 bn of the $77 bn. The land strip itself is cheap (~$0.6 bn with
-contingency); most of it is building city structures and stations for two from day one. Every other
-line shows what its reserve would cost in the report.
+The spine holds room for a **sibling system** right beside it, so the next generation can be
+built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
+construction separation), far enough that work on one needs no slow orders on the other; the
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $8.1 bn of the $77 bn. The
+land is cheap (~$1.0 bn with contingency); most of it is building city structures and stations
+for two from day one. Every other line shows what its reserve would cost in the report.
 
-The spine works out to ~$197 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
+The spine works out to ~$198 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
 in 2004 (incl. trains and stations); US megaprojects cost several times Chinese ones. The biggest
 single driver of the range is the elevated guideway cost per km, so that's research item 1.
 
@@ -75,7 +77,7 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
 That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $83 bn P50,
-$6.2 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
+$6.3 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
 
 ## Honest caveats
 

@@ -118,14 +118,21 @@ wetlands:
 # Land held for a SECOND system beside the first (docs/PLAN.md, two-system corridor): build
 # system A now, run it while the next generation (B) goes up beside it, then alternate.
 # Priced for every line; added to a line's total only where lines.yaml sets reserve_second_system.
+# In the country the extra width = B's own right-of-way (same as A's, from row_width by structure)
+# + construction_separation. Jon (2026-11-03): far enough apart that either system can be built or
+# rebuilt without much limitation on the one running next to it.
 reserve:
-  width_rural:
-    value: 45
-    low: 30
-    high: 70
-    unit: m of extra width beside the first system's right-of-way
+  construction_separation:
+    value: 50
+    low: 35
+    high: 80
+    unit: m between the two systems' rights-of-way (rural)
     conf: placeholder
-    source: B's own ~20 m right-of-way plus a separation strip so B can be built (cranes, haul roads, pier works) while A runs at speed; to set from construction safety rules
+    source: >
+      Keep the fall zone of piling rigs and crawler cranes (roughly their mast/boom length, ~30-60 m
+      for pier and beam work) plus a haul road off the live guideway, so works on one system never
+      need slow orders or possessions on the other. Launching gantries that erect beams from the new
+      system's own piers could shrink it. To set from crane/rail-adjacent safety rules (RESEARCH 16).
   width_urban:
     value: 12
     low: 8

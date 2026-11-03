@@ -20,6 +20,9 @@ works), date, details. One section per tool.
   costs, review and contingency. With the reserve, downtown Minneapolis costs $6.2 bn more than
   Midway (was $4.4 bn): building downtown structures for two is expensive. Holding the reserve on
   every other line would add $21.1 bn P50.
+- 2026-11-03: spacing made explicit: B's own right-of-way + 50 m construction separation (~70 m
+  centre to centre, so building one needs no slow orders on the other). Spine reserve $7.5 -> $8.1 bn
+  P50, land $0.43 -> $0.69 bn nominal; spine $76.5 -> $77.1 bn. Room to build freely costs ~$0.6 bn.
 
 ## OSRD
 

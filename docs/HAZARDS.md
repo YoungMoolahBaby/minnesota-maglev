@@ -26,3 +26,20 @@ Design stance so far: **elevated by default** outside cities. The beams lift the
 drifting snow and farm and wildlife crossings, and the land under them stays farmable. That costs
 more per km (`costs.guideway.elevated` vs `at_grade`), so the route search should decide it per
 cell, not a fixed share.
+
+## Shared corridor: both systems in one place
+
+Jon's call (2026-11-03): sibling systems side by side, and the shared hazards go into the planning
+instead of splitting the corridor. So the corridor is designed for the worst case once, for both:
+
+| Shared risk | Design rule for the corridor |
+|---|---|
+| A flood takes out both | piers and stations of BOTH systems above the climate-adjusted 500-yr flood + freeboard (not yet priced for the reserve: add the floodplain adder to its bridge provisions) |
+| An ice storm or blizzard stops both | heated switches and guideway de-icing on both; snow storage in the separation strip, never on the other guideway |
+| One power failure stops both | each system fed from different substations and different grid nodes (Calliope phase), so one outage can't drop both |
+| A tornado, derecho or crash debris hits both | the 50 m separation keeps most crash debris from one off the other; tornado debris travels much farther, so both guideways and their power need wind and debris design, not distance |
+| Construction on one hurts the other | the 50 m separation keeps crane and piling-rig fall zones off the live guideway, so works need no slow orders |
+| Shared stations are a single point of failure | the Midway hub and end stations get two independent sets of platforms, power and access |
+| Both age together | stagger the generations (build B while A is mid-life), so they are never both at end of life |
+
+To price in phase 3: what each rule adds over a single-system corridor, as parameters with sources.

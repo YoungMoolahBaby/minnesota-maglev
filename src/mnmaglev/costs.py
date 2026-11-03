@@ -83,7 +83,13 @@ def segment_reserve(s: Segment, P) -> dict:
     q = segment_quantities(s)
     g = "costs.guideway."
     rural_km = q["elevated_km"] + q["at_grade_km"]
-    rural_acres = rural_km * 1000.0 * P["land.reserve.width_rural"] / ACRE_M2
+    # B's own right-of-way (same structure mix as A) + the construction separation between them
+    rural_width_km_m = (
+        q["elevated_km"] * P["land.row_width.elevated"]
+        + q["at_grade_km"] * P["land.row_width.at_grade"]
+        + rural_km * P["land.reserve.construction_separation"]
+    )
+    rural_acres = rural_width_km_m * 1000.0 / ACRE_M2
     urban_acres = q["urban_viaduct_km"] * 1000.0 * P["land.reserve.width_urban"] / ACRE_M2
     price = sum(share * P[f"land.price_per_acre.{cls}"] for cls, share in s.land.items())
     land = (rural_acres + urban_acres) * price * P["land.reserve.acquisition_multiplier"]
