@@ -11,178 +11,175 @@ line: spine
 curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
-  simplify_tol_m: 856.83
+  simplify_tol_m: 300.0
+  vertices: 78
+  vertices_removed_for_curves: 33
   all_curves_fit: true
+  cost_least_cost_path_musd: 30090
+  cost_smoothed_musd: 30089
 pieces:
 - from: duluth
   to:
     id: wp_0_1
-    lat: 45.99982
-    lon: -92.66362
+    lat: 45.99927
+    lon: -92.66918
   zone: north
-  length_km: 101.3
-  crow_km: 97.5
-  detour: 1.04
+  length_km: 102.0
+  crow_km: 97.7
+  detour: 1.043
   land_shares:
-    suburban: 0.059
-    urban: 0.022
-    forest: 0.552
-    open: 0.118
-    wetland: 0.246
-    water: 0.003
-  floodplain_share: 0.026
-  floodplain_1pct_share: 0.026
+    suburban: 0.055
+    urban: 0.018
+    forest: 0.59
+    open: 0.134
+    wetland: 0.201
+    water: 0.001
+  floodplain_share: 0.012
+  floodplain_1pct_share: 0.012
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.022
+  built_up_share: 0.016
   highway_corridor_share: 0.009
   highway_corridor_km: 0.9
-  urban_km: 1.2
-  urban_start_km: 1.2
+  urban_km: 1.1
+  urban_start_km: 1.1
   urban_end_km: 0.0
   bridges_m: []
-  max_ground_grade_1km: 0.1146
+  max_ground_grade_1km: 0.1676
   elev_range_m:
-  - 185
+  - 189
   - 396
-  guideway_max_height_m: 48.2
-  km_over_25m_high: 0.73
+  guideway_max_height_m: 72.8
+  km_over_25m_high: 1.05
 - from:
     id: wp_0_1
-    lat: 45.99982
-    lon: -92.66362
+    lat: 45.99927
+    lon: -92.66918
   to: midway_hub
   zone: central
-  length_km: 125.7
-  crow_km: 122.4
-  detour: 1.027
+  length_km: 125.6
+  crow_km: 122.2
+  detour: 1.028
   land_shares:
-    suburban: 0.147
-    urban: 0.059
-    forest: 0.419
-    open: 0.193
-    wetland: 0.156
-    water: 0.027
-  floodplain_share: 0.116
-  floodplain_1pct_share: 0.116
+    suburban: 0.159
+    urban: 0.056
+    forest: 0.413
+    open: 0.219
+    wetland: 0.148
+    water: 0.005
+  floodplain_share: 0.076
+  floodplain_1pct_share: 0.076
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.055
-  highway_corridor_share: 0.062
-  highway_corridor_km: 7.8
-  urban_km: 4.7
+  built_up_share: 0.054
+  highway_corridor_share: 0.063
+  highway_corridor_km: 7.9
+  urban_km: 4.0
   urban_start_km: 0.0
-  urban_end_km: 4.7
+  urban_end_km: 4.0
   bridges_m:
   - 210
-  - 840
-  - 420
-  - 735
-  - 105
-  - 210
-  - 630
-  max_ground_grade_1km: 0.025
+  max_ground_grade_1km: 0.028
   elev_range_m:
-  - 234
+  - 233
   - 298
   guideway_max_height_m: 5.3
   km_over_25m_high: 0.0
 - from: midway_hub
   to: msp
   zone: central
-  length_km: 9.8
+  length_km: 9.9
   crow_km: 8.9
-  detour: 1.093
+  detour: 1.105
   land_shares:
-    suburban: 0.42
-    urban: 0.518
-    forest: 0.019
-    open: 0.005
-    wetland: 0.009
-    water: 0.029
-  floodplain_share: 0.042
-  floodplain_1pct_share: 0.042
-  floodway_km: 0.21
+    suburban: 0.466
+    urban: 0.447
+    forest: 0.035
+    open: 0.006
+    wetland: 0.01
+    water: 0.035
+  floodplain_share: 0.04
+  floodplain_1pct_share: 0.04
+  floodway_km: 0.32
   flood_map_coverage: 1.0
-  built_up_share: 0.561
-  highway_corridor_share: 0.032
-  highway_corridor_km: 0.3
-  urban_km: 5.6
-  urban_start_km: 2.8
-  urban_end_km: 2.7
+  built_up_share: 0.627
+  highway_corridor_share: 0.021
+  highway_corridor_km: 0.2
+  urban_km: 3.8
+  urban_start_km: 1.6
+  urban_end_km: 2.2
   bridges_m:
-  - 210
-  max_ground_grade_1km: 0.0509
+  - 315
+  max_ground_grade_1km: 0.0512
   elev_range_m:
-  - 222
-  - 281
-  guideway_max_height_m: 18.2
+  - 223
+  - 280
+  guideway_max_height_m: 16.7
   km_over_25m_high: 0.0
 - from: msp
   to:
     id: wp_2_1
-    lat: 44.59993
-    lon: -92.9668
+    lat: 44.59965
+    lon: -92.96592
   zone: central
-  length_km: 38.3
-  crow_km: 37.4
-  detour: 1.024
+  length_km: 38.6
+  crow_km: 37.5
+  detour: 1.03
   land_shares:
-    suburban: 0.226
-    urban: 0.145
-    forest: 0.111
-    open: 0.451
+    suburban: 0.231
+    urban: 0.124
+    forest: 0.125
+    open: 0.444
     wetland: 0.047
-    water: 0.02
-  floodplain_share: 0.059
-  floodplain_1pct_share: 0.054
-  floodway_km: 2.0
+    water: 0.029
+  floodplain_share: 0.056
+  floodplain_1pct_share: 0.055
+  floodway_km: 1.68
   flood_map_coverage: 1.0
-  built_up_share: 0.119
-  highway_corridor_share: 0.03
-  highway_corridor_km: 1.2
-  urban_km: 4.6
-  urban_start_km: 3.5
-  urban_end_km: 1.2
+  built_up_share: 0.087
+  highway_corridor_share: 0.041
+  highway_corridor_km: 1.6
+  urban_km: 4.1
+  urban_start_km: 2.8
+  urban_end_km: 1.3
   bridges_m:
-  - 1785
-  - 210
-  max_ground_grade_1km: 0.0557
+  - 1680
+  max_ground_grade_1km: 0.052
   elev_range_m:
   - 213
-  - 314
-  guideway_max_height_m: 12.3
+  - 311
+  guideway_max_height_m: 10.7
   km_over_25m_high: 0.0
 - from:
     id: wp_2_1
-    lat: 44.59993
-    lon: -92.9668
+    lat: 44.59965
+    lon: -92.96592
   to: rochester
   zone: south
-  length_km: 79.8
-  crow_km: 75.9
-  detour: 1.052
+  length_km: 80.1
+  crow_km: 75.8
+  detour: 1.056
   land_shares:
-    suburban: 0.089
-    urban: 0.031
-    forest: 0.093
+    suburban: 0.086
+    urban: 0.021
+    forest: 0.109
     open: 0.769
-    wetland: 0.015
-    water: 0.002
-  floodplain_share: 0.027
-  floodplain_1pct_share: 0.027
+    wetland: 0.014
+    water: 0.001
+  floodplain_share: 0.037
+  floodplain_1pct_share: 0.037
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.037
-  highway_corridor_share: 0.025
-  highway_corridor_km: 2.0
-  urban_km: 1.4
+  built_up_share: 0.023
+  highway_corridor_share: 0.028
+  highway_corridor_km: 2.2
+  urban_km: 0.4
   urban_start_km: 0.0
-  urban_end_km: 1.4
+  urban_end_km: 0.4
   bridges_m: []
   max_ground_grade_1km: 0.0582
   elev_range_m:
   - 236
-  - 375
-  guideway_max_height_m: 11.7
+  - 376
+  guideway_max_height_m: 15.7
   km_over_25m_high: 0.0

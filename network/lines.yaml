@@ -107,6 +107,7 @@ lines:
 
   - id: iron_range
     name: Duluth - Iron Range
+    use_measured: true   # network/measured/iron_range.yaml
     phase: 2
     points: [duluth, virginia, hibbing]
     note: Serves the Mesabi Range, where the guideway steel's iron ore comes from.
@@ -133,6 +134,7 @@ lines:
 
   - id: west
     name: Twin Cities - St. Cloud - Fargo/Moorhead
+    use_measured: true   # network/measured/west.yaml
     phase: 2
     points: [midway_hub, st_cloud, alexandria, moorhead]
     defaults:
@@ -164,6 +166,7 @@ lines:
 
   - id: southwest
     name: Twin Cities - Mankato
+    use_measured: true   # network/measured/southwest.yaml
     phase: 2
     points: [msp, mankato]
     defaults:

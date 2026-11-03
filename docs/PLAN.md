@@ -127,9 +127,20 @@ Spine 356 km; built-up viaduct 15 -> 33 km; ~12 km beside freeways; line +$6.9 b
 fusion $102.8 bn (4 units: the new route's 1-second peak is 75 MW, the slice-2 route's was 65).
 Rail corridors not modelled (freight railroads set separations case by case, 25-200 ft).
 
-Next slices, in order of how much they move the result: the other lines (phase 2 first), SSURGO
-organic soils (real peat), parcels and buildings, public and tribal lands, and a price for what
-following a highway saves in permits and review.
+**Phase 2 lines routed 2026-11-03** (iron_range, west, southwest; `use_measured: true`), and the
+curve fitting made local: each station-to-station leg of the least-cost path is simplified at
+300 m, then, while a curve doesn't fit between its neighbours, the vertex (failing or adjacent)
+whose removal adds the least cost on the cost surface is dropped; stations stay fixed. The old
+single global tolerance grew to 1.45 km on the west line and cut across lakes (9.6 km of bridge;
+~3 km of lake crossings on the spine too). Measured: spine 357 km, Duluth - Hibbing 126 (est.
+136), Midway - Moorhead 375 (386), MSP - Mankato 105 (111). Spine with fusion $97.0 bn, phase 2
+$234 bn, all $456 bn (phase 3 lines still estimated). The MRLC server answered one of three
+parallel downloads with a firewall captcha page; downloads now keep only real TIFFs and retry.
+
+Next slices, in order of how much they move the result: tall piers priced by height (the Duluth
+hillside ravines need ~70-80 m), the phase 3 lines, SSURGO organic soils (real peat), parcels and
+buildings, public and tribal lands, and a price for what following a highway saves in permits
+and review.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

@@ -335,3 +335,26 @@ def test_built_up_km_are_priced_as_urban_viaduct(world):
     q0, q1 = segment_quantities(plain), segment_quantities(built)
     assert q1["urban_viaduct_km"] - q0["urban_viaduct_km"] == pytest.approx(0.3 * seg.rural_guideway_km)
     assert q0["elevated_km"] - q1["elevated_km"] == pytest.approx(0.3 * seg.rural_guideway_km)
+
+
+def test_smoothing_fits_curves_locally_and_keeps_the_detour(world):
+    from mnmaglev.gis import CELL, Grid, smooth
+
+    params, _, _ = world
+    P = nominal(params)
+    g = Grid(x0=-5000.0, y0=-20000.0, nx=400, ny=200)  # 84 x 42 km
+    xs = g.x0 + (np.arange(g.nx) + 0.5) * CELL
+    ys = g.y1 - (np.arange(g.ny) + 0.5) * CELL
+    lake = np.hypot(xs[None, :] - 30000.0, ys[:, None]) < 4000.0
+    cost = np.where(lake, 400.0, 70.0)
+    # least-cost path: around the lake, plus a kink no curve fits (forces vertices out)
+    leg = np.array([[0, 0], [5000, 0], [5300, 600], [5600, 0], [20000, 0], [30000, 8000],
+                    [40000, 0], [60000, 0], [75000, 0]], dtype=float)
+    stations = leg[[0, -1]]
+    out, info = smooth([leg[:7], leg[6:]], np.vstack([stations[0], leg[6], stations[1]]), P, cost, g)
+    assert info["all_curves_fit"]
+    assert info["vertices_removed_for_curves"] >= 1
+    assert np.allclose(out[0], leg[0]) and np.allclose(out[-1], leg[-1])
+    # the mid station stays on the line (its vertex is filleted like any other: within a platform)
+    assert np.min(np.linalg.norm(out - leg[6], axis=1)) < 150.0
+    assert info["cost_smoothed_musd"] <= 1.02 * info["cost_least_cost_path_musd"]

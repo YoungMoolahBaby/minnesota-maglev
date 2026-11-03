@@ -117,8 +117,9 @@ def write_markdown(net: dict, path: Path) -> None:
     cc = net["conf_counts"]
     L.append("> Concept-stage numbers. Parameters by confidence: "
              + ", ".join(f"{k} {cc.get(k, 0)}" for k in ("high", "medium", "low", "placeholder"))
-             + ". Segment shares (structure, land, floodplain, peat) are planner estimates until the "
-               "GIS phase measures them. See docs/RESEARCH.md for what to firm up first.\n")
+             + ". Segment shares (structure, land, floodplain) are measured by GIS on lines with a measured "
+               "route (`use_measured`) and planner estimates elsewhere; peat is estimated everywhere. "
+               "See docs/RESEARCH.md for what to firm up first.\n")
 
     L.append("## Lines\n")
     L.append("| Line | Phase | Route km | Stations (new) | End to end | Capital P10 / P50 / P90 | P50 per km | Opex P50 / yr | Second-system reserve P50 |")

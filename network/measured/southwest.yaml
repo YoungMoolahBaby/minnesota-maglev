@@ -1,0 +1,89 @@
+# Measured along the GIS alignment (network/alignments/southwest.geojson) by `mnmaglev gis southwest`:
+# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid, FEMA NFHL flood zones
+# (floodplain_share = 1% + 0.2% annual chance; floodway runs counted as bridge;
+# flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021
+# impervious surface + descriptor (built_up_share = share of the piece's non-urban,
+# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
+# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
+# wetland).
+line: southwest
+curves:
+  r_cruise_m: 3980.2213558022463
+  r_urban_m: 861.0538357603562
+  simplify_tol_m: 300.0
+  vertices: 21
+  vertices_removed_for_curves: 5
+  all_curves_fit: true
+  cost_least_cost_path_musd: 9055
+  cost_smoothed_musd: 9388
+pieces:
+- from: msp
+  to:
+    id: wp_0_1
+    lat: 44.59923
+    lon: -93.4426
+  zone: central
+  length_km: 38.0
+  crow_km: 36.1
+  detour: 1.053
+  land_shares:
+    suburban: 0.249
+    urban: 0.158
+    forest: 0.183
+    open: 0.307
+    wetland: 0.085
+    water: 0.017
+  floodplain_share: 0.122
+  floodplain_1pct_share: 0.115
+  floodway_km: 0.73
+  flood_map_coverage: 1.0
+  built_up_share: 0.144
+  highway_corridor_share: 0.028
+  highway_corridor_km: 1.1
+  urban_km: 4.1
+  urban_start_km: 4.1
+  urban_end_km: 0.0
+  bridges_m:
+  - 105
+  - 630
+  - 525
+  max_ground_grade_1km: 0.0712
+  elev_range_m:
+  - 186
+  - 316
+  guideway_max_height_m: 19.2
+  km_over_25m_high: 0.0
+- from:
+    id: wp_0_1
+    lat: 44.59923
+    lon: -93.4426
+  to: mankato
+  zone: south
+  length_km: 66.5
+  crow_km: 65.4
+  detour: 1.016
+  land_shares:
+    suburban: 0.078
+    urban: 0.025
+    forest: 0.077
+    open: 0.789
+    wetland: 0.03
+    water: 0.001
+  floodplain_share: 0.027
+  floodplain_1pct_share: 0.027
+  floodway_km: 0.0
+  flood_map_coverage: 1.0
+  built_up_share: 0.018
+  highway_corridor_share: 0.006
+  highway_corridor_km: 0.4
+  urban_km: 1.1
+  urban_start_km: 0.0
+  urban_end_km: 1.1
+  bridges_m: []
+  max_ground_grade_1km: 0.0458
+  elev_range_m:
+  - 244
+  - 325
+  guideway_max_height_m: 9.0
+  km_over_25m_high: 0.0

@@ -1,0 +1,157 @@
+# Measured along the GIS alignment (network/alignments/west.geojson) by `mnmaglev gis west`:
+# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid, FEMA NFHL flood zones
+# (floodplain_share = 1% + 0.2% annual chance; floodway runs counted as bridge;
+# flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021
+# impervious surface + descriptor (built_up_share = share of the piece's non-urban,
+# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
+# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
+# wetland).
+line: west
+curves:
+  r_cruise_m: 3980.2213558022463
+  r_urban_m: 861.0538357603562
+  simplify_tol_m: 300.0
+  vertices: 75
+  vertices_removed_for_curves: 33
+  all_curves_fit: true
+  cost_least_cost_path_musd: 30219
+  cost_smoothed_musd: 30812
+pieces:
+- from: midway_hub
+  to: st_cloud
+  zone: central
+  length_km: 107.4
+  crow_km: 102.7
+  detour: 1.046
+  land_shares:
+    suburban: 0.19
+    urban: 0.139
+    forest: 0.061
+    open: 0.547
+    wetland: 0.044
+    water: 0.018
+  floodplain_share: 0.048
+  floodplain_1pct_share: 0.039
+  floodway_km: 1.05
+  flood_map_coverage: 1.0
+  built_up_share: 0.122
+  highway_corridor_share: 0.009
+  highway_corridor_km: 0.9
+  urban_km: 12.8
+  urban_start_km: 11.1
+  urban_end_km: 1.7
+  bridges_m:
+  - 315
+  - 105
+  - 105
+  - 105
+  - 105
+  - 630
+  - 105
+  - 210
+  max_ground_grade_1km: 0.0298
+  elev_range_m:
+  - 248
+  - 317
+  guideway_max_height_m: 2.9
+  km_over_25m_high: 0.0
+- from: st_cloud
+  to: alexandria
+  zone: central
+  length_km: 105.7
+  crow_km: 101.0
+  detour: 1.047
+  land_shares:
+    suburban: 0.066
+    urban: 0.049
+    forest: 0.049
+    open: 0.766
+    wetland: 0.068
+    water: 0.001
+  floodplain_share: 0.016
+  floodplain_1pct_share: 0.016
+  floodway_km: 0.0
+  flood_map_coverage: 1.0
+  built_up_share: 0.031
+  highway_corridor_share: 0.012
+  highway_corridor_km: 1.3
+  urban_km: 3.6
+  urban_start_km: 3.3
+  urban_end_km: 0.3
+  bridges_m: []
+  max_ground_grade_1km: 0.0453
+  elev_range_m:
+  - 311
+  - 437
+  guideway_max_height_m: 4.9
+  km_over_25m_high: 0.0
+- from: alexandria
+  to:
+    id: wp_2_1
+    lat: 46.00055
+    lon: -95.77507
+  zone: central
+  length_km: 34.6
+  crow_km: 33.2
+  detour: 1.044
+  land_shares:
+    suburban: 0.057
+    urban: 0.033
+    forest: 0.085
+    open: 0.752
+    wetland: 0.053
+    water: 0.02
+  floodplain_share: 0.002
+  floodplain_1pct_share: 0.002
+  floodway_km: 0.0
+  flood_map_coverage: 1.0
+  built_up_share: 0.028
+  highway_corridor_share: 0.006
+  highway_corridor_km: 0.2
+  urban_km: 0.5
+  urban_start_km: 0.5
+  urban_end_km: 0.0
+  bridges_m:
+  - 210
+  - 420
+  max_ground_grade_1km: 0.0201
+  elev_range_m:
+  - 397
+  - 449
+  guideway_max_height_m: 1.3
+  km_over_25m_high: 0.0
+- from:
+    id: wp_2_1
+    lat: 46.00055
+    lon: -95.77507
+  to: moorhead
+  zone: north
+  length_km: 126.4
+  crow_km: 123.2
+  detour: 1.026
+  land_shares:
+    suburban: 0.06
+    urban: 0.008
+    forest: 0.008
+    open: 0.89
+    wetland: 0.027
+    water: 0.006
+  floodplain_share: 0.009
+  floodplain_1pct_share: 0.0
+  floodway_km: 0.0
+  flood_map_coverage: 0.718
+  built_up_share: 0.017
+  highway_corridor_share: 0.004
+  highway_corridor_km: 0.5
+  urban_km: 0.3
+  urban_start_km: 0.0
+  urban_end_km: 0.3
+  bridges_m:
+  - 105
+  max_ground_grade_1km: 0.0314
+  elev_range_m:
+  - 276
+  - 410
+  guideway_max_height_m: 7.3
+  km_over_25m_high: 0.0

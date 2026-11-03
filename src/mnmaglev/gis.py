@@ -109,13 +109,31 @@ def grid_for(line: Line, buffer_km: float = 30.0) -> Grid:
     return Grid(x0, y0, nx, ny)
 
 
-def _get(url: str, path: Path) -> Path:
-    if not path.exists() or path.stat().st_size < 1000:
-        req = urllib.request.Request(url, headers={"User-Agent": "minnesota-maglev GIS"})
-        with urllib.request.urlopen(req, timeout=600) as r:
-            path.write_bytes(r.read())
-        time.sleep(0.5)
-    return path
+TIFF_MAGIC = (b"II*\x00", b"MM\x00*")
+
+
+def _get(url: str, path: Path, tries: int = 6) -> Path:
+    """Download url to path once (cached). Servers sometimes answer with an HTML error or
+    firewall captcha page instead of the raster, so a .tif is only kept if it is a TIFF."""
+    tif = path.suffix == ".tif"
+    if path.exists() and path.stat().st_size >= 1000:
+        with open(path, "rb") as f:
+            if not tif or f.read(4) in TIFF_MAGIC:
+                return path
+    req = urllib.request.Request(url, headers={"User-Agent": "minnesota-maglev GIS"})
+    for k in range(tries):
+        try:
+            with urllib.request.urlopen(req, timeout=600) as r:
+                data = r.read()
+            if not tif or data[:4] in TIFF_MAGIC:
+                path.write_bytes(data)
+                time.sleep(0.5)
+                return path
+            print(f"  not a TIFF from the server (try {k + 1}): {data[:80]!r}", flush=True)
+        except OSError as e:  # URLError, timeouts, dropped connections
+            print(f"  download failed (try {k + 1}): {e}", flush=True)
+        time.sleep(min(30 * (k + 1), 120))
+    raise RuntimeError(f"no valid download for {path.name} after {tries} tries: {url}")
 
 
 def fetch_dem(g: Grid, folder: Path) -> np.ndarray:
@@ -253,22 +271,64 @@ def _simplify(pts: np.ndarray, tol: float) -> np.ndarray:
     return np.array(LineString(pts).simplify(tol, preserve_topology=False).coords)
 
 
-def smooth(pts: np.ndarray, stations_xy: np.ndarray, P: dict) -> tuple[np.ndarray, dict]:
-    """Polyline -> alignment with circular curves >= minimum radius (urban radius near stations)."""
+def path_cost(pts: np.ndarray, cost: np.ndarray, g: Grid) -> float:
+    """MUSD along a polyline over the cost surface (MUSD per km), sampled every half cell."""
+    total = 0.0
+    for a, b in zip(pts[:-1], pts[1:]):
+        L = float(np.linalg.norm(b - a))
+        n = max(int(L / (CELL / 2)), 1)
+        u = (np.arange(n) + 0.5) / n
+        x, y = a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])
+        r = np.clip(((g.y1 - y) // CELL).astype(int), 0, g.ny - 1)
+        c = np.clip(((x - g.x0) // CELL).astype(int), 0, g.nx - 1)
+        total += float(cost[r, c].sum()) * L / n / 1000.0
+    return total
+
+
+def smooth(legs: list[np.ndarray], stations_xy: np.ndarray, P: dict, cost: np.ndarray, g: Grid,
+           tol: float = 300.0) -> tuple[np.ndarray, dict]:
+    """Least-cost path (one polyline per station-to-station leg) -> alignment with circular curves
+    >= minimum radius (urban radius near stations).
+
+    Each leg is simplified finely (Douglas-Peucker, tol), then, while some curve doesn't fit between
+    its neighbours, the vertex (a failing one or a neighbour) whose removal adds the least cost on
+    the cost surface is dropped. Stations stay fixed. One global tolerance (slices 1-3) straightened
+    the whole line for its tightest spot and cut across lakes the least-cost path went around.
+    """
     r_cruise = min_curve_radius_m(P["system.vehicle.cruise_speed"], P["system.geometry.superelevation_max"],
                                   P["system.geometry.unbalanced_lateral"])
     r_urban = min_curve_radius_m(P["system.vehicle.urban_speed"], P["system.geometry.superelevation_max"],
                                  P["system.geometry.unbalanced_lateral"])
     near = 15000.0  # m from a station where trains run at or below urban speed
-    tol = 300.0
-    for _ in range(40):
-        s = _simplify(pts, tol)
+    pts, fixed = [], []
+    for k, leg in enumerate(legs):
+        sl = _simplify(leg, tol)
+        if k:
+            sl = sl[1:]
+        pts += list(sl)
+        fixed += ([True] if not k else []) + [False] * (len(sl) - (1 if k else 2)) + [True]
+    memo: dict = {}
+
+    def chord(a, b) -> float:
+        key = (a.tobytes(), b.tobytes())
+        if key not in memo:
+            memo[key] = path_cost(np.array([a, b]), cost, g)
+        return memo[key]
+
+    removed = 0
+    while True:
+        s = np.array(pts)
         d = np.min(np.linalg.norm(s[:, None, :] - stations_xy[None, :, :], axis=2), axis=1)
         radii = np.where(d < near, r_urban, r_cruise)
         ok = _fillet_ok(s, radii)
-        if ok.all():
+        cands = {j for i in np.where(~ok)[0] for j in (i - 1, i, i + 1)
+                 if 0 < j < len(pts) - 1 and not fixed[j]}
+        if not cands:
             break
-        tol *= 1.3
+        best = min(cands, key=lambda j: chord(pts[j - 1], pts[j + 1])
+                   - chord(pts[j - 1], pts[j]) - chord(pts[j], pts[j + 1]))
+        del pts[best], fixed[best]
+        removed += 1
     # discretise the curves
     out = [s[0]]
     for i in range(1, len(s) - 1):
@@ -285,8 +345,13 @@ def smooth(pts: np.ndarray, stations_xy: np.ndarray, P: dict) -> tuple[np.ndarra
             u = k / n
             out.append((1 - u) ** 2 * p0 + 2 * (1 - u) * u * s[i] + u ** 2 * p1)
     out.append(s[-1])
-    return np.array(out), {"r_cruise_m": r_cruise, "r_urban_m": r_urban, "simplify_tol_m": tol,
-                           "all_curves_fit": bool(ok.all())}
+    out = np.array(out)
+    raw = np.vstack([legs[0]] + [l[1:] for l in legs[1:]])
+    return out, {"r_cruise_m": r_cruise, "r_urban_m": r_urban, "simplify_tol_m": tol,
+                 "vertices": len(s), "vertices_removed_for_curves": removed,
+                 "all_curves_fit": bool(ok.all()),
+                 "cost_least_cost_path_musd": round(path_cost(raw, cost, g)),
+                 "cost_smoothed_musd": round(path_cost(out, cost, g))}
 
 
 def route(line: Line, P: dict, cache: Path | None = None) -> dict:
@@ -315,8 +380,7 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
         xy = np.array([g.xy(r, c) for r, c in path])
         xy[0], xy[-1] = a, b
         legs.append((pa, pb, xy))
-    full = np.vstack([legs[0][2]] + [l[2][1:] for l in legs[1:]])
-    align, curve_info = smooth(full, st_xy, P)
+    align, curve_info = smooth([l[2] for l in legs], st_xy, P, cost, g)
     layers = {**frac, **{f"fl_{k}": v for k, v in flood.items()},
               "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"]}
     meas = measure(align, st_xy, stops, g, layers, dem, P["system.geometry.max_gradient"])

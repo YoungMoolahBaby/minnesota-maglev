@@ -126,6 +126,23 @@ works), date, details. One section per tool.
   trend. Spine with fusion $94.0 -> $102.8 bn (estimates: $109.1 bn); all phases $452 -> $462 bn. The
   planner lines moved by up to +$1.5 bn because of the new corridor adder on their assumed corridor
   shares.
+- 2026-11-03, phase 2 lines routed (GIS slices 1-3): every measured line is shorter than my
+  estimate (Duluth - Hibbing 126 vs 136 km, Midway - Moorhead 375 vs 386, MSP - Mankato 105 vs 111),
+  but the first routing made the west line $10 bn dearer (P50 $79.0 -> 89.3 bn): 9.6 km of bridges
+  against my 0.6. Nearly all were lakes (Sauk chain west of St. Cloud, Alexandria, the Otter Tail
+  lakes near Fergus Falls), which the least-cost path had gone around. The cause was the curve
+  fitting: one Douglas-Peucker tolerance for the whole line, raised until every curve fit, so one
+  tight spot straightened everything (1.45 km on the west line). Local fitting (simplify each leg at
+  300 m, drop the cheapest vertex where a curve doesn't fit) brings the west line's bridges to
+  ~2.5 km and every smoothed route within 0-4% of its least-cost path's cost. It also fixed the
+  spine, which had ~3 km of needless lake crossings north of the metro: spine line P50 $95.6 ->
+  $89.9 bn, with fusion $102.8 -> $97.0 bn. Phase 2 (all measured) $234.3 bn (estimates $246.7),
+  all $456.4 bn. Fleet still 4 / 6 / 10 units, but from phase 2 on overnight ice warming sets it,
+  not the daytime peak. Following the terrain more closely, the Duluth climbs now cross the
+  hillside's ravines on piers up to 73 m (spine) and 80 m (Iron Range), ~1 km each over 25 m,
+  still priced as ordinary elevated guideway. The MRLC server answered one of three parallel
+  downloads with a firewall captcha page, which the cache saved as a tile; downloads now keep only
+  files that start like a TIFF and retry otherwise.
 
 ## OSRD
 
