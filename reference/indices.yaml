@@ -1,0 +1,25 @@
+# Price indices and exchange rates for bringing benchmark costs to 2026 USD.
+# Method: convert a foreign figure to USD at its price year's exchange rate, then inflate with the
+# US construction index (FHWA NHCCI). CPI-U is kept as a cross-check (general prices, not construction).
+
+target: {label: "2026 USD", nhcci: 3.1348, cpi: 336.940}   # NHCCI 2026 Q1 (latest); CPI-U Sep 2026
+
+nhcci:
+  source: FHWA National Highway Construction Cost Index, base 2003 Q1 = 1, annual mean of quarters, data.transportation.gov dataset r94d-n4f9 (downloaded 2026-11-03; FHWA has since rebased to 2021 Q2 = 1, use ratios within this vintage only)
+  note: starts 2003; years before 2003 use 2003 (understates ~3%/yr; ENR CCI 2000 6221 -> 2004 7115)
+  annual: {2003: 1.0138, 2004: 1.1098, 2005: 1.3267, 2006: 1.5353, 2007: 1.5442, 2008: 1.6560,
+           2009: 1.4429, 2010: 1.4392, 2011: 1.5099, 2012: 1.6016, 2013: 1.6130, 2014: 1.6816,
+           2015: 1.6984, 2016: 1.6606, 2017: 1.6745, 2018: 1.7861, 2019: 1.9246, 2020: 1.9208,
+           2021: 2.0593, 2022: 2.6014, 2023: 3.0142, 2024: 3.2369, 2025: 3.2254, 2026: 3.1348}
+
+cpi:
+  source: BLS CPI-U US city average all items (CUUR0000SA0), annual averages; 2025 has 11 months (Oct 2025 not collected); 2026 = Sep 2026 (BLS release 2026-10-14)
+  annual: {2000: 172.2, 2004: 188.9, 2008: 215.303, 2014: 236.736, 2021: 270.970, 2024: 313.689, 2025: 321.943, 2026: 336.940}
+
+usd_per:
+  source: Federal Reserve G.5A annual average exchange rates
+  EUR: {2002: 0.9454, 2007: 1.3711, 2008: 1.4726}
+  AUD: {2008: 0.8537}
+  CNY: {2004: 0.12082}
+  JPY: {2014: 0.009457}
+  GBP: {2005: 1.8204}

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
+from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
 from .kinematics import line_summary
 from .network import Line
@@ -69,6 +70,7 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
             for ph in sorted({r["line"].phase for r in results})
         },
         "min_radius_m": curve_radius_note(P0),
+        "benchmarks": benchmark_table(params),
         "conf_counts": Counter(p.conf for p in params.values()),
     }
 
@@ -134,6 +136,12 @@ def write_markdown(net: dict, path: Path) -> None:
     L.append("|---|---|---|")
     for k, rho, conf in net["sensitivity"]:
         L.append(f"| `{k}` | {rho:+.2f} | {conf} |")
+    L.append("")
+    L.append("## Benchmarks\n")
+    L.append("Sourced figures behind the cost parameters (reference/benchmarks.yaml), converted to 2026 USD "
+             "with the FHWA construction index and adjusted to each parameter's scope. `allin_per_km` rows "
+             "are whole projects (incl. trains, stations, soft costs) to compare with the P50 per km above.\n")
+    L.append(net["benchmarks"])
     L.append("")
     L.append(f"Smallest curve radius at cruise speed: **{net['min_radius_m']:,.0f} m** "
              "(12 deg cant + unbalanced lateral limit); the route search must respect it.\n")

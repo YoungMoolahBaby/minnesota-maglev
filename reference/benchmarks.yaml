@@ -1,0 +1,228 @@
+# Sourced cost benchmarks behind the parameters (research pass 1, 2026-11-03).
+# Each entry: the original figure as published, its currency and price year, what it covers, and
+# `adjust` to bring it to the parameter's scope (our params are BEFORE soft costs and contingency,
+# which the model adds). `mnmaglev benchmarks` converts every entry to 2026 USD with
+# reference/indices.yaml (FX at the price year, then the FHWA NHCCI construction index).
+# anchor: true = the parameter's low..high range must cover it (tests/test_benchmarks.py).
+# "derived" = arithmetic on the published figures (per km, sums), done by us.
+
+benchmarks:
+  # --- elevated guideway, civil (costs.guideway.elevated) ---
+  - id: vr_munich_elevated
+    param: costs.guideway.elevated
+    value: 28.95
+    currency: EUR
+    year: 2007
+    unit: MUSD/km
+    adjust: {factor: 0.74, why: "VR prices include planning and contingency; assumed ~35% (split not published)"}
+    scope: Transrapid Munich airport link, elevated superstructure 24.70 + earthworks 2.36 + third-party works 1.89 EUR M/km (derived; land 1.40 excluded, priced separately)
+    source: Vieregg-Rössler, Ermittlung der wahrscheinlichen Baukosten Transrapid München (2007), http://www.vr-transport.de/vr/tr_kosten2007.html
+    quote: "Fahrweg-Überbau aufgeständert 5,76 km 24,70 142,30"
+    conf: medium
+    note: critic's estimate for the Bavarian Greens, leans high
+    anchor: true
+  - id: scmaglev_viaduct
+    param: costs.guideway.elevated
+    value: 46.6
+    currency: USD
+    year: 2020
+    unit: MUSD/km
+    scope: Baltimore-Washington SCMaglev DEIS App. G9, above-ground viaduct per linear mile ($75 M/mile), 32-100+ ft high, suburban; no soft costs or contingency. Price year not confirmed (DEIS 2021; 2020 assumed)
+    source: MDE Tier II report citing DEIS App. G9 (2022), https://mde.maryland.gov/programs/water/WetlandsandWaterways/SiteAssets/Lists/SCMAGLEV/NewForm/SCMAGLEV_Tier_II_SEJ_MDE_R2_22.03.01.pdf
+    quote: "unit cost per linear mile of above-ground viaduct is $75,000,000"
+    conf: medium
+    note: SCMaglev (superconducting, U-shaped guideway), not Transrapid; tall viaduct
+    anchor: true
+  - id: gurney_pittsburgh
+    param: costs.guideway.elevated
+    value: 24.9
+    currency: USD
+    year: 2001
+    unit: MUSD/km
+    scope: Maglev Inc. (Pittsburgh), dual elevated steel guideway, $40 M/mile; likely includes the stator
+    source: US House hearing 107-27, Magnetic Levitation Transportation Issues (June 2001), https://commdocs.house.gov/committees/Trans/hpw107-27.000/hpw107-27_0.htm
+    quote: "Construction cost for a dual guideway maglev is $40 million per mile."
+    conf: low
+    note: promoter figure; NHCCI starts 2003, so 2003 is used (understates inflation slightly)
+    anchor: true
+
+  # --- at-grade guideway, civil (costs.guideway.at_grade) ---
+  - id: vr_munich_at_grade
+    param: costs.guideway.at_grade
+    value: 24.45
+    currency: EUR
+    year: 2007
+    unit: MUSD/km
+    adjust: {factor: 0.74, why: "as vr_munich_elevated"}
+    scope: at-grade superstructure 20.20 + earthworks 2.36 + third-party works 1.89 EUR M/km (derived); "at grade" Transrapid is still a beam on ~0.1 m piers. Elevated/at-grade superstructure ratio 1.22 (VR-Munich), 1.26 (VR Berlin-Hamburg)
+    source: Vieregg-Rössler (2007), http://www.vr-transport.de/vr/tr_kosten2007.html
+    quote: "Fahrweg-Überbau ebenerdig 21,74 km 20,20"
+    conf: medium
+    anchor: true
+
+  # --- propulsion, power, control (costs.systems.propulsion_power_control) ---
+  - id: vr_munich_systems
+    param: costs.systems.propulsion_power_control
+    value: 13.1
+    currency: EUR
+    year: 2007
+    unit: MUSD/km
+    adjust: {factor: 0.74, why: "as vr_munich_elevated"}
+    scope: stator carrier 1.69 + stator winding 0.92 + power supply 6.55 + operations control ~3.94 EUR M/km (derived); critic doubled the feasibility study's power cost (study ~11 vs critic ~13 EUR M/km)
+    source: Vieregg-Rössler (2007), http://www.vr-transport.de/vr/tr_kosten2007.html
+    quote: "Stator carrier 1.69, winding 0.92, power 6.55 (EUR M/km); operations control 80.10 + 67.61 M EUR"
+    conf: medium
+    note: official Berlin-Hamburg planning (MPG, 1993 prices) puts systems at ~0.57x civil guideway (DM 8.6 vs 15.1 M/km, derived); NMI 1992 power/guideway ~0.6
+    anchor: true
+
+  # --- urban viaduct (costs.guideway.urban_viaduct) ---
+  - id: hart_kiewit_guideway
+    param: costs.guideway.urban_viaduct
+    value: 64
+    currency: USD
+    year: 2010
+    unit: MUSD/km
+    scope: Honolulu rail, Kiewit guideway contracts (2009-11), ~10.4 mi dual-track elevated guideway along highway medians, excl. stations; trackwork unclear (derived $1.071 bn / 10.4 mi)
+    source: Honolulu Star-Advertiser (staradvertiser.com/?p=782816), RT&S (rtands.com/?p=3285)
+    quote: "$1.071B for about 10.4 mi (final combined value after changes)"
+    conf: medium
+    note: light-metro guideway, suburban medians; a high-speed maglev urban viaduct is heavier
+    anchor: true
+  - id: cahsr_viaduct_morgan_hill
+    param: costs.guideway.urban_viaduct
+    value: 93
+    currency: USD
+    year: 2017
+    unit: MUSD/km
+    scope: California HSR viaduct structure, $150 M/mile, city staff estimate
+    source: City of Morgan Hill memo (~2017), morganhill.ca.gov/DocumentCenter/View/22317
+    quote: "approximate costs of the viaduct structure at $150 million per mile"
+    conf: low
+    anchor: true
+  - id: honolulu_city_center_with_stations
+    param: costs.guideway.urban_viaduct
+    value: 344
+    currency: USD
+    year: 2024
+    unit: MUSD/km
+    scope: HART City Center guideway AND 6 stations, ~3 mi downtown (derived); includes stations, so above our station-free parameter
+    source: railway-news.com/hart-awards-1-66-billion-contract-for-honolulu-rail-transit-project
+    quote: "$1.66 billion"
+    conf: medium
+    anchor: false
+
+  # --- tunnel (costs.guideway.tunnel) ---
+  - id: hudson_tunnel_1c
+    param: costs.guideway.tunnel
+    value: 584
+    currency: USD
+    year: 2026
+    unit: MUSD/km
+    scope: Hudson Tunnel Project package 1C, twin tubes ~7,250 ft each, boring + liner + floor + 9 cross passages; excludes track, systems, fit-out, shafts (derived $1.29 bn / route km). Subaqueous Manhattan job, top end
+    source: NJBIZ, Gateway $1.29B Hudson tunnel contract award (Apr 2026), njbiz.com/gateway-1-29b-hudson-tunnel-contract-award
+    quote: "$1.29 billion"
+    conf: high
+    anchor: true
+  - id: cahsr_palmdale_burbank_structures
+    param: costs.guideway.tunnel
+    value: 291
+    currency: USD
+    year: 2017
+    unit: MUSD/km
+    scope: CA HSR Palmdale-Burbank, SCC 10 track structures and track ($9,647 M) over 20.6 mi of tunnel (derived ceiling; includes 4.2 mi of viaduct), before soft costs and contingency
+    source: CA HSR 2018 Business Plan Basis of Estimate, Table 20, https://hsr.ca.gov/wp-content/uploads/docs/about/business_plans/2018_Business_Plan_Basis_of_Estimate.pdf
+    quote: "20.6 miles of tunnels"
+    conf: medium
+    anchor: true
+
+  # --- long bridges (costs.guideway.bridge_per_m) ---
+  - id: st_croix_crossing
+    param: costs.guideway.bridge_per_m
+    value: 0.25
+    currency: USD
+    year: 2014
+    unit: MUSD/m
+    scope: St. Croix Crossing (Stillwater, built 2013-17), $381.6 M over the extradosed main unit + approaches (derived); 4-lane highway, deck 98.5 ft. Over all structures incl. ramps $0.19 M/m
+    source: Aspire Magazine, Fall 2018, aspirebridge.com
+    quote: "BRIDGE CONSTRUCTION COST: $341,600,000 + $40,000,000 early foundation contract = $381,600,000 total"
+    conf: high
+    note: highway bridge, wider but lighter-loaded than a dual maglev deck (~12-13 m)
+    anchor: true
+  - id: hastings_bridge
+    param: costs.guideway.bridge_per_m
+    value: 0.20
+    currency: USD
+    year: 2011
+    unit: MUSD/m
+    scope: Hastings tied-arch Mississippi bridge (design-build ~2010-13), ~$120 M for 591 m, 71.9 ft wide (derived)
+    source: MnDOT project reporting (agent summary; $120-130 M across sources)
+    quote: "about $120M (sources say $120-130M)"
+    conf: medium
+    anchor: true
+  - id: i35w_st_anthony_falls
+    param: costs.guideway.bridge_per_m
+    value: 0.63
+    currency: USD
+    year: 2007
+    unit: MUSD/m
+    scope: I-35W Mississippi bridge replacement, $234 M for 371 m, 10 lanes / 55 m wide, emergency schedule (derived)
+    source: Wikipedia, I-35W Saint Anthony Falls Bridge
+    quote: "$234 million"
+    conf: high
+    anchor: false
+    note: 4x the deck width of a maglev bridge and an emergency build; context, not an anchor
+
+  # --- all-in system benchmarks (whole projects; for the per-km sanity check, not a single param) ---
+  - id: fra_2005_maglev_range_low
+    param: allin_per_km
+    value: 24.9
+    currency: USD
+    year: 2005
+    unit: MUSD/km
+    scope: FRA Report to Congress (2005), maglev all-in $40-100 M/mile (low end)
+    source: TRID abstract of the FRA 2005 report
+    quote: "$40 to $100 million per mile"
+    conf: medium
+    anchor: false
+  - id: fra_2005_maglev_range_high
+    param: allin_per_km
+    value: 62.1
+    currency: USD
+    year: 2005
+    unit: MUSD/km
+    scope: as above (high end)
+    source: TRID abstract of the FRA 2005 report
+    quote: "$40 to $100 million per mile"
+    conf: medium
+    anchor: false
+  - id: baltimore_washington_transrapid_2001
+    param: allin_per_km
+    value: 60.6
+    currency: USD
+    year: 2001
+    unit: MUSD/km
+    scope: Baltimore-Washington Transrapid, $3.9 bn for 40 miles, incl. 40% contingency and tunnelled stations
+    source: US House hearing 107-27 (FRA written answers, 2001)
+    quote: "$3.9 billion (40 miles)"
+    conf: medium
+    anchor: false
+  - id: shanghai_maglev
+    param: allin_per_km
+    value: 43.6
+    currency: USD
+    year: 2004
+    unit: MUSD/km
+    scope: Shanghai maglev, US$1.33 bn / 30.5 km incl. trains and stations, Chinese costs
+    source: Wikipedia, Transrapid
+    quote: "US$43.6 million, including trains and stations"
+    conf: medium
+    anchor: false
+
+# Soft costs and contingency (no conversion; shares):
+#   MnDOT MWRRI cost method (Quandel, 2011): soft costs 24% (design 10, insurance 2, program mgmt 4,
+#     CM 6, engineering during construction 2), contingency 30% of direct construction.
+#     https://www.dot.state.mn.us/passengerrail/mwrri/files/Appendix%20E-Cost%20Estimating%20Methodology.pdf
+#   AACE 18R-97 class 5: -20..-50% / +30..+100% (as reproduced in CA HSR 2024 Basis of Estimate).
+#   Flyvbjerg, Holm & Buhl (2003): rail cost escalation averages 44.7% (SD 38.4, n=58), 9 in 10 overrun.
+#   CA HSR 2024 BOE: allocated contingency 10-50% by category (viaduct 20, tunnel 31, systems 11),
+#     unallocated 5%; FTA/FRA fund to P65 (OP-40).

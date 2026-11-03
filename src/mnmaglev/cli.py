@@ -59,6 +59,13 @@ def cmd_report(args) -> int:
     return 0
 
 
+def cmd_benchmarks(args) -> int:
+    from .benchmarks import benchmark_table
+
+    print(benchmark_table(load_params()))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="mnmaglev")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -71,6 +78,7 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--seed", type=int, default=1)
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")
     rp.set_defaults(fn=cmd_report)
+    sub.add_parser("benchmarks", help="sourced cost benchmarks in 2026 USD vs parameter ranges").set_defaults(fn=cmd_benchmarks)
     args = ap.parse_args(argv)
     return args.fn(args)
 

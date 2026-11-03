@@ -23,6 +23,16 @@ works), date, details. One section per tool.
 - 2026-11-03: spacing made explicit: B's own right-of-way + 50 m construction separation (~70 m
   centre to centre, so building one needs no slow orders on the other). Spine reserve $7.5 -> $8.1 bn
   P50, land $0.43 -> $0.69 bn nominal; spine $76.5 -> $77.1 bn. Room to build freely costs ~$0.6 bn.
+- 2026-11-03, research pass 1: sourced the top cost drivers (reference/benchmarks.yaml, three
+  research agents + the FHWA NHCCI series). Elevated guideway 42 -> 60, at grade 30 -> 48, systems
+  18 -> 27, urban viaduct 110 -> 150, tunnel 450 -> 500, bridges 0.16 -> 0.40 MUSD/m, soft 25 -> 24%,
+  contingency stays 40%. Spine P50 $77.1 -> $100.7 bn ($259 M/km); network through phase 3 $336 ->
+  $447 bn. Most of the rise is real US construction inflation: the highway construction index rose
+  ~2x since 2007, so 2007 European figures land far above my CPI-ish placeholders. The at-grade
+  guideway is only ~1.24x cheaper than elevated (it is still a beam on low piers), so at-grade buys
+  little; elevated-by-default costs less extra than the placeholders implied.
+- 2026-11-03: research agents could not fetch railroads.dot.gov (403) or the SCMaglev DEIS cost
+  appendices; the FRA 2005 Report to Congress tables are the best missing US source.
 
 ## OSRD
 

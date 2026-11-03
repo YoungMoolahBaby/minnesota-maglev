@@ -43,7 +43,11 @@ from the one before with measurements.
   strips or two, and a cheaper "land only" option (no city provisions, B finds its own way into
   the cities).
 
-## Phase 1: research pass (next)
+## Phase 1: research pass (in progress; pass 1 done 2026-11-03)
+
+Pass 1 sourced the top cost drivers (docs/RESEARCH.md items 1-5, reference/benchmarks.yaml,
+`mnmaglev benchmarks`); the spine went from $77 bn to $101 bn P50. The benchmarks file and
+`tests/test_benchmarks.py` (every anchor inside its parameter range) are the pattern for the rest.
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
 sourced numbers, tighten ranges, add `params/benchmarks.yaml` (real projects as checks: Shanghai,

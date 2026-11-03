@@ -17,6 +17,7 @@ uv sync
 uv run mnmaglev check            # validate every parameter and the network
 uv run mnmaglev report           # -> out/report.md, out/results.json, out/map.html
 uv run mnmaglev report --phase 1 # just the spine
+uv run mnmaglev benchmarks       # sourced cost benchmarks in 2026 USD vs the parameter ranges
 uv run pytest
 ```
 
@@ -34,24 +35,28 @@ uv run pytest
   and back to iron pellets, crude taconite (Mesabi Range) and copper ore (Duluth Complex grades).
 - **Map**: `out/map.html`, the network on OpenStreetMap with costs and times in the popups.
 
-First run (2026-11-03, all numbers concept-stage, see the report for the caveats):
+After research pass 1 (2026-11-03; the main cost parameters are now sourced, see
+`reference/benchmarks.yaml`; still concept-stage, see the report for the caveats):
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve | 389 | 1 h 10 | $77 bn ($66 - 90 bn) |
-| Network through phase 2 | 1,022 | | $176 bn ($150 - 205 bn) |
-| Everything incl. Chicago | 1,997 | | $336 bn ($287 - 392 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve | 389 | 1 h 10 | $101 bn ($88 - 116 bn) |
+| Network through phase 2 | 1,022 | | $233 bn ($203 - 268 bn) |
+| Everything incl. Chicago | 1,997 | | $447 bn ($388 - 513 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
 construction separation), far enough that work on one needs no slow orders on the other; the
-shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $8.1 bn of the $77 bn. The
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.4 bn of the $101 bn. The
 land is cheap (~$1.0 bn with contingency); most of it is building city structures and stations
 for two from day one. Every other line shows what its reserve would cost in the report.
 
-The spine works out to ~$198 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
-in 2004 (incl. trains and stations); US megaprojects cost several times Chinese ones. The biggest
-single driver of the range is the elevated guideway cost per km, so that's research item 1.
+The spine works out to ~$259 M per route-km all-in (with 24% soft costs, 40% contingency and the
+second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
+incl. trains and stations); the 2001 Baltimore-Washington Transrapid estimate ~$187 M/km (incl. 40%
+contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Early estimates of rail projects have
+overrun ~45% on average, which closes most of the gap. The biggest single driver of the range is
+still the elevated guideway cost per km.
 
 ## How it fits together
 
@@ -76,8 +81,8 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $83 bn P50,
-$6.3 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $107 bn P50,
+$6.6 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
 
 ## Honest caveats
 

@@ -3,52 +3,52 @@
 # unit, conf (high | medium | low | placeholder), source, note.
 # "placeholder" = an engineering guess waiting for research (see docs/RESEARCH.md).
 #
-# Benchmarks behind the guideway numbers (all dual track, all-in incl. trains and stations):
-#   Shanghai maglev 2004: US$1.33 bn / 30.5 km = US$43.6 M/km (Wikipedia, Transrapid)
-#   Transrapid Australia quote to Victoria 2008: A$34 M/km, 50% at grade, 50% elevated
-#   UK Ultraspeed proposal: ~US$46 M/km
-#   Munich airport link (cancelled 2008): EUR 1.85 bn for 37 km, then rose "mainly due to the track"
-# US costs run well above China and Europe for the same work, so the ranges reach high.
+# Civil and systems costs are BEFORE soft costs and contingency (the model adds those).
+# Research pass 1 (2026-11-03): the sourced figures behind guideway, systems, urban, tunnel and
+# bridge costs are in reference/benchmarks.yaml, converted to 2026 USD with the FHWA highway
+# construction index (`uv run mnmaglev benchmarks`). Each range covers its anchor benchmarks
+# (tests/test_benchmarks.py). Converting with CPI instead of a construction index would give
+# ~25-40% lower values for older figures; the low ends allow for that.
 
 guideway:
   elevated:
-    value: 42
-    low: 28
-    high: 75
+    value: 60
+    low: 40
+    high: 95
     unit: MUSD/km
     conf: low
-    source: Shanghai/Victoria/Ultraspeed benchmarks above, civil part only, inflated to 2026, US premium
+    source: "benchmarks (2026 USD): Transrapid Munich itemised estimate ~60 (Vieregg-Rössler 2007, net of planning/contingency), SCMaglev DEIS viaduct ~76 (tall, suburban), Pittsburgh maglev 2001 ~77 (promoter, likely incl. stator)"
     note: dual-track concrete or hybrid beams on piers, rural. The default for Minnesota (snow, drifting, farm and wildlife crossings).
   at_grade:
-    value: 30
-    low: 20
-    high: 55
+    value: 48
+    low: 32
+    high: 78
     unit: MUSD/km
     conf: low
-    source: Victoria 50/50 quote implies at-grade well below elevated
-    note: beams on a low embankment or slab; needs snow clearance under the vehicle skirt and fencing.
+    source: "Transrapid Munich at-grade ~50 (2026 USD, benchmarks); elevated/at-grade superstructure ratio 1.22-1.26 in two German derivations, because 'at grade' Transrapid is still a beam on low piers"
+    note: beams on low piers or a slab; needs snow clearance under the vehicle skirt and fencing.
   urban_viaduct:
-    value: 110
-    low: 65
-    high: 250
+    value: 150
+    low: 90
+    high: 280
     unit: MUSD/km
-    conf: placeholder
-    source: engineering guess, utility relocation, traffic staging, taller piers
+    conf: low
+    source: "Honolulu guideway contracts ~139 (2026 USD, suburban medians, light metro), CA HSR viaduct ~174 (city estimate); heavier maglev structure, utility relocation, traffic staging. Whole urban lines incl. stations run ~220-450"
   tunnel:
-    value: 450
-    low: 220
+    value: 500
+    low: 280
     high: 1000
     unit: MUSD/km
-    conf: placeholder
-    source: US twin-bore transit tunnel costs (excl. stations); maglev needs a large bore for 400+ km/h
-    note: only where nothing else works (downtown approaches).
+    conf: low
+    source: "Hudson tunnel package 1C ~584 (2026, civil only, subaqueous, top end), CA HSR Palmdale-Burbank structures <= ~545 (2026 USD ceiling); US transit tunnel lines incl. stations median ~1,088 (Transit Costs Project)"
+    note: only where nothing else works (downtown approaches); maglev needs a large bore for 400+ km/h.
   bridge_per_m:
-    value: 0.16
-    low: 0.08
-    high: 0.35
+    value: 0.40
+    low: 0.22
+    high: 0.75
     unit: MUSD/m
-    conf: placeholder
-    source: long-span dual-track bridge over a navigable river or wide floodplain
+    conf: low
+    source: "Minnesota river bridges in 2026 USD: St. Croix Crossing ~0.47, Hastings ~0.42 (4-lane highway decks, ~$19-24k per m2); a dual maglev deck is narrower (~12-13 m) but heavier-spec. I-35W (~1.28, 10 lanes, emergency) is context only"
   switch_each:
     value: 15
     low: 8
@@ -59,12 +59,12 @@ guideway:
 
 systems:
   propulsion_power_control:
-    value: 18
-    low: 10
-    high: 32
+    value: 27
+    low: 17
+    high: 45
     unit: MUSD/km
     conf: low
-    source: long stator (iron packs + windings), substations, operations control, comms; the share of the all-in benchmarks not in civil works
+    source: "long stator (iron packs + windings), substations and feeders, operations control, comms. Transrapid Munich itemised ~27 (2026 USD, benchmarks; critic doubled the study's power cost); official Berlin-Hamburg planning puts systems at ~0.57x civil guideway (0.57 x 60 = 34)"
     note: the long stator lives in the guideway, so this scales with km, not with trains.
 
 adders:
@@ -161,19 +161,19 @@ vehicles:
 
 soft:
   engineering_admin:
-    value: 0.25
+    value: 0.24
     low: 0.18
     high: 0.35
     unit: fraction of construction
     conf: medium
-    source: design, program management, permitting, insurance; US megaproject norms
+    source: "MnDOT MWRRI cost method (Quandel 2011): design 10 + insurance/bonding 2 + program mgmt 4 + construction mgmt 6 + engineering during construction 2 = 24%; TCRP 138 (59 US rail projects) ~20% of capital, 11-54% of construction"
   contingency:
     value: 0.40
     low: 0.30
     high: 0.70
     unit: fraction of construction + soft
     conf: medium
-    source: concept stage (AACE class 5 accuracy -50%/+100%)
+    source: "AACE 18R-97 class 5 (-20..-50% / +30..+100%); MnDOT MWRRI uses 30% of direct construction; rail projects overran 44.7% on average (Flyvbjerg, Holm & Buhl 2003, SD 38, n=58); FTA/FRA fund to P65"
 
 operations:
   energy_price:

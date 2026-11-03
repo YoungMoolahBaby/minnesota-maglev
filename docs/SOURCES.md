@@ -5,6 +5,10 @@ Check every dataset's license before it goes into the repo. Raw downloads live i
 
 ## Used for parameters so far
 
+Cost benchmarks with exact quotes, price years and conversions: `reference/benchmarks.yaml`
+(run `uv run mnmaglev benchmarks`). Price indices and exchange rates: `reference/indices.yaml`
+(FHWA NHCCI from data.transportation.gov r94d-n4f9, BLS CPI-U, Federal Reserve G.5A).
+
 - Transrapid technical and cost figures: [Wikipedia, Transrapid](https://en.wikipedia.org/wiki/Transrapid)
   (Shanghai US$43.6 M/km incl. trains and stations; Victoria quote A$34 M/km; 505 km/h cruise; ~1 m/s^2;
   Cd 0.26, 16 m^2; 1.7 kW/t levitation; 440 seats).
