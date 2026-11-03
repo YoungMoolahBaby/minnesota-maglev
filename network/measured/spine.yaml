@@ -1,0 +1,149 @@
+# Measured along the GIS alignment (network/alignments/spine.geojson) by `mnmaglev gis spine`:
+# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid. Slice 1: no floodplain,
+# peat, parcels or existing corridors yet. Land shares: NLCD groups (water, suburban =
+# developed open/low, urban = developed medium/high, forest, open = crops/pasture/grass/
+# shrub/barren, wetland).
+line: spine
+curves:
+  r_cruise_m: 3980.2213558022463
+  r_urban_m: 861.0538357603562
+  simplify_tol_m: 659.1
+  all_curves_fit: true
+pieces:
+- from: duluth
+  to:
+    id: wp_0_1
+    lat: 45.99913
+    lon: -92.6742
+  zone: north
+  length_km: 101.8
+  crow_km: 97.9
+  detour: 1.04
+  land_shares:
+    suburban: 0.06
+    urban: 0.02
+    forest: 0.589
+    open: 0.116
+    wetland: 0.213
+    water: 0.002
+  urban_km: 1.1
+  urban_start_km: 1.1
+  urban_end_km: 0.0
+  bridges_m: []
+  max_ground_grade_1km: 0.146
+  elev_range_m:
+  - 185
+  - 396
+  guideway_max_height_m: 43.5
+  km_over_25m_high: 1.05
+- from:
+    id: wp_0_1
+    lat: 45.99913
+    lon: -92.6742
+  to: midway_hub
+  zone: central
+  length_km: 126.0
+  crow_km: 122.1
+  detour: 1.032
+  land_shares:
+    suburban: 0.149
+    urban: 0.054
+    forest: 0.412
+    open: 0.22
+    wetland: 0.152
+    water: 0.012
+  urban_km: 5.0
+  urban_start_km: 0.0
+  urban_end_km: 5.0
+  bridges_m:
+  - 210
+  - 315
+  - 105
+  - 210
+  - 525
+  max_ground_grade_1km: 0.0281
+  elev_range_m:
+  - 234
+  - 299
+  guideway_max_height_m: 4.3
+  km_over_25m_high: 0.0
+- from: midway_hub
+  to: msp
+  zone: central
+  length_km: 9.2
+  crow_km: 8.9
+  detour: 1.04
+  land_shares:
+    suburban: 0.41
+    urban: 0.535
+    forest: 0.022
+    open: 0.001
+    wetland: 0.024
+    water: 0.008
+  urban_km: 4.5
+  urban_start_km: 2.4
+  urban_end_km: 2.1
+  bridges_m:
+  - 105
+  max_ground_grade_1km: 0.0493
+  elev_range_m:
+  - 214
+  - 287
+  guideway_max_height_m: 12.7
+  km_over_25m_high: 0.0
+- from: msp
+  to:
+    id: wp_2_1
+    lat: 44.59963
+    lon: -92.90371
+  zone: central
+  length_km: 40.7
+  crow_km: 40.3
+  detour: 1.012
+  land_shares:
+    suburban: 0.206
+    urban: 0.1
+    forest: 0.092
+    open: 0.494
+    wetland: 0.073
+    water: 0.034
+  urban_km: 2.3
+  urban_start_km: 2.0
+  urban_end_km: 0.3
+  bridges_m:
+  - 420
+  - 315
+  - 210
+  - 210
+  max_ground_grade_1km: 0.0387
+  elev_range_m:
+  - 213
+  - 311
+  guideway_max_height_m: 13.6
+  km_over_25m_high: 0.0
+- from:
+    id: wp_2_1
+    lat: 44.59963
+    lon: -92.90371
+  to: rochester
+  zone: south
+  length_km: 76.0
+  crow_km: 73.4
+  detour: 1.035
+  land_shares:
+    suburban: 0.098
+    urban: 0.04
+    forest: 0.078
+    open: 0.779
+    wetland: 0.005
+    water: 0.001
+  urban_km: 2.1
+  urban_start_km: 0.0
+  urban_end_km: 2.1
+  bridges_m: []
+  max_ground_grade_1km: 0.0641
+  elev_range_m:
+  - 230
+  - 370
+  guideway_max_height_m: 27.6
+  km_over_25m_high: 0.1

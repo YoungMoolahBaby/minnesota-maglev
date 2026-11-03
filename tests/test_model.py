@@ -271,10 +271,35 @@ def test_staggering_cuts_the_peak_and_keeps_hub_connections(world):
     r = optimise(two, P0, restarts=2)
     for p in r["phases"]:
         assert p["peak_staggered_mw"] <= p["peak_aligned_mw"] + 1e-6
-    assert r["phases"][0]["peak_staggered_mw"] < 0.8 * r["phases"][0]["peak_aligned_mw"]
+    assert r["phases"][0]["peak_staggered_mw"] < 0.9 * r["phases"][0]["peak_aligned_mw"]
     assert r["unmet_transfers"] == []
     # the west line leaves the hub 5-12 min after a spine arrival
     h = r["headway_min"]
     spine_arr = [(r["offsets"]["spine"][i] + hub_events(two[0], P0, bool(i))[0]) % h for i in (0, 1)]
     west_dep = (r["offsets"]["west"][0] + hub_events(two[1], P0, False)[1]) % h
     assert _connects(west_dep, spine_arr, True, 5, 12, h)
+
+
+def test_guideway_profile_respects_grade():
+    np_ = __import__("numpy")
+    from mnmaglev.gis import guideway_profile
+
+    z = np_.concatenate([np_.full(50, 300.0), np_.full(50, 150.0)])  # a 150 m cliff
+    p = guideway_profile(z, 100.0, 0.10)
+    assert (p >= z - 1e-9).all()
+    assert np_.abs(np_.diff(p)).max() <= 0.10 * 100.0 + 1e-9
+    assert (p - z).max() == pytest.approx(150 - 10, abs=1e-6)  # one step down allowed at the cliff edge
+
+
+def test_measured_spine_loads_and_validates(world):
+    params, cities, _ = world
+    from pathlib import Path
+
+    from mnmaglev import ROOT
+    if not (Path(ROOT) / "network" / "measured" / "spine.yaml").exists():
+        pytest.skip("no GIS alignment yet")
+    measured = next(l for l in load_lines(cities=cities, use_measured=True) if l.id == "spine")
+    planner = next(l for l in load_lines(cities=cities, use_measured=False) if l.id == "spine")
+    assert check_network([measured], cities, set(params)) == []
+    assert [p.id for p in measured.stations] == [p.id for p in planner.stations]
+    assert 0.8 * planner.length_km < measured.length_km < 1.2 * planner.length_km

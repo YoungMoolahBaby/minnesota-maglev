@@ -64,3 +64,11 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
   Iowa Environmental Mesonet archive: https://mesonet.agron.iastate.edu/request/download.phtml
   (`scripts/icing_hours.py` downloads them to data/raw/noaa_asos, gitignored; the yearly summary is
   reference/icing.yaml). Public-domain US government observations.
+
+## GIS slice 1 (src/mnmaglev/gis.py)
+
+- USGS 3DEP elevation, ImageServer exportImage (public domain):
+  https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer
+- NLCD 2021 land cover, MRLC GeoServer WCS (public domain):
+  https://www.mrlc.gov/geoserver/mrlc_download/NLCD_2021_Land_Cover_L48/wcs
+Both are cached in data/raw/gis (gitignored); the alignment and measurements are committed.

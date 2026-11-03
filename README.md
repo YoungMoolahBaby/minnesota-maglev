@@ -22,6 +22,7 @@ uv run mnmaglev report --local-supply off   # the same without the Minnesota loc
 uv run mnmaglev report --fusion none            # the same without the fusion fleet (grid power only)
 uv run mnmaglev report --winter-heating full    # heat the whole guideway during icing (vs targeted / none)
 uv run mnmaglev timetable --write               # stagger departures to cut the power peak, keep hub connections
+uv sync --extra gis && uv run mnmaglev gis spine # route a line on elevation + land cover (downloads ~85 MB, cached)
 uv run pytest
 ```
 
@@ -44,9 +45,9 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 389 | 1 h 10 | $108.5 bn ($94 - 125 bn) |
-| Network through phase 2 (6 fusion units) | 1,022 | | $245 bn ($212 - 283 bn) |
-| Everything incl. Chicago (10 fusion units) | 1,997 | | $466 bn ($402 - 537 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 354 | 1 h 01 | $93.5 bn ($81 - 109 bn) |
+| Network through phase 2 (6 fusion units) | 987 | | $230 bn ($199 - 268 bn) |
+| Everything incl. Chicago (10 fusion units) | 1,962 | | $450 bn ($389 - 524 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
@@ -66,7 +67,7 @@ pays ~$2.6 M of production tax to the Range on the spine. `--local-supply off` s
 Helion / Zap Energy class), more than the trains need, instead of batteries. The model simulates
 every train on the timetable second by second (braking trains feed pulling ones) and sizes the
 fleet to cover the 1-second peak plus 10% and one spare unit: the spine averages 24 MW but peaks
-at 75 MW with staggered departures (123 MW if every train left on the hour), plus 18 MW of ice
+at 75 MW with staggered departures (91 MW if every train left on the hour), plus 18 MW of ice
 heating during storms, so it gets 4 units (200 MW) for ~$6.9 bn P50, and ~84% of their output (~1.3 TWh/yr) is
 surplus for neighbouring users (hydrogen steelmaking on the Range needs ~1 GW, data centres, the
 Midway hub district) or the grid. The full network gets 10 units (500 MW). At wholesale prices the
@@ -92,11 +93,22 @@ surface, heater cost and overnight warming time are still placeholders (docs/RES
 **Staggered timetable** (`network/timetable.yaml`): every line still runs every 30 minutes each way,
 but `mnmaglev timetable --write` shifts each direction's departures by whole minutes so trains
 don't accelerate at the same moment. It cuts the network's 1-second power peak about in half
-(spine 123 -> 75 MW, everything 485 -> 237 MW), and with it the fusion fleet (14 -> 10 units, ~$5 bn),
-while keeping Midway hub connections of 5-12 minutes: both spine directions reach the hub together
-(:27/:28 and :57/:58, cross-platform Duluth <-> Rochester), the St. Cloud line leaves 6-7 minutes later
-and arrives 10 minutes before the spine leaves. With the fleet that lean, overnight ice warming sets
+(on the measured spine 91 -> 75 MW, everything 524 -> 238 MW), and with it the fusion fleet
+(to 4 / 6 / 10 units by phase), while keeping Midway hub connections of 5-12 minutes: trains from
+Duluth reach the hub at :19/:49 and the St. Cloud line leaves 6 minutes later (:25/:55); trains from
+Moorhead arrive at :21/:51, 6 minutes before the spine leaves for Duluth. Rochester -> St. Cloud riders
+still wait ~30 minutes (the rule asks for one good connection per direction, not every pair). With the fleet that lean, overnight ice warming sets
 the full network's fleet size, not the daytime peak.
+
+**Measured route (GIS slice 1)**: `mnmaglev gis spine` routes the spine on USGS 3DEP elevation and
+NLCD 2021 land cover (210 m cells, each priced with the model's own parameters), smooths it to the
+minimum curve radius and measures it. The real route is 354 km (my estimates said 389), Duluth to
+the Midway hub in 35 minutes, 1 h 01 end to end; mostly forest (59%) and wetland (21%) north of
+Hinckley, cropland (78%) south of Cannon Falls; the Duluth descent needs piers up to ~44 m for a
+km to stay within 10%. Spine P50 $93.5 bn vs $108.1 bn on my estimates (`--no-measured`). Treat that
+drop as optimistic for now: slice 1 counts only open water as bridge (river valleys and their
+floodplains come with FEMA data in slice 2), only dense development as urban (suburbs are priced as
+rural), and doesn't see buildings, parcels or highway and rail corridors yet.
 
 The spine works out to ~$259 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
 second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
@@ -110,7 +122,7 @@ still the elevated guideway cost per km.
 | Piece | Role | Status |
 |---|---|---|
 | `src/mnmaglev` (Python) | parameters, network, costs, land, materials, Monte Carlo, report | working |
-| GIS pipeline | measure the segment shares from MN lidar, land cover, NWI wetlands, FEMA floodplains, parcels; least-cost route search with maglev curve and grade limits | phase 2 |
+| `gis.py` (`mnmaglev gis <line>`) | route a line on USGS elevation + NLCD land cover: least-cost path priced with the model's own parameters, curves >= the minimum radius, pier heights for <=10% grades; measured shares feed the model (`use_measured: true`). Next: floodplains, peat soils, parcels, existing corridors | slice 1 (spine) |
 | [OSRD](https://github.com/OpenRailAssociation/osrd) | running time, timetables and capacity on the real alignments (`integrations/osrd`) | planned |
 | `power.py`, `fusion.py` | second-by-second traction demand from the timetable; the fusion fleet sized from its peak, surplus and costs | working |
 | [Calliope](https://calliope.readthedocs.io/) | optimise the power mix (fusion units, grid, surplus users) hour by hour (`integrations/calliope`) | planned |
@@ -129,8 +141,10 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $115.5 bn P50 with fusion,
-$7.0 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $116.5 bn P50 with fusion,
+$8.4 bn more than the Midway hub on the same planner estimates (`--no-measured`: $108.1 bn); the
+GIS-measured Midway spine is $93.5 bn. The difference is downtown tunnel, and building it for two
+systems downtown.
 
 ## Honest caveats
 

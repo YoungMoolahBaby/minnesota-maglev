@@ -95,6 +95,21 @@ Decisions for Jon along the way:
 
 ## Phase 2: GIS corridors (route search)
 
+**Slice 1 done 2026-11-03 (spine):** `src/mnmaglev/gis.py`, `mnmaglev gis <line>`. USGS 3DEP
+elevation (ImageServer) + NLCD 2021 land cover (MRLC WCS) on a 210 m EPSG:5070 grid (7x7 NLCD
+pixels per cell, exact class fractions); cost surface from the model's nominal parameters
+(structure by cover, land by cover and zone, wetland mitigation, wetland as peat proxy, terrain);
+skimage MCP least-cost path between stations; simplified and filleted to the minimum radius
+(3,980 m at cruise, 861 m within 15 km of stations); measured per piece, split at climate-zone
+latitudes; guideway profile for <=10% grades gives pier heights. Outputs network/alignments/
+spine.geojson and network/measured/spine.yaml; `use_measured: true` makes the model use them
+(`--no-measured` for the estimates). Spine 354 km, $93.5 bn P50 (estimates: 389 km, $108.1 bn).
+
+Next slices, in order of how much they move the result: FEMA NFHL floodplains (river valleys as
+bridges/viaducts), developed-land treatment for suburbs (NLCD impervious %), existing highway and
+rail corridors (OSM / MnDOT; cheaper land, fewer severed farms), SSURGO organic soils (real peat),
+parcels and buildings, public and tribal lands; then the other lines.
+
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 
 - Data (docs/SOURCES.md): MN 0.5 m statewide lidar DEM (resampled to ~10-30 m for search),

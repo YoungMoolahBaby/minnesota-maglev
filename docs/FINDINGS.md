@@ -88,6 +88,13 @@ works), date, details. One section per tool.
   were close overall. Spine heating energy 17.4 -> 14.4 GWh/yr; the fleet is unchanged, because the
   fleet is set by heating POWER (overnight warming time per km), not by how often it ices. I had
   told Jon the icing hours were the number that matters most for the fleet; that was wrong.
+- 2026-11-03, GIS slice 1 (spine): first least-cost alignment on USGS elevation + NLCD land cover.
+  The first run went 39% through wetland: priced only by land and mitigation, bogs looked cheap.
+  Adding the peat adder for wetland cells (deep piles) brought it to ~18%, with forest taking the
+  rest. Grades: the ground near Duluth reaches 14.6% over a km; the guideway profile stays within
+  10% with piers up to ~44 m for ~1 km. Measured spine 354 km vs 389 estimated, $93.5 bn vs $108.1 bn
+  P50, likely optimistic (water-only bridges, suburbs priced as rural, no buildings or corridors).
+  The measured spine also changed the timetable (re-optimised: spine peak 91 -> 75 MW).
 
 ## OSRD
 

@@ -10,6 +10,14 @@ dependencies = ["numpy>=2", "pyyaml>=6"]
 [project.scripts]
 mnmaglev = "mnmaglev.cli:main"
 
+[project.optional-dependencies]
+gis = [
+    "pyproj>=3.8.0",
+    "rasterio>=1.5.2",
+    "scikit-image>=0.26.0",
+    "shapely>=2.2.0",
+]
+
 [dependency-groups]
 dev = ["pytest>=8"]
 

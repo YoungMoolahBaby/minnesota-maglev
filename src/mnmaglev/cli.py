@@ -11,10 +11,10 @@ from .network import check_network, list_variants, load_cities, load_lines, load
 from .params import check_params, load_params
 
 
-def _load(phase: int | None, only: list[str] | None, variant: str | None = None):
+def _load(phase: int | None, only: list[str] | None, variant: str | None = None, measured: bool = True):
     params = load_params()
     cities = load_cities()
-    lines = load_lines(cities=cities, variant=variant)
+    lines = load_lines(cities=cities, variant=variant, use_measured=measured)
     if phase is not None:
         lines = [l for l in lines if l.phase <= phase]
     if only:
@@ -40,7 +40,8 @@ def cmd_check(args) -> int:
 def cmd_report(args) -> int:
     from .report import run_network, write_json, write_map, write_markdown
 
-    params, cities, lines = _load(args.phase, args.lines.split(",") if args.lines else None, args.variant)
+    params, cities, lines = _load(args.phase, args.lines.split(",") if args.lines else None, args.variant,
+                                  not args.no_measured)
     problems = check_params(params) + check_network(lines, cities, set(params))
     if problems:
         for p in problems:
@@ -95,6 +96,28 @@ def cmd_timetable(args) -> int:
     return 0
 
 
+def cmd_gis(args) -> int:
+    from . import gis
+    from .params import nominal
+
+    params = load_params()
+    cities = load_cities()
+    line = next((l for l in load_lines(cities=cities, use_measured=False) if l.id == args.line), None)
+    if line is None:
+        print(f"no line {args.line!r}")
+        return 1
+    res = gis.route(line, nominal(params))
+    print(f"curves: {res['curves']}")
+    for p in res["measured"]:
+        a = p["from"] if isinstance(p["from"], str) else p["from"]["id"]
+        b = p["to"] if isinstance(p["to"], str) else p["to"]["id"]
+        print(f"  {a} -> {b} ({p['zone']}): {p['length_km']} km, detour {p['detour']}, land {p['land_shares']}, "
+              f"bridges {p['bridges_m']}, guideway up to {p['guideway_max_height_m']} m")
+    gpath, mpath = gis.write_outputs(line, res)
+    print(f"wrote {gpath} and {mpath}; set use_measured: true on the line in network/lines.yaml to use it")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="mnmaglev")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -109,11 +132,16 @@ def main(argv: list[str] | None = None) -> int:
                     help="override settings.fusion in network/lines.yaml")
     rp.add_argument("--winter-heating", choices=["targeted", "full", "none"], default=None,
                     help="override settings.winter_heating in network/lines.yaml")
+    rp.add_argument("--no-measured", action="store_true",
+                    help="use the planner estimates even where a GIS alignment exists")
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")
     rp.add_argument("--seed", type=int, default=1)
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")
     rp.set_defaults(fn=cmd_report)
     sub.add_parser("benchmarks", help="sourced cost benchmarks in 2026 USD vs parameter ranges").set_defaults(fn=cmd_benchmarks)
+    gp = sub.add_parser("gis", help="route a line on elevation + land cover and measure it (needs --extra gis)")
+    gp.add_argument("line", help="line id from network/lines.yaml")
+    gp.set_defaults(fn=cmd_gis)
     tp = sub.add_parser("timetable", help="stagger departures to minimise the network power peak")
     tp.add_argument("--write", action="store_true", help="write network/timetable.yaml")
     tp.add_argument("--restarts", type=int, default=6)

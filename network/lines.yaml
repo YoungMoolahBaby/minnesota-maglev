@@ -39,6 +39,7 @@ lines:
   - id: spine
     name: Arrowhead - Twin Cities - Med City
     reserve_second_system: true   # hold land + build-for-two provisions for a second system (docs/PLAN.md)
+    use_measured: true   # segments from the GIS alignment (network/measured/spine.yaml); --no-measured = the estimates below
     phase: 1
     points: [duluth, hinckley, midway_hub, msp, rochester]
     note: >

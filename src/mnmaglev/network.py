@@ -149,7 +149,10 @@ def load_lines(
     path: Path = NETWORK_DIR / "lines.yaml",
     cities: dict[str, City] | None = None,
     variant: str | None = None,
+    use_measured: bool = True,
 ) -> list[Line]:
+    """Lines from lines.yaml. A line with `use_measured: true` takes its points and segments from its
+    GIS alignment (network/measured/<id>.yaml) when that exists, unless use_measured=False."""
     cities = cities or load_cities()
     lines = []
     for raw in _raw_lines(path, variant):
@@ -159,9 +162,16 @@ def load_lines(
         unknown = set(overrides) - {(a.id, b.id) for a, b in zip(pts, pts[1:])}
         if unknown:
             raise ValueError(f"line {raw['id']}: segments not between neighbouring points: {unknown}")
+        planner = {k: {**defaults, **v} for k, v in overrides.items()}
+        measured = measured_specs(raw["id"], cities, defaults, planner) if (
+            use_measured and raw.get("use_measured")) else None
+        if measured:
+            pts, mspecs = measured
+            pairs = [(m.pop("_a"), m.pop("_b"), m) for m in mspecs]
+        else:
+            pairs = [(a, b, {**defaults, **overrides.get((a.id, b.id), {})}) for a, b in zip(pts, pts[1:])]
         segs = []
-        for a, b in zip(pts, pts[1:]):
-            spec = {**defaults, **overrides.get((a.id, b.id), {})}
+        for a, b, spec in pairs:
             missing = [k for k in SEGMENT_KEYS if k not in spec]
             if missing:
                 raise ValueError(f"line {raw['id']} {a.id}->{b.id}: missing {missing}")
@@ -232,3 +242,59 @@ def check_network(lines: list[Line], cities: dict[str, City], param_names: set[s
             if s.urban_km + s.bridge_km > s.length_km:
                 problems.append(f"{tag}: urban + bridge km exceed the segment length")
     return problems
+
+
+MEASURED_DIR = NETWORK_DIR / "measured"
+OPEN_LAND = {"north": "cropland_central", "central": "cropland_central", "south": "cropland_south"}
+
+
+def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) -> tuple[list, list[dict]] | None:
+    """Points and segment specs from network/measured/<line>.yaml (the GIS alignment), or None.
+
+    Measured: detour, zone, land shares, urban km at each end, bridges; peat = wetland share
+    (proxy until SSURGO). Not measured yet, so inherited from the planner segment that starts or
+    ends at the same station (else the line defaults): structure mix, urban tunnel share, floodplain.
+    """
+    path = MEASURED_DIR / f"{line_id}.yaml"
+    if not path.exists():
+        return None
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    points, specs = [], []
+
+    def point(p):
+        if isinstance(p, str):
+            return cities[p]
+        return City(id=f"{line_id}_{p['id']}", name="zone break (waypoint)", lat=p["lat"], lon=p["lon"],
+                    pop=0, type="waypoint")
+
+    for piece in data["pieces"]:
+        a, b = point(piece["from"]), point(piece["to"])
+        if not points:
+            points.append(a)
+        points.append(b)
+        inherit = None
+        for (fa, fb), spec in planner.items():
+            if fa == a.id and fb == b.id:
+                inherit = spec
+                break
+        if inherit is None:
+            inherit = next((s for (fa, fb), s in planner.items() if fa == a.id or fb == b.id), {})
+        base = {**defaults, **inherit}
+        sh = piece["land_shares"]
+        land = {"suburban": sh["suburban"], "urban_core": sh["urban"], "forest_north": sh["forest"],
+                OPEN_LAND[piece["zone"]]: sh["open"], "wetland": sh["wetland"]}
+        total = sum(land.values())
+        land = {k: v / total for k, v in land.items() if v > 0}
+        specs.append({
+            **base,
+            "detour": piece["detour"],
+            "zone": piece["zone"],
+            "urban_start_km": piece["urban_start_km"],
+            "urban_end_km": piece["urban_end_km"],
+            "land": land,
+            "peat": sh["wetland"],
+            "bridges": [{"name": f"water crossing {i + 1}", "length_m": m} for i, m in enumerate(piece["bridges_m"])],
+            "note": f"measured (GIS slice 1); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades",
+            "_a": a, "_b": b,
+        })
+    return points, specs

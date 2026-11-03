@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
+from . import ROOT
 from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
 from .fusion import fleet_money, size_by_phase
@@ -373,9 +374,15 @@ def write_map(net: dict, path: Path) -> None:
     for r in net["results"]:
         line = r["line"]
         cs = _pct(r["capS"]["total"])
+        apath = ROOT / "network" / "alignments" / f"{line.id}.geojson"
+        if apath.exists():
+            geom = json.loads(apath.read_text(encoding="utf-8"))["features"][0]["geometry"]["coordinates"]
+            coords = [[lat, lon] for lon, lat in geom]
+        else:
+            coords = [[p.lat, p.lon] for p in line.points]
         feats.append({
             "name": line.name, "phase": line.phase, "colour": PHASE_COLOURS.get(line.phase, "#333"),
-            "coords": [[p.lat, p.lon] for p in line.points],
+            "coords": coords,
             "popup": f"<b>{line.name}</b><br>phase {line.phase}, {line.length_km:,.0f} km, "
                      f"{_hm(r['kin']['end_to_end_s'])} end to end<br>capital P50 {_bn(cs['p50'])} "
                      f"(P10 {_bn(cs['p10'])}, P90 {_bn(cs['p90'])})",
@@ -409,7 +416,7 @@ const legend = L.control({position: 'bottomleft'});
 legend.onAdd = () => { const d = L.DomUtil.create('div', 'legend');
   d.innerHTML = '<b>Phase</b><br><span style="color:#c0392b">&#9644;</span> 1 spine<br>' +
     '<span style="color:#2471a3">&#9644;</span> 2<br><span style="color:#7f8c8d">&#9644;</span> 3 (future)<br>' +
-    '<small>straight lines between points;<br>real alignments come from the GIS phase</small>'; return d; };
+    '<small>spine: GIS alignment;<br>other lines: straight lines until routed</small>'; return d; };
 legend.addTo(map);
 </script></body></html>
 """
