@@ -205,8 +205,8 @@ def test_day_power_profile_matches_trip_energy(world):
     trips = 2 * P0["system.service.trains_per_hour"] * P0["system.service.service_hours"]
     kin_mwh = trips * sum(l.energy_kwh_winter for l in s["legs"]) / 1000
     assert d["mwh_per_day"] == pytest.approx(kin_mwh, rel=0.01)
-    # peaks well above the average: trains accelerating together
-    assert d["peak_1min_mw"] > 2 * d["avg_service_mw"]
+    # peaks above the average: trains accelerating (staggering keeps them apart, so not 2x any more)
+    assert d["peak_1min_mw"] > 1.5 * d["avg_service_mw"]
 
 
 def test_fusion_fleet_covers_peak_with_spare(world):
@@ -258,3 +258,23 @@ def test_winter_heating_modes(world):
     assert units["none"]["units"] <= units["targeted"]["units"] <= units["full"]["units"]
     t = units["targeted"]
     assert t["night_warming_mw"] <= t["night_idle_mw"]
+
+
+def test_staggering_cuts_the_peak_and_keeps_hub_connections(world):
+    from mnmaglev.timetable import _connects, hub_events, optimise
+
+    params, _, lines = world
+    P0 = nominal(params)
+    two = sorted([l for l in lines if l.id in ("spine", "west")], key=lambda l: l.phase)
+    for l in two:
+        l.offset_fwd_min = l.offset_rev_min = 0
+    r = optimise(two, P0, restarts=2)
+    for p in r["phases"]:
+        assert p["peak_staggered_mw"] <= p["peak_aligned_mw"] + 1e-6
+    assert r["phases"][0]["peak_staggered_mw"] < 0.8 * r["phases"][0]["peak_aligned_mw"]
+    assert r["unmet_transfers"] == []
+    # the west line leaves the hub 5-12 min after a spine arrival
+    h = r["headway_min"]
+    spine_arr = [(r["offsets"]["spine"][i] + hub_events(two[0], P0, bool(i))[0]) % h for i in (0, 1)]
+    west_dep = (r["offsets"]["west"][0] + hub_events(two[1], P0, False)[1]) % h
+    assert _connects(west_dep, spine_arr, True, 5, 12, h)

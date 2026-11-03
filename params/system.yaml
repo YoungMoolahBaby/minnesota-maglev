@@ -139,3 +139,17 @@ service:
     unit: fraction of the year
     conf: low
     source: Nov-Mar ~5 of 12 months; heating loads and dense cold air apply
+  min_transfer:
+    value: 5
+    low: 5
+    high: 5
+    unit: minutes, shortest planned connection at the Midway hub
+    conf: low
+    source: design choice (cross-platform change at one hub); used by `mnmaglev timetable` when staggering departures
+  max_transfer_wait:
+    value: 12
+    low: 12
+    high: 12
+    unit: minutes, longest planned connection at the Midway hub
+    conf: low
+    source: design choice; with 30-minute headways anything longer feels like a missed train

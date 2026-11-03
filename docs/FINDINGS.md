@@ -74,6 +74,13 @@ works), date, details. One section per tool.
   be ~245 MW and 10 units. Overnight warming of the whole spine in rotation needs ~82 MW, well
   inside the 200 MW idle overnight. Heating energy ~17 GWh/yr on the spine (~8% of traction). Spine
   total $107.8 -> $110.0 bn P50 (one more unit, heaters along the line).
+- 2026-11-03, staggered timetable: a coordinate search with restarts over whole-minute offsets per line
+  and direction halves the network's 1-second peak (485 -> 237 MW); the spine alone 123 -> 75 MW, close
+  to one train accelerating at a time. Requiring 5-12 minute connections at the Midway hub costs
+  almost nothing (134 -> 137 MW at phase 2). The first, power-only run had the St. Cloud line leaving
+  the hub at the same minute the spine arrived; the transfer rule fixed it. With fewer units,
+  overnight ice warming stopped fitting in the idle capacity for phases 2-3, so the fleet is now sized
+  to whichever is larger. Fleet 14 -> 10 units; spine $110.0 -> $108.5 bn, all $470.6 -> $465.6 bn.
 
 ## OSRD
 

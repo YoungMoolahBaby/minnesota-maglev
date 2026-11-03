@@ -71,6 +71,30 @@ def cmd_benchmarks(args) -> int:
     return 0
 
 
+def cmd_timetable(args) -> int:
+    from .timetable import optimise, write_timetable
+
+    params, _, lines = _load(None, None)
+    from .params import nominal
+
+    lines = sorted(lines, key=lambda l: l.phase)
+    for l in lines:  # optimise from aligned departures, not from an earlier result
+        l.offset_fwd_min = l.offset_rev_min = 0
+    result = optimise(lines, nominal(params), restarts=args.restarts, seed=args.seed,
+                      transfers=not args.no_transfers)
+    if result["unmet_transfers"]:
+        print("no offset gives a good hub connection for:", ", ".join(result["unmet_transfers"]))
+    for p in result["phases"]:
+        print(f"through phase {p['phase']}: 1-second peak {p['peak_aligned_mw']:.0f} MW aligned -> "
+              f"{p['peak_staggered_mw']:.0f} MW staggered")
+    for lid, (fwd, rev) in result["offsets"].items():
+        print(f"  {lid}: forward +{fwd} min, reverse +{rev} min")
+    if args.write:
+        write_timetable(result)
+        print("wrote network/timetable.yaml")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="mnmaglev")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -90,6 +114,12 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")
     rp.set_defaults(fn=cmd_report)
     sub.add_parser("benchmarks", help="sourced cost benchmarks in 2026 USD vs parameter ranges").set_defaults(fn=cmd_benchmarks)
+    tp = sub.add_parser("timetable", help="stagger departures to minimise the network power peak")
+    tp.add_argument("--write", action="store_true", help="write network/timetable.yaml")
+    tp.add_argument("--restarts", type=int, default=6)
+    tp.add_argument("--no-transfers", action="store_true", help="ignore connections at the Midway hub")
+    tp.add_argument("--seed", type=int, default=1)
+    tp.set_defaults(fn=cmd_timetable)
     args = ap.parse_args(argv)
     return args.fn(args)
 

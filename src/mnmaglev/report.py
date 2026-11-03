@@ -12,6 +12,7 @@ import numpy as np
 from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
 from .fusion import fleet_money, size_by_phase
+from .timetable import hub_times
 from .winter import heating_mwh
 from .kinematics import line_summary
 from .network import Line
@@ -269,8 +270,7 @@ def write_markdown(net: dict, path: Path) -> None:
     fz = net.get("fusion", "none")
     L.append(f"Fusion setting: **{fz}** (network/lines.yaml settings.fusion; `--fusion own|none` overrides). "
              "Demand comes from every train on the timetable, second by second, both directions, "
-             "departures aligned on the hour and half hour at every line (a conservative, peaky "
-             "timetable), in winter air. Braking trains feed power to pulling ones. The fleet covers "
+             "with the departures in the Timetable section below, in winter air. Braking trains feed power to pulling ones. The fleet covers "
              "the 1-second peak plus headroom and one spare unit, no batteries; everything the trains "
              "don't use is surplus for neighbouring users or the grid.\n")
     L.append("| Through phase | Avg demand MW (24 h / service) | Peak MW (1 min / 1 s) | Units (new) | Capacity MW "
@@ -305,13 +305,36 @@ def write_markdown(net: dict, path: Path) -> None:
              "trains aren't using. Storm trains, sweepers and clearing vehicles are in each line's winter O&M. "
              "Heater capital is in each line's construction; heating energy is in its opex (at grid price).\n")
     L.append("| Through phase | Heated continuously (km) | Heating during icing MW | Units with heating "
-             "| Units if the whole line were heated (full) | Overnight warming MW vs idle fleet MW | Heating GWh/yr |")
-    L.append("|---|---|---|---|---|---|---|")
+             "| Units if the whole line were heated (full) | Overnight warming MW vs idle fleet MW | Heating GWh/yr "
+             "| Fleet size set by |")
+    L.append("|---|---|---|---|---|---|---|---|")
     for f0, ff in zip(net["fusion0"], net["sizing_full"]):
         fits = "fits" if f0["night_warming_mw"] <= f0["night_idle_mw"] else "DOES NOT FIT"
         L.append(f"| {f0['phase']} | {float(f0['critical_km']):,.0f} | {float(f0['storm_heating_mw']):,.0f} "
                  f"| {f0['units']} | {ff['units']} | {float(f0['night_warming_mw']):,.0f} vs {f0['night_idle_mw']:,.0f} ({fits}) "
-                 f"| {float(f0['heating_mwh']) / 1000:,.1f} |")
+                 f"| {float(f0['heating_mwh']) / 1000:,.1f} | {f0['binding']} "
+                 f"({f0['units_by_peak']} by day peak, {f0['units_by_night']} by overnight warming) |")
+    L.append("")
+
+    L.append("### Timetable: staggered departures\n")
+    stag = any(r["line"].offset_fwd_min or r["line"].offset_rev_min for r in R)
+    if stag:
+        L.append("Departures are staggered per network/timetable.yaml (`mnmaglev timetable --write` picks the "
+                 "offsets that minimise the network's 1-second power peak, phase by phase). Each line still "
+                 "runs every 30 minutes each way. Minutes past the hour trains reach the Midway hub (every "
+                 "30 minutes after that), for planning transfers:\n")
+    else:
+        L.append("Departures are aligned (no network/timetable.yaml): every line leaves its ends on the hour "
+                 "and half hour, the peakiest case. Run `mnmaglev timetable --write` to stagger them.\n")
+    L.append("| Line | Forward first departure | Reverse first departure | At Midway hub, forward | At Midway hub, reverse |")
+    L.append("|---|---|---|---|---|")
+    for r in R:
+        line = r["line"]
+        ht = hub_times(line, net["P0"])
+        fmt = lambda v: "-" if v is None else ", ".join(f":{m % 60:02d}" for m in v)  # noqa: E731
+        L.append(f"| {line.id} | 06:{line.offset_fwd_min:02d} from {line.points[0].id} "
+                 f"| 06:{line.offset_rev_min:02d} from {line.points[-1].id} "
+                 f"| {fmt(ht['forward'])} | {fmt(ht['reverse'])} |")
     L.append("")
     path.write_text("\n".join(L), encoding="utf-8")
 

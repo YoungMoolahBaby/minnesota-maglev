@@ -115,8 +115,8 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     rule (proposed Feb 2026, final pending).
 22. [ ] Surplus users: an H2-DRI plant on the Range (NRRI pre-FEED with U.S. Steel; ~1 GW of power),
     data centres near the Midway hub or the Range, district heat; what they would pay per MWh.
-23. [ ] Peak shaving by timetable: stagger the lines' departures at the Midway hub and see how far
-    the 485 MW network peak (and the fleet) drops.
+23. [x] Peak shaving by timetable (2026-11-03): staggered departures with 5-12 minute hub connections
+    cut the network peak 485 -> 237 MW and the fleet 14 -> 10 units (`mnmaglev timetable`).
 
 ## Winter ice
 

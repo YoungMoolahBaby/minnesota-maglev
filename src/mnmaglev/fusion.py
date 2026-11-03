@@ -41,8 +41,13 @@ def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none"
         storm = sum(storm_mw(l, P0, heating) for l in built)  # icing doesn't wait for quiet hours
         night_hours = 24.0 - P0["system.service.service_hours"]
         night = sum(night_mw(l, P0, heating, night_hours) for l in built)
-        units = math.ceil((d["peak_mw"] + storm) * (1 + P0[f + "sizing_margin"]) / unit) + int(P0[f + "spare_units"])
-        units = max(units, prev_units)
+        spare = int(P0[f + "spare_units"])
+        by_peak = math.ceil((d["peak_mw"] + storm) * (1 + P0[f + "sizing_margin"]) / unit) + spare
+        by_night = math.ceil(night / unit) + spare  # overnight warming runs on the non-spare units
+        units = max(by_peak, by_night, prev_units)
+        binding = "day peak" if by_peak >= by_night else "overnight warming"
+        if units == prev_units and prev_units > max(by_peak, by_night):
+            binding = "earlier phase"
         heat_mwh = sum(heating_mwh(l, P0, heating) for l in built)
         demand = sum(mwh[l.id] for l in built) + heat_mwh
         out.append({
@@ -56,6 +61,9 @@ def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none"
             "new_units": units - prev_units,
             "capacity_mw": units * unit,
             "heating": heating,
+            "units_by_peak": by_peak,
+            "units_by_night": by_night,
+            "binding": binding,
             "storm_heating_mw": storm,
             "night_warming_mw": night,
             "night_idle_mw": (units - int(P0[f + "spare_units"])) * unit,

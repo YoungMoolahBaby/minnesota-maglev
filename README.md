@@ -21,6 +21,7 @@ uv run mnmaglev benchmarks       # sourced cost benchmarks in 2026 USD vs the pa
 uv run mnmaglev report --local-supply off   # the same without the Minnesota local-supply policy
 uv run mnmaglev report --fusion none            # the same without the fusion fleet (grid power only)
 uv run mnmaglev report --winter-heating full    # heat the whole guideway during icing (vs targeted / none)
+uv run mnmaglev timetable --write               # stagger departures to cut the power peak, keep hub connections
 uv run pytest
 ```
 
@@ -43,9 +44,9 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating and 5 fusion units | 389 | 1 h 10 | $110 bn ($95 - 126 bn) |
-| Network through phase 2 (8 fusion units) | 1,022 | | $248 bn ($214 - 286 bn) |
-| Everything incl. Chicago (14 fusion units) | 1,997 | | $471 bn ($406 - 543 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 389 | 1 h 10 | $108.5 bn ($94 - 125 bn) |
+| Network through phase 2 (6 fusion units) | 1,022 | | $245 bn ($212 - 283 bn) |
+| Everything incl. Chicago (10 fusion units) | 1,997 | | $466 bn ($402 - 537 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
@@ -65,9 +66,10 @@ pays ~$2.6 M of production tax to the Range on the spine. `--local-supply off` s
 Helion / Zap Energy class), more than the trains need, instead of batteries. The model simulates
 every train on the timetable second by second (braking trains feed pulling ones) and sizes the
 fleet to cover the 1-second peak plus 10% and one spare unit: the spine averages 24 MW but peaks
-at 123 MW (plus 18 MW of ice heating during storms), so it gets 5 units (250 MW) for ~$8.4 bn P50, and ~88% of their output (~1.6 TWh/yr) is
+at 75 MW with staggered departures (123 MW if every train left on the hour), plus 18 MW of ice
+heating during storms, so it gets 4 units (200 MW) for ~$6.9 bn P50, and ~84% of their output (~1.3 TWh/yr) is
 surplus for neighbouring users (hydrogen steelmaking on the Range needs ~1 GW, data centres, the
-Midway hub district) or the grid. The full network gets 14 units (700 MW). At wholesale prices the
+Midway hub district) or the grid. The full network gets 10 units (500 MW). At wholesale prices the
 surplus and the grid power the trains no longer buy only just beat the plant's O&M, so the case is
 strategic (carbon-free, energy security, Range industry), not cost. Every fusion number is a target
 or projection: no fusion plant has made net electricity yet, a first Minnesota unit is ~2035 at the
@@ -80,10 +82,19 @@ shaded cuts and drifts: 29 km of the spine, 18 MW), the way Shinkansen, Boston a
 switches; (2) storm trains and sweepers through icing nights (St. Louis); (3) clearing vehicles,
 slow orders and bus backup for the worst storms (Emsland, Metro Transit); (4) new: warm the whole
 guideway overnight on icing nights, in rotation, with fusion units the trains aren't using (82 MW
-vs 200 MW idle on the spine). The magnets and stator sit under the deck where ice can't form; the
+vs 150 MW idle on the spine). The magnets and stator sit under the deck where ice can't form; the
 heated parts are the side guidance rails (10 mm magnet gap) and gliding strips. Heating the whole
-line during storms instead would double the fusion fleet (10 units for the spine). Heating numbers
+line during storms instead would more than double the fusion fleet (9 units for the spine instead of 4). Heating numbers
 are still mostly placeholders (docs/RESEARCH.md 24).
+
+**Staggered timetable** (`network/timetable.yaml`): every line still runs every 30 minutes each way,
+but `mnmaglev timetable --write` shifts each direction's departures by whole minutes so trains
+don't accelerate at the same moment. It cuts the network's 1-second power peak about in half
+(spine 123 -> 75 MW, everything 485 -> 237 MW), and with it the fusion fleet (14 -> 10 units, ~$5 bn),
+while keeping Midway hub connections of 5-12 minutes: both spine directions reach the hub together
+(:27/:28 and :57/:58, cross-platform Duluth <-> Rochester), the St. Cloud line leaves 6-7 minutes later
+and arrives 10 minutes before the spine leaves. With the fleet that lean, overnight ice warming sets
+the full network's fleet size, not the daytime peak.
 
 The spine works out to ~$259 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
 second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
@@ -116,7 +127,7 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $117 bn P50 with fusion,
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $115.5 bn P50 with fusion,
 $7.0 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
 
 ## Honest caveats

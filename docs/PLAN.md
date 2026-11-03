@@ -64,6 +64,12 @@ from the one before with measurements.
   in params/winter.yaml and src/mnmaglev/winter.py, `settings.winter_heating: targeted`. Heating
   adds to the storm-time peak in fusion sizing (spine 4 -> 5 units); heating the whole line during
   icing would need 10. Overnight warming fits in the idle units.
+- **2026-11-03, staggered timetable** (Jon): departures staggered at the Midway hub instead of every
+  line leaving on the hour. `mnmaglev timetable --write` -> network/timetable.yaml (offsets per line
+  and direction, phase by phase, minimising the network's 1-second power peak; a direction that
+  starts at or passes the hub must connect within 5-12 minutes both ways). Peaks: spine 123 -> 75 MW,
+  phase 2 246 -> 137, all 485 -> 237. Fusion fleet 5/8/14 -> 4/6/10 units; the fleet must also cover
+  overnight ice warming, which now sets the full network's size.
 
 ## Phase 1: research pass (in progress; passes 1-2 done 2026-11-03)
 

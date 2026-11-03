@@ -83,6 +83,8 @@ class Line:
     segments: list[Segment]
     note: str = ""
     reserve: bool = False  # hold land and build-for-two provisions for a second system
+    offset_fwd_min: int = 0  # first departure, minutes after 06:00, from the first point
+    offset_rev_min: int = 0  # first departure, minutes after 06:00, from the last point
 
     @property
     def length_km(self) -> float:
@@ -182,7 +184,22 @@ def load_lines(
                  points=pts, segments=segs, note=str(raw.get("note", "")).strip(),
                  reserve=bool(raw.get("reserve_second_system", False)))
         )
+    offsets = load_timetable()
+    for line in lines:
+        if line.id in offsets:
+            line.offset_fwd_min, line.offset_rev_min = offsets[line.id]
     return lines
+
+
+TIMETABLE_PATH = NETWORK_DIR / "timetable.yaml"
+
+
+def load_timetable(path: Path = TIMETABLE_PATH) -> dict[str, tuple[int, int]]:
+    """Departure offsets per line (minutes after 06:00, forward / reverse), from `mnmaglev timetable`."""
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return {k: (int(v["forward"]), int(v["reverse"])) for k, v in (data.get("offsets") or {}).items()}
 
 
 def check_network(lines: list[Line], cities: dict[str, City], param_names: set[str]) -> list[str]:

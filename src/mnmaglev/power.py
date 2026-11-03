@@ -53,19 +53,25 @@ def trip_profile(line: Line, P, season: str, reverse: bool = False, step_s: floa
     return np.diff(e) / step_s
 
 
-def line_day_profile(line: Line, P, season: str = "winter", step_s: float = 1.0) -> np.ndarray:
-    """All trains of a line over one day (W per step), both directions, departures from 06:00."""
+def direction_day_profile(line: Line, P, season: str, reverse: bool, offset_min: float = 0.0,
+                          step_s: float = 1.0) -> np.ndarray:
+    """One direction of a line over a day (W per step); departures every headway from 06:00 + offset."""
     headway = 3600.0 / P["system.service.trains_per_hour"]
-    start = 6 * 3600.0
+    start = 6 * 3600.0 + 60.0 * offset_min
     n_dep = int(P["system.service.service_hours"] * P["system.service.trains_per_hour"])
     n = int(DAY_S / step_s)
     day = np.zeros(n)
-    for reverse in (False, True):
-        trip = trip_profile(line, P, season, reverse, step_s)
-        for k in range(n_dep):
-            idx = (int((start + k * headway) / step_s) + np.arange(len(trip))) % n  # the day repeats
-            np.add.at(day, idx, trip)
+    trip = trip_profile(line, P, season, reverse, step_s)
+    for k in range(n_dep):
+        idx = (int((start + k * headway) / step_s) + np.arange(len(trip))) % n  # the day repeats
+        np.add.at(day, idx, trip)
     return day
+
+
+def line_day_profile(line: Line, P, season: str = "winter", step_s: float = 1.0) -> np.ndarray:
+    """All trains of a line over one day (W per step), both directions, with the line's offsets."""
+    return (direction_day_profile(line, P, season, False, line.offset_fwd_min, step_s)
+            + direction_day_profile(line, P, season, True, line.offset_rev_min, step_s))
 
 
 def demand_summary(profile_w: np.ndarray, step_s: float = 1.0) -> dict:

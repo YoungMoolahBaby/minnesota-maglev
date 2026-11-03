@@ -1,0 +1,36 @@
+# Departure offsets per line, minutes after 06:00 (then every headway), forward = from the
+# line's first point, reverse = from its last. Written by `mnmaglev timetable --write`, which
+# picks them to minimise the network's 1-second power peak, phase by phase. The power model
+# and the fusion sizing read this file; delete it to go back to aligned departures.
+offsets:
+  spine:
+    forward: 17
+    reverse: 0
+  iron_range:
+    forward: 26
+    reverse: 10
+  west:
+    forward: 4
+    reverse: 12
+  southwest:
+    forward: 18
+    reverse: 21
+  north_woods:
+    forward: 22
+    reverse: 9
+  southern_link:
+    forward: 24
+    reverse: 17
+  great_lakes:
+    forward: 18
+    reverse: 0
+peaks_mw:
+- phase: 1
+  peak_aligned_mw: 123.2
+  peak_staggered_mw: 75.0
+- phase: 2
+  peak_aligned_mw: 245.8
+  peak_staggered_mw: 137.3
+- phase: 3
+  peak_aligned_mw: 484.9
+  peak_staggered_mw: 237.1
