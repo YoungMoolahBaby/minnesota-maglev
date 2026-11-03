@@ -105,8 +105,17 @@ latitudes; guideway profile for <=10% grades gives pier heights. Outputs network
 spine.geojson and network/measured/spine.yaml; `use_measured: true` makes the model use them
 (`--no-measured` for the estimates). Spine 354 km, $93.5 bn P50 (estimates: 389 km, $108.1 bn).
 
-Next slices, in order of how much they move the result: FEMA NFHL floodplains (river valleys as
-bridges/viaducts), developed-land treatment for suburbs (NLCD impervious %), existing highway and
+**Slice 2 done 2026-11-03 (spine): FEMA floodplains.** NFHL MapServer layer 28 queried per 25 km
+tile (count query = map coverage; features in 1% / 0.2% zones and floodways, simplified 15 m),
+rasterised at 30 m and averaged per cell. Cost surface: floodway cells priced as bridge, flood
+zones get `costs.adders.floodplain`. Measured per piece: floodplain_share, floodplain_1pct_share,
+floodway_km, flood_map_coverage; floodway runs count as bridges. The model uses the measured share
+where FEMA has maps and the estimate elsewhere. Spine 353 km, 5.7% in flood zones (estimate ~6%),
+floodway bridges 0.9 km (Mississippi) and 2.0 km (Minnesota River); line +$2.1 bn P50, spine with
+fusion $94.0 bn (one unit fewer after re-optimising the timetable).
+
+Next slices, in order of how much they move the result: developed-land treatment for suburbs
+(NLCD impervious %), existing highway and
 rail corridors (OSM / MnDOT; cheaper land, fewer severed farms), SSURGO organic soils (real peat),
 parcels and buildings, public and tribal lands; then the other lines.
 

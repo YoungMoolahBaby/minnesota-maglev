@@ -95,6 +95,19 @@ works), date, details. One section per tool.
   10% with piers up to ~44 m for ~1 km. Measured spine 354 km vs 389 estimated, $93.5 bn vs $108.1 bn
   P50, likely optimistic (water-only bridges, suburbs priced as rural, no buildings or corridors).
   The measured spine also changed the timetable (re-optimised: spine peak 91 -> 75 MW).
+- 2026-11-03, GIS slice 2 (FEMA floodplains, spine): FEMA has digital flood maps for all of the
+  spine's pieces. 5.7% of the measured route is in a 1% or 0.2% annual-chance zone, close to my ~6%
+  estimate; what changed the cost is the floodways: pricing them as bridge makes the route cross
+  the Mississippi on ~0.9 km and the Minnesota River on ~2.0 km of bridge instead of just the water
+  width (bridge metres on the spine 2.6 -> 4.1 km). Line +$2.1 bn P50 (reserve +$0.5 bn of it).
+  Re-optimising the timetable for the new route lowered the spine's 1-second peak 75 -> 65 MW, so
+  phase 1 needs 3 fusion units instead of 4 (-$1.5 bn); spine with fusion $93.5 -> $94.0 bn, all
+  $450 -> $452 bn. The transfer rule still holds, but the connections it found moved: Rochester ->
+  St. Cloud now connects (9 min) and Duluth -> St. Cloud waits ~26 min (was the other way round).
+  The FEMA server drops connections under load: the download is cached per page and retried, and
+  took ~70 minutes for the spine. The TR08 energy test failed after the reroute (31.0 Wh/seat-km vs
+  28.1 +-10%): it took 'segment 3 with detour 2', meant as ~230 km, which on the measured route is a
+  79 km leg with more of its energy in accelerating. It now builds an explicit 230 km leg: 27.9.
 
 ## OSRD
 

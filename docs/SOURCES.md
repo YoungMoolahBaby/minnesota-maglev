@@ -71,4 +71,6 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
   https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer
 - NLCD 2021 land cover, MRLC GeoServer WCS (public domain):
   https://www.mrlc.gov/geoserver/mrlc_download/NLCD_2021_Land_Cover_L48/wcs
-Both are cached in data/raw/gis (gitignored); the alignment and measurements are committed.
+- FEMA National Flood Hazard Layer, flood hazard zones (MapServer layer 28, public domain):
+  https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28
+All are cached in data/raw/gis (gitignored); the alignment and measurements are committed.

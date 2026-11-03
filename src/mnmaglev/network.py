@@ -293,8 +293,13 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             "urban_end_km": piece["urban_end_km"],
             "land": land,
             "peat": sh["wetland"],
+            # measured where FEMA maps cover the piece, the estimate where they don't
+            "floodplain": (piece["flood_map_coverage"] * piece["floodplain_share"]
+                           + (1 - piece["flood_map_coverage"]) * float(base["floodplain"]))
+            if "floodplain_share" in piece else base["floodplain"],
             "bridges": [{"name": f"water crossing {i + 1}", "length_m": m} for i, m in enumerate(piece["bridges_m"])],
-            "note": f"measured (GIS slice 1); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades",
+            "note": (f"measured (GIS); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades"
+                     + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")),
             "_a": a, "_b": b,
         })
     return points, specs

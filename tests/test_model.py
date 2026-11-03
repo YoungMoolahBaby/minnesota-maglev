@@ -184,7 +184,8 @@ def test_energy_matches_tr08_at_300_kmh(world):
     params, _, lines = world
     P0 = nominal(params)
     seg = next(l for l in lines if l.id == "spine").segments[3]
-    long = replace(seg, urban_start_km=0, urban_end_km=0, detour=2.0)  # ~230 km, stops at both ends
+    crow = seg.length_km / seg.detour
+    long = replace(seg, urban_start_km=0, urban_end_km=0, detour=230 / crow)  # 230 km, stops at both ends
     r = run_leg([long], {**P0, "system.vehicle.cruise_speed": 300})
     w = P0["system.service.winter_share"]
     kwh = w * r.energy_kwh_winter + (1 - w) * r.energy_kwh_summer

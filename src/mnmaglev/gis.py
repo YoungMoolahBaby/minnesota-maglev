@@ -1,18 +1,22 @@
-"""GIS phase, slice 1: a real alignment for a line from elevation and land cover.
+"""GIS phase, slices 1-2: a real alignment for a line from elevation, land cover and flood zones.
 
 1. Data (cached in data/raw/gis, gitignored): USGS 3DEP elevation (ImageServer exportImage) and
    NLCD 2021 land cover (MRLC WCS, 30 m class codes), both in EPSG:5070 (CONUS Albers, metres),
    on a 210 m grid = exactly 7 x 7 land-cover pixels per cell, so every cell gets class fractions.
+   FEMA NFHL flood zones (MapServer layer 28, queried per 25 km tile): 1% and 0.2% annual-chance
+   zones and regulatory floodways, rasterised at 30 m and averaged per cell, plus whether FEMA has
+   digital maps for the tile at all.
 2. Cost surface: what a km of guideway through each cell costs, priced with the model's own
    nominal parameters: structure (rural elevated / urban viaduct / bridge over water), right-of-way
-   land by cover class and zone, wetland mitigation, and a terrain penalty for steep ground.
+   land by cover class and zone, wetland mitigation, and a terrain penalty for steep ground;
+   floodways are priced as bridge, other flood zones get the floodplain adder.
 3. Route: least-cost path between the line's stations (skimage MCP), then simplified and given
    circular curves no tighter than the minimum radius (cruise speed in the country, urban speed near
    stations); vertices too sharp for a curve are dropped and the line re-simplified.
 4. Measure along the final alignment: length, detour, land shares, wetland, water crossings
-   (bridges), urban km, grades. Written to network/alignments/<line>.geojson and network/measured/<line>.yaml.
+   and floodways (bridges), floodplain share, urban km, grades. Written to network/alignments/<line>.geojson and network/measured/<line>.yaml.
 
-Not yet (later slices): FEMA floodplains, SSURGO peat, parcels, existing highway / rail corridors,
+Not yet (later slices): suburbs as developed land, SSURGO peat, parcels, existing highway / rail corridors,
 public and tribal land, and the at-grade / elevated choice per cell.
 Requires the optional extra: uv sync --extra gis
 """
@@ -151,7 +155,7 @@ def zone_of_lat(lat: float) -> str:
     return "north" if lat >= 46.0 else ("central" if lat >= 44.6 else "south")
 
 
-def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict) -> np.ndarray:
+def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None) -> np.ndarray:
     """MUSD per km of route through each cell (nominal parameters)."""
     gw = "costs.guideway."
     t = _to_4326()
@@ -161,11 +165,15 @@ def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict) -> np.ndarray:
                     P["land.price_per_acre.cropland_south"])[:, None]
     forest = P["land.price_per_acre.forest_north"]
     acres_per_km = P["land.row_width.elevated"] * 1000 / 4046.86
-    rural = 1.0 - frac["water"] - frac["urban"]
-    # wetland stands in for peat / soft ground until SSURGO (slice 2): deep piles, the peat adder
+    # bridge over open water and over the regulatory floodway (piers there are restricted)
+    span = np.maximum(frac["water"], flood["floodway"]) if flood else frac["water"]
+    rural = np.clip(1.0 - span - frac["urban"], 0.0, 1.0)
+    # wetland stands in for peat / soft ground until SSURGO: deep piles, the peat adder
     soft = 1.0 + frac["wetland"] * P["costs.adders.peat_soft_ground"]
-    structure = (frac["water"] * P[gw + "bridge_per_m"] * 1000 + frac["urban"] * P[gw + "urban_viaduct"]
-                 + rural * P[gw + "elevated"] * soft)
+    # floodplain: piers above the 500-year flood with freeboard, scour protection
+    fp = 1.0 + (flood["flood"] if flood else 0.0) * P["costs.adders.floodplain"]
+    structure = (span * P[gw + "bridge_per_m"] * 1000
+                 + (frac["urban"] * P[gw + "urban_viaduct"] + rural * P[gw + "elevated"] * soft) * fp)
     land = acres_per_km * P["land.acquisition_multiplier"] * (
         frac["suburban"] * P["land.price_per_acre.suburban"] + frac["urban"] * P["land.price_per_acre.urban_core"]
         + frac["forest"] * forest + frac["open"] * crop + frac["wetland"] * P["land.price_per_acre.wetland"])
@@ -241,7 +249,9 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     folder.mkdir(parents=True, exist_ok=True)
     dem = fetch_dem(g, folder)
     frac = fetch_landcover_fractions(g, folder)
-    cost = cost_surface(g, frac, dem, P)
+    (folder / "nfhl").mkdir(exist_ok=True)
+    flood = fetch_floodplain(g, folder / "nfhl")
+    cost = cost_surface(g, frac, dem, P, flood)
     cell_km = CELL / 1000.0
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
@@ -257,7 +267,8 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
         legs.append((pa, pb, xy))
     full = np.vstack([legs[0][2]] + [l[2][1:] for l in legs[1:]])
     align, curve_info = smooth(full, st_xy, P)
-    meas = measure(align, st_xy, stops, g, frac, dem, P["system.geometry.max_gradient"])
+    meas = measure(align, st_xy, stops, g, {**frac, **{f"fl_{k}": v for k, v in flood.items()}}, dem,
+                   P["system.geometry.max_gradient"])
     return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops}
 
 
@@ -327,7 +338,10 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
     n = m.stop - m.start
     km = n * step / 1000
     bridges, run = [], 0
-    for w in (f["water"][m] > 0.5):
+    span = f["water"][m] > 0.5
+    if "fl_floodway" in f:
+        span = span | (f["fl_floodway"][m] > 0.5)
+    for w in span:
         if w:
             run += 1
         elif run:
@@ -349,6 +363,10 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
         "detour": round(float(km / crow), 3) if crow > 0 else 1.0,
         "land_shares": {k: round(float(f[k][m].mean()), 3)
                         for k in ("suburban", "urban", "forest", "open", "wetland", "water")},
+        **({"floodplain_share": round(float(f["fl_flood"][m].mean()), 3),
+            "floodplain_1pct_share": round(float(f["fl_sfha"][m].mean()), 3),
+            "floodway_km": round(float((f["fl_floodway"][m] > 0.5).sum() * step / 1000), 2),
+            "flood_map_coverage": round(float(f["fl_covered"][m].mean()), 3)} if "fl_flood" in f else {}),
         "urban_km": round(float(urban.sum() * step / 1000), 1),
         "urban_start_km": round(float(urban[:half].sum() * step / 1000), 1),
         "urban_end_km": round(float(urban[half:].sum() * step / 1000), 1),
@@ -375,10 +393,120 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
     gpath.write_text(json.dumps(gj), encoding="utf-8")
     mpath = m_dir / f"{line.id}.yaml"
     header = ("# Measured along the GIS alignment (network/alignments/%s.geojson) by `mnmaglev gis %s`:\n"
-              "# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid. Slice 1: no floodplain,\n"
-              "# peat, parcels or existing corridors yet. Land shares: NLCD groups (water, suburban =\n"
-              "# developed open/low, urban = developed medium/high, forest, open = crops/pasture/grass/\n"
-              "# shrub/barren, wetland).\n" % (line.id, line.id))
+              "# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid, FEMA NFHL flood zones\n"
+              "# (floodplain_share = 1%% + 0.2%% annual chance; floodway runs counted as bridge;\n"
+              "# flood_map_coverage = share of the piece where FEMA has digital maps). Not yet: peat,\n"
+              "# parcels, existing corridors. Land shares: NLCD groups (water, suburban = developed\n"
+              "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
+              "# wetland).\n" % (line.id, line.id))
     mpath.write_text(header + yaml.safe_dump({"line": line.id, "curves": res["curves"], "pieces": res["measured"]},
                                              sort_keys=False), encoding="utf-8")
     return gpath, mpath
+
+
+# --- FEMA National Flood Hazard Layer (slice 2) -------------------------------------------------
+
+NFHL_QUERY = "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query"
+FLOOD_WHERE = "SFHA_TF='T' OR ZONE_SUBTY LIKE '0.2 PCT%' OR ZONE_SUBTY LIKE '%FLOODWAY%'"
+
+
+def _get_json(params: dict, path: Path, tries: int = 10) -> dict:
+    import json
+    import urllib.parse
+
+    if path.exists() and path.stat().st_size > 20:
+        return json.loads(path.read_text(encoding="utf-8"))
+    url = NFHL_QUERY + "?" + urllib.parse.urlencode(params)
+    for k in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "minnesota-maglev GIS"})
+            with urllib.request.urlopen(req, timeout=300) as r:
+                data = json.loads(r.read())
+            if "error" in data:
+                raise RuntimeError(data["error"])
+            path.write_text(json.dumps(data), encoding="utf-8")
+            time.sleep(1.0)
+            return data
+        except Exception:  # the FEMA server drops requests now and then
+            if k == tries - 1:
+                raise
+            time.sleep(min(10 * (k + 1), 60))
+    return {}
+
+
+def _esri_polygons(geom: dict):
+    """Esri rings -> shapely polygons (exterior rings clockwise, holes counter-clockwise)."""
+    from shapely.geometry import LinearRing, Polygon
+
+    ext, holes = [], []
+    for ring in geom.get("rings", []):
+        if len(ring) < 4:
+            continue
+        (holes if LinearRing(ring).is_ccw else ext).append(ring)
+    polys = [Polygon(e) for e in ext]
+    out = [[p, []] for p in polys]
+    for h in holes:
+        hp = Polygon(h).representative_point()
+        for item in out:
+            if item[0].contains(hp):
+                item[1].append(h)
+                break
+    return [Polygon(p.exterior.coords, hs) for p, hs in out]
+
+
+def fetch_floodplain(g: Grid, folder: Path, tile_km: float = 25.0) -> dict[str, np.ndarray]:
+    """Per 210 m cell: share in the 1% annual-chance floodplain, the 0.2% (500-yr) zone, the
+    regulatory floodway; and whether FEMA's digital flood maps cover the cell's tile at all."""
+    from rasterio.features import rasterize
+    from rasterio.transform import from_origin
+
+    tcells = int(tile_km * 1000 / CELL)
+    out = {k: np.zeros((g.ny, g.nx), dtype=np.float32) for k in ("sfha", "x500", "floodway")}
+    covered = np.zeros((g.ny, g.nx), dtype=bool)
+    sub = 7  # rasterise at 30 m, average to the 210 m cell
+    for r0 in range(0, g.ny, tcells):
+        for c0 in range(0, g.nx, tcells):
+            h, w = min(tcells, g.ny - r0), min(tcells, g.nx - c0)
+            x0, y1 = g.x0 + c0 * CELL, g.y1 - r0 * CELL
+            env = f"{x0},{y1 - h * CELL},{x0 + w * CELL},{y1}"
+            base = {"geometry": env, "geometryType": "esriGeometryEnvelope", "inSR": 5070,
+                    "spatialRel": "esriSpatialRelIntersects", "f": "json"}
+            n_all = _get_json({**base, "where": "1=1", "returnCountOnly": "true"},
+                              folder / f"nfhl_count_{r0}_{c0}.json").get("count", 0)
+            if not n_all:
+                continue
+            covered[r0:r0 + h, c0:c0 + w] = True
+            feats, offset, page = [], 0, 0
+            while True:
+                data = _get_json({**base, "where": FLOOD_WHERE, "outFields": "FLD_ZONE,ZONE_SUBTY,SFHA_TF",
+                                  "returnGeometry": "true", "outSR": 5070, "maxAllowableOffset": 15,
+                                  "geometryPrecision": 0, "resultOffset": offset, "resultRecordCount": 400},
+                                 folder / f"nfhl_{r0}_{c0}_p{page}.json")
+                feats += data.get("features", [])
+                if not data.get("exceededTransferLimit"):
+                    break
+                offset += len(data.get("features", []))
+                page += 1
+            if not feats:
+                continue
+            tr = from_origin(x0, y1, CELL / sub, CELL / sub)
+            shapes = {"sfha": [], "x500": [], "floodway": []}
+            for f in feats:
+                a = f["attributes"]
+                sub_t = (a.get("ZONE_SUBTY") or "").upper()
+                polys = _esri_polygons(f.get("geometry") or {})
+                if a.get("SFHA_TF") == "T":
+                    shapes["sfha"] += polys
+                if sub_t.startswith("0.2 PCT"):
+                    shapes["x500"] += polys
+                if "FLOODWAY" in sub_t:
+                    shapes["floodway"] += polys
+            for k, polys in shapes.items():
+                if not polys:
+                    continue
+                fine = rasterize(((p, 1) for p in polys), out_shape=(h * sub, w * sub), transform=tr,
+                                 fill=0, dtype="uint8")
+                out[k][r0:r0 + h, c0:c0 + w] = fine.reshape(h, sub, w, sub).mean(axis=(1, 3))
+    out["covered"] = covered.astype(np.float32)
+    out["flood"] = np.maximum(out["sfha"], out["x500"])
+    return out
