@@ -21,11 +21,14 @@ lines:
   - id: spine
     name: Arrowhead - Twin Cities - Med City
     phase: 1
-    points: [duluth, hinckley, minneapolis, msp, rochester]
+    points: [duluth, hinckley, midway_hub, msp, rochester]
     note: >
-      The priority corridor. Alternative to study: a St. Paul Union Depot stop between Hinckley and
-      Minneapolis, or MSP-only for the Twin Cities with light-rail links. The Duluth approach
-      descends ~200 m from the hilltop to the harbour (fine for 10% maglev grades, check icing).
+      The priority corridor. The Twin Cities station is one hub in the Midway area between
+      Minneapolis and St. Paul (Jon's choice, 2026-11-03), fed by the Green Line, the A Line and
+      buses, so both cities are served equally and the line avoids downtown tunnels. MSP stays a
+      stop for airport - Rochester (Mayo) trips. Alternative kept in network/variants/downtown_minneapolis.yaml.
+      The Duluth approach descends ~200 m from the hilltop to the harbour (fine for 10% maglev
+      grades, check icing).
     defaults:
       detour: 1.10
       zone: central
@@ -49,22 +52,24 @@ lines:
         peat: 0.15
         bridges: [{name: St. Louis River, length_m: 450}, {name: Kettle River, length_m: 250}]
       - from: hinckley
-        to: minneapolis
+        to: midway_hub
         detour: 1.12
-        urban_end_km: 18
-        urban_tunnel: 0.25
-        land: {forest_north: 0.15, wetland: 0.12, cropland_central: 0.38, suburban: 0.15, urban_core: 0.02, existing_corridor: 0.18}
-        floodplain: 0.05
+        urban_end_km: 16
+        urban_tunnel: 0.10
+        land: {forest_north: 0.15, wetland: 0.12, cropland_central: 0.38, suburban: 0.17, existing_corridor: 0.18}
+        floodplain: 0.03
         peat: 0.06
-        bridges: [{name: Mississippi River (Minneapolis), length_m: 450}]
-      - from: minneapolis
+        note: through the northern suburbs on existing freeway/rail corridors; no Mississippi crossing needed
+      - from: midway_hub
         to: msp
         detour: 1.15
-        urban_start_km: 15
-        urban_tunnel: 0.3
-        land: {urban_core: 0.25, suburban: 0.45, existing_corridor: 0.3}
-        floodplain: 0.0
+        urban_start_km: 9.5
+        urban_tunnel: 0.25
+        land: {urban_core: 0.1, suburban: 0.5, existing_corridor: 0.4}
+        floodplain: 0.1
         peat: 0.0
+        note: crosses the Mississippi gorge (Mississippi National River and Recreation Area) toward Fort Snelling and the airport
+        bridges: [{name: Mississippi River gorge, length_m: 450}]
       - from: msp
         to: rochester
         detour: 1.10
@@ -106,7 +111,7 @@ lines:
   - id: west
     name: Twin Cities - St. Cloud - Fargo/Moorhead
     phase: 2
-    points: [minneapolis, st_cloud, alexandria, moorhead]
+    points: [midway_hub, st_cloud, alexandria, moorhead]
     defaults:
       detour: 1.08
       zone: central
@@ -119,11 +124,13 @@ lines:
       peat: 0.03
       bridges: []
     segments:
-      - from: minneapolis
+      - from: midway_hub
         to: st_cloud
-        urban_start_km: 12
-        urban_tunnel: 0.0
+        urban_start_km: 15
+        urban_tunnel: 0.1
         land: {suburban: 0.3, cropland_central: 0.4, existing_corridor: 0.25, wetland: 0.05}
+        note: leaves the hub northwest, crossing the Mississippi in the north metro
+        bridges: [{name: Mississippi River (north metro), length_m: 450}]
       - from: st_cloud
         to: alexandria
       - from: alexandria

@@ -5,7 +5,8 @@ like in a city builder, and the model prices them as close to reality as it can:
 what it's built on, land and wetlands, floods, frost and snow, trains, power, operations, and the
 iron and copper you'd have to mine to build it.
 
-**Priority corridor:** Duluth - Twin Cities - Rochester (phase 1). Then the Iron Range, St. Cloud -
+**Priority corridor:** Duluth - Twin Cities - Rochester (phase 1), with one Twin Cities hub in the
+Midway area between Minneapolis and St. Paul, fed by light rail and buses. Then the Iron Range, St. Cloud -
 Fargo/Moorhead and Mankato (phase 2). Later: Brainerd/Bemidji, a southern link, and Rochester - La Crosse -
 Madison - Milwaukee - Chicago (phase 3, needs partner states).
 
@@ -37,11 +38,11 @@ First run (2026-11-03, all numbers concept-stage, see the report for the caveats
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Minneapolis - MSP - Rochester | 390 | 1 h 11 | $73 bn ($63 - 85 bn) |
-| Network through phase 2 | 1,015 | | $169 bn ($144 - 197 bn) |
-| Everything incl. Chicago | 1,990 | | $330 bn ($281 - 385 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester | 389 | 1 h 10 | $69 bn ($59 - 80 bn) |
+| Network through phase 2 | 1,022 | | $168 bn ($143 - 196 bn) |
+| Everything incl. Chicago | 1,997 | | $328 bn ($280 - 383 bn) |
 
-The spine works out to ~$190 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
+The spine works out to ~$177 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
 in 2004 (incl. trains and stations); US megaprojects cost several times Chinese ones. The biggest
 single driver of the range is the elevated guideway cost per km, so that's research item 1.
 
@@ -65,6 +66,11 @@ up first, [docs/HAZARDS.md](docs/HAZARDS.md) for snow, rain, floods and freezing
 `network/lines.yaml` is the city-builder part: add a line through ids from `network/cities.yaml`,
 set its structure mix (elevated / at grade / urban viaduct / tunnel), land classes, floodplain and
 peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't add up.
+
+Alternatives live in `network/variants/` (lines there replace the same ids):
+`uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $73 bn P50,
+$4.4 bn more than the Midway hub, mostly downtown tunnel.
 
 ## Honest caveats
 

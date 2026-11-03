@@ -13,6 +13,21 @@ from the one before with measurements.
 - 9 tests: haversine, closed-form trapezoid run time, air density, curve radius, quantities add up,
   spine plausibility, Monte Carlo ordering.
 
+## Decisions
+
+- **2026-11-03, Twin Cities station = one Midway hub** between Minneapolis and St. Paul (placeholder
+  site Snelling & University), fed by the Green Line, the A Line and buses, like local lines
+  feeding a regional trunk (BART) or Japan's Shin-Yokohama / Shin-Osaka. Why: both cities served
+  equally (no St. Paul-left-out problem), no downtown tunnels ($68.9 bn vs $73.3 bn P50 for the
+  spine), and one hub works for two systems. MSP stays a stop for airport - Rochester trips.
+  The St. Cloud line also starts at the hub. Kept as a variant: `downtown_minneapolis`.
+- **Two-system corridor (idea, to build into the model):** reserve land for two systems
+  side by side in the rural corridor (strips ~50-60 m apart) and room for both at the Midway hub and
+  the end stations; build one, run it while the next generation goes up beside it, then
+  alternate. Land is ~0.5% of the cost, so the reserve is cheap insurance. Open: Minnesota
+  eminent-domain limits on taking land for a future system (options, willing sellers, farm
+  leaseback), one environmental review for both strips or two.
+
 ## Phase 1: research pass (next)
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
@@ -21,7 +36,8 @@ Chuo Shinkansen, California HSR, Brightline West, NLX) and a test that the model
 per-km costs with their structure mix. Check every "verify" in the YAML.
 
 Decisions for Jon along the way:
-- Twin Cities stations: Minneapolis downtown + MSP (current), or St. Paul Union Depot too, or MSP only.
+- Midway hub site: Snelling & University (placeholder), Prospect Park, or on the Midway rail corridor;
+  pick with transit access, land, noise; check MnDOT's "Rethinking I-94" corridor work for a space reservation.
 - Cruise speed: 430 km/h (Shanghai-proven) vs 500+ (TR09) vs ~600 (CRRC); trades energy, curve
   radius and noise for time.
 - Elevated-by-default (snow, drifting, crossings) vs more at-grade (cheaper, but snow clearance).

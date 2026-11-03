@@ -3,7 +3,12 @@
 # pop: 2020 Census city population, from memory, VERIFY against census.gov before quoting.
 # Coordinates: city centres (approximate), station sites are a later design step.
 
-minneapolis:   {name: Minneapolis,           lat: 44.9778, lon: -93.2650, pop: 429954, type: terminal_major}
+# The Twin Cities hub (default, 2026-11-03): one station between the two downtowns, fed by the
+# Green Line (University Ave), the A Line (Snelling) and buses. Site is a placeholder at
+# Snelling & University; the GIS phase picks the real one (Prospect Park and the Midway rail
+# corridor are alternatives). Room for two systems (see docs/PLAN.md, two-system corridor).
+midway_hub:    {name: Midway hub,            lat: 44.9558, lon: -93.1668, pop: 0,      type: terminal_major}
+minneapolis:   {name: Minneapolis,          lat: 44.9778, lon: -93.2650, pop: 429954, type: terminal_major}
 st_paul:       {name: St. Paul,              lat: 44.9480, lon: -93.0860, pop: 311527, type: terminal_major}
 msp:           {name: MSP Airport,           lat: 44.8848, lon: -93.2223, pop: 0,      type: airport}
 duluth:        {name: Duluth,                lat: 46.7867, lon: -92.1005, pop: 86697,  type: terminal_major}

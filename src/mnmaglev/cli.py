@@ -7,14 +7,14 @@ import sys
 from pathlib import Path
 
 from . import ROOT
-from .network import check_network, load_cities, load_lines
+from .network import check_network, list_variants, load_cities, load_lines
 from .params import check_params, load_params
 
 
-def _load(phase: int | None, only: list[str] | None):
+def _load(phase: int | None, only: list[str] | None, variant: str | None = None):
     params = load_params()
     cities = load_cities()
-    lines = load_lines(cities=cities)
+    lines = load_lines(cities=cities, variant=variant)
     if phase is not None:
         lines = [l for l in lines if l.phase <= phase]
     if only:
@@ -23,26 +23,33 @@ def _load(phase: int | None, only: list[str] | None):
 
 
 def cmd_check(args) -> int:
-    params, cities, lines = _load(None, None)
-    problems = check_params(params) + check_network(lines, cities, set(params))
+    problems = []
+    for variant in [None, *list_variants()]:
+        params, cities, lines = _load(None, None, variant)
+        found = check_network(lines, cities, set(params))
+        if variant is None:
+            found = check_params(params) + found
+        problems += [f"[{variant or 'default'}] {p}" for p in found]
     for p in problems:
         print("PROBLEM", p)
-    print(f"{len(params)} parameters, {len(cities)} places, {len(lines)} lines, {len(problems)} problems")
+    print(f"{len(params)} parameters, {len(cities)} places, {len(lines)} lines, "
+          f"variants {list_variants()}, {len(problems)} problems")
     return 1 if problems else 0
 
 
 def cmd_report(args) -> int:
     from .report import run_network, write_json, write_map, write_markdown
 
-    params, cities, lines = _load(args.phase, args.lines.split(",") if args.lines else None)
+    params, cities, lines = _load(args.phase, args.lines.split(",") if args.lines else None, args.variant)
     problems = check_params(params) + check_network(lines, cities, set(params))
     if problems:
         for p in problems:
             print("PROBLEM", p)
         return 1
-    out = Path(args.out)
+    out = Path(args.out) if args.out else ROOT / "out" / (args.variant or "")
     out.mkdir(parents=True, exist_ok=True)
     net = run_network(lines, params, n=args.n, seed=args.seed)
+    net["variant"] = args.variant
     write_markdown(net, out / "report.md")
     write_json(net, out / "results.json")
     write_map(net, out / "map.html")
@@ -55,13 +62,14 @@ def cmd_report(args) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="mnmaglev")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("check", help="validate params and network").set_defaults(fn=cmd_check)
+    sub.add_parser("check", help="validate params, the network and every variant").set_defaults(fn=cmd_check)
     rp = sub.add_parser("report", help="estimate the network, write out/")
     rp.add_argument("--phase", type=int, default=None, help="include lines up to this phase")
     rp.add_argument("--lines", default=None, help="comma-separated line ids")
+    rp.add_argument("--variant", default=None, help=f"network variant from network/variants/ ({', '.join(list_variants())})")
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")
     rp.add_argument("--seed", type=int, default=1)
-    rp.add_argument("--out", default=str(ROOT / "out"))
+    rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")
     rp.set_defaults(fn=cmd_report)
     args = ap.parse_args(argv)
     return args.fn(args)

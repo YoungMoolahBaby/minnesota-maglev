@@ -103,13 +103,36 @@ SEGMENT_KEYS = (
 )
 
 
+VARIANTS_DIR = NETWORK_DIR / "variants"
+
+
+def list_variants() -> list[str]:
+    return sorted(p.stem for p in VARIANTS_DIR.glob("*.yaml"))
+
+
+def _raw_lines(path: Path, variant: str | None) -> list[dict]:
+    """Lines from the main file; a variant's lines replace those with the same id."""
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))["lines"]
+    if variant:
+        vpath = VARIANTS_DIR / f"{variant}.yaml"
+        if not vpath.exists():
+            raise ValueError(f"no variant {variant!r}; have {list_variants()}")
+        replace = {l["id"]: l for l in yaml.safe_load(vpath.read_text(encoding="utf-8"))["lines"]}
+        unknown = set(replace) - {l["id"] for l in raw}
+        if unknown:
+            raise ValueError(f"variant {variant}: lines {unknown} not in {path.name}")
+        raw = [replace.get(l["id"], l) for l in raw]
+    return raw
+
+
 def load_lines(
-    path: Path = NETWORK_DIR / "lines.yaml", cities: dict[str, City] | None = None
+    path: Path = NETWORK_DIR / "lines.yaml",
+    cities: dict[str, City] | None = None,
+    variant: str | None = None,
 ) -> list[Line]:
     cities = cities or load_cities()
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
     lines = []
-    for raw in data["lines"]:
+    for raw in _raw_lines(path, variant):
         pts = [cities[p] for p in raw["points"]]
         defaults = raw.get("defaults", {})
         overrides = {(s["from"], s["to"]): s for s in raw.get("segments", [])}

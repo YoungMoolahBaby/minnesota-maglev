@@ -83,7 +83,8 @@ def _bn(musd: float) -> str:
 def write_markdown(net: dict, path: Path) -> None:
     R = net["results"]
     L = []
-    L.append("# Minnesota maglev: network estimate\n")
+    variant = net.get("variant")
+    L.append("# Minnesota maglev: network estimate" + (f" (variant: {variant})" if variant else "") + "\n")
     L.append(f"Generated {date.today().isoformat()} by `mnmaglev report` "
              f"({net['n']:,} Monte Carlo samples, seed {net['seed']}). USD 2026.\n")
     cc = net["conf_counts"]

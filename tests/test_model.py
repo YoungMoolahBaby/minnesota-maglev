@@ -24,6 +24,25 @@ def test_data_is_valid(world):
     assert check_network(lines, cities, set(params)) == []
 
 
+def test_variants_load_and_validate(world):
+    from mnmaglev.network import list_variants
+
+    params, cities, lines = world
+    assert "downtown_minneapolis" in list_variants()
+    for v in list_variants():
+        vl = load_lines(cities=cities, variant=v)
+        assert check_network(vl, cities, set(params)) == []
+        assert [l.id for l in vl] == [l.id for l in lines]  # same lines, some replaced
+
+
+def test_spine_runs_through_midway_hub(world):
+    _, cities, lines = world
+    spine = next(l for l in lines if l.id == "spine")
+    assert "midway_hub" in [p.id for p in spine.points]
+    downtown = next(l for l in load_lines(cities=cities, variant="downtown_minneapolis") if l.id == "spine")
+    assert "minneapolis" in [p.id for p in downtown.points]
+
+
 def test_haversine_one_degree_latitude():
     assert haversine_km(45, -93, 46, -93) == pytest.approx(111.2, abs=0.1)
 
