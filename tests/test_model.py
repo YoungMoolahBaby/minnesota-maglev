@@ -173,3 +173,69 @@ def test_materials_bill_is_a_small_share(world):
     assert bill["total"] == pytest.approx(sum(v for k, v in bill.items() if k != "total"))
     construction = line_capital(spine, P0, spine.stations, t)["construction"]
     assert 0 < bill["total"] / construction < 0.15
+
+
+def test_energy_matches_tr08_at_300_kmh(world):
+    """TR08, 5 sections: 28.1 Wh per seat-km at 300 km/h (Schach et al., via de.wikipedia Transrapid)."""
+    from dataclasses import replace
+
+    from mnmaglev.kinematics import run_leg
+
+    params, _, lines = world
+    P0 = nominal(params)
+    seg = next(l for l in lines if l.id == "spine").segments[3]
+    long = replace(seg, urban_start_km=0, urban_end_km=0, detour=2.0)  # ~230 km, stops at both ends
+    r = run_leg([long], {**P0, "system.vehicle.cruise_speed": 300})
+    w = P0["system.service.winter_share"]
+    kwh = w * r.energy_kwh_winter + (1 - w) * r.energy_kwh_summer
+    seats = P0["system.vehicle.seats_per_section"] * P0["costs.vehicles.sections_per_train"]
+    wh_per_seat_km = kwh / r.length_km / seats * 1000
+    assert wh_per_seat_km == pytest.approx(28.1, rel=0.1)
+
+
+def test_day_power_profile_matches_trip_energy(world):
+    """Second-by-second power over a day integrates to the energy model's trips (dwells aside)."""
+    from mnmaglev.power import demand_summary, line_day_profile
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    d = demand_summary(line_day_profile(spine, P0, "winter"))
+    s = line_summary(spine, P0)
+    trips = 2 * P0["system.service.trains_per_hour"] * P0["system.service.service_hours"]
+    kin_mwh = trips * sum(l.energy_kwh_winter for l in s["legs"]) / 1000
+    assert d["mwh_per_day"] == pytest.approx(kin_mwh, rel=0.01)
+    # peaks well above the average: trains accelerating together
+    assert d["peak_1min_mw"] > 2 * d["avg_service_mw"]
+
+
+def test_fusion_fleet_covers_peak_with_spare(world):
+    from mnmaglev.fusion import fleet_money, size_by_phase
+
+    params, _, lines = world
+    P0 = nominal(params)
+    sizing = size_by_phase(lines, P0)
+    unit = P0["power.fusion.unit_mwe"]
+    for s in sizing:
+        # without the spare unit, capacity still covers the 1-second peak plus headroom
+        assert (s["units"] - P0["power.fusion.spare_units"]) * unit >= s["peak_mw"] * (1 + P0["power.fusion.sizing_margin"])
+        assert s["new_units"] >= 0
+    assert [s["units"] for s in sizing] == sorted(s["units"] for s in sizing)  # fleet only grows
+    money = fleet_money(sizing, P0)
+    assert all(m["surplus_mwh"] >= 0 for m in money)
+    total_new = sum(s["new_units"] for s in sizing)
+    assert total_new == sizing[-1]["units"]
+
+
+def test_fusion_learning_curve_makes_later_units_cheaper(world):
+    from mnmaglev.fusion import fleet_money, size_by_phase
+
+    params, _, lines = world
+    P0 = nominal(params)
+    sizing = size_by_phase(lines, P0)
+    flat = fleet_money(sizing, {**P0, "power.fusion.learning_rate": 0.0})
+    learn = fleet_money(sizing, P0)
+    per_unit_flat = P0["power.fusion.unit_mwe"] * P0["power.fusion.capex_per_kw"] / 1000.0
+    soft = (1 + P0["costs.soft.engineering_admin"]) * (1 + P0["costs.soft.contingency"])
+    assert flat[0]["capital"] == pytest.approx(sizing[0]["new_units"] * per_unit_flat * soft)
+    assert all(l["capital"] < f["capital"] for l, f in zip(learn[1:], flat[1:]) if f["capital"] > 0)

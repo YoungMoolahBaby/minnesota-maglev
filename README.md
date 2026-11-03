@@ -19,6 +19,7 @@ uv run mnmaglev report           # -> out/report.md, out/results.json, out/map.h
 uv run mnmaglev report --phase 1 # just the spine
 uv run mnmaglev benchmarks       # sourced cost benchmarks in 2026 USD vs the parameter ranges
 uv run mnmaglev report --local-supply off   # the same without the Minnesota local-supply policy
+uv run mnmaglev report --fusion none            # the same without the fusion fleet (grid power only)
 uv run pytest
 ```
 
@@ -36,20 +37,20 @@ uv run pytest
   and back to iron pellets, crude taconite (Mesabi Range) and copper ore (Duluth Complex grades).
 - **Map**: `out/map.html`, the network on OpenStreetMap with costs and times in the popups.
 
-After research pass 1 (2026-11-03; the main cost parameters are now sourced, see
+After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters sourced, see
 `reference/benchmarks.yaml`; still concept-stage, see the report for the caveats):
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve and local supply | 389 | 1 h 10 | $99 bn ($86 - 114 bn) |
-| Network through phase 2 | 1,022 | | $229 bn ($199 - 264 bn) |
-| Everything incl. Chicago | 1,997 | | $439 bn ($380 - 505 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester, with reserve, local supply and 4 fusion units | 389 | 1 h 10 | $108 bn ($93 - 124 bn) |
+| Network through phase 2 (7 fusion units) | 1,022 | | $245 bn ($211 - 282 bn) |
+| Everything incl. Chicago (12 fusion units) | 1,997 | | $465 bn ($401 - 536 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
 construction separation), far enough that work on one needs no slow orders on the other; the
-shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.3 bn of the $99 bn. The
-land is cheap (~$1.0 bn with contingency); most of it is building city structures and stations
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.9 bn of the spine. The
+land is cheap (~$1.3 bn with contingency); most of it is building city structures and stations
 for two from day one. Every other line shows what its reserve would cost in the report.
 
 **Local supply** (on by default): Minnesota-made guideway beams and stator packs, taconite aggregate
@@ -57,9 +58,22 @@ near the Range, and long-term supply contracts with Minnesota mines and mills. I
 ~$1.7 bn P50 (~1.7%), mostly from the price hedge of supply contracts (1 contingency point) and one
 beam plant serving the whole network; taconite aggregate saves little. Materials are only ~4% of
 construction (the report's materials bill), so cheap ore can't move the total much; the ore
-pays ~$2.3 M of production tax to the Range on the spine. `--local-supply off` shows it without.
+pays ~$2.6 M of production tax to the Range on the spine. `--local-supply off` shows it without.
 
-The spine works out to ~$254 M per route-km all-in (with 24% soft costs, 40% contingency and the
+**Fusion power** (on by default): the megaproject builds its own small fusion units (~50 MWe, the
+Helion / Zap Energy class), more than the trains need, instead of batteries. The model simulates
+every train on the timetable second by second (braking trains feed pulling ones) and sizes the
+fleet to cover the 1-second peak plus 10% and one spare unit: the spine averages 24 MW but peaks
+at 123 MW, so it gets 4 units (200 MW) for ~$6.9 bn P50, and ~86% of their output (~1.3 TWh/yr) is
+surplus for neighbouring users (hydrogen steelmaking on the Range needs ~1 GW, data centres, the
+Midway hub district) or the grid. The full network gets 12 units (600 MW). At wholesale prices the
+surplus and the grid power the trains no longer buy only just beat the plant's O&M, so the case is
+strategic (carbon-free, energy security, Range industry), not cost. Every fusion number is a target
+or projection: no fusion plant has made net electricity yet, a first Minnesota unit is ~2035 at the
+earliest, and Minnesota's nuclear moratorium may cover fusion (unresolved). Until then the trains
+run on grid power, which is what each line's opex shows. `--fusion none` drops the fleet.
+
+The spine works out to ~$259 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
 second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
 incl. trains and stations); the 2001 Baltimore-Washington Transrapid estimate ~$187 M/km (incl. 40%
 contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Early estimates of rail projects have
@@ -73,8 +87,9 @@ still the elevated guideway cost per km.
 | `src/mnmaglev` (Python) | parameters, network, costs, land, materials, Monte Carlo, report | working |
 | GIS pipeline | measure the segment shares from MN lidar, land cover, NWI wetlands, FEMA floodplains, parcels; least-cost route search with maglev curve and grade limits | phase 2 |
 | [OSRD](https://github.com/OpenRailAssociation/osrd) | running time, timetables and capacity on the real alignments (`integrations/osrd`) | planned |
-| [Calliope](https://calliope.readthedocs.io/) | traction power supply: substations, MISO grid, winter peaks, renewables + storage (`integrations/calliope`) | planned |
-| cfsem | long-stator and levitation magnet sizing, which replaces the placeholder stator steel and aluminium per km (`sim/`) | planned |
+| `power.py`, `fusion.py` | second-by-second traction demand from the timetable; the fusion fleet sized from its peak, surplus and costs | working |
+| [Calliope](https://calliope.readthedocs.io/) | optimise the power mix (fusion units, grid, surplus users) hour by hour (`integrations/calliope`) | planned |
+| cfsem | long-stator and levitation magnet sizing (replaces the derived stator steel per km), and the fusion units' pulsed air-core coils (`sim/`) | planned |
 | CortenForge | the 3D city-builder view: lidar terrain, guideway, trains running the OSRD timetable, hazard overlays (`sim/`) | planned |
 
 See [docs/PLAN.md](docs/PLAN.md) for the phases, [docs/RESEARCH.md](docs/RESEARCH.md) for what to firm
@@ -89,8 +104,8 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $106 bn P50,
-$6.5 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $115 bn P50 with fusion,
+$7.0 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
 
 ## Honest caveats
 

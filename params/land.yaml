@@ -28,12 +28,12 @@ row_width:
 
 price_per_acre:
   urban_core:
-    value: 1.5
-    low: 0.5
-    high: 4.0
+    value: 3.0
+    low: 1.0
+    high: 10.0
     unit: MUSD/acre
-    conf: placeholder
-    source: downtown Minneapolis/St. Paul/Duluth/Rochester parcels incl. buildings
+    conf: "low"
+    source: "downtown Minneapolis: 0.8 acre sold for $8.4 M in 2021 (~10.5 M/acre, Star Tribune); listings at 2.8-7.3 M/acre (LoopNet asks). St. Paul not found"
   suburban:
     value: 0.35
     low: 0.12
@@ -43,25 +43,25 @@ price_per_acre:
     source: developed suburban land incl. structures
   cropland_south:
     value: 0.011
-    low: 0.008
-    high: 0.016
+    low: 0.0095
+    high: 0.015
     unit: MUSD/acre
-    conf: low
-    source: southern MN cropland; check U of MN Land Economics (landeconomics.umn.edu) county averages
+    conf: "medium"
+    source: "UMN Minnesota Land Economics 2024 assessor values, tillable: Dakota 10,301, Goodhue 10,297, Olmsted 10,273, Rice 10,089, Steele 11,548, Blue Earth 11,410 USD/acre (sales run higher)"
   cropland_central:
-    value: 0.007
-    low: 0.005
-    high: 0.010
+    value: 0.0055
+    low: 0.0027
+    high: 0.008
     unit: MUSD/acre
-    conf: low
-    source: as cropland_south
+    conf: "medium"
+    source: "UMN Land Economics 2024 tillable: Pine 2,684, Chisago 4,323, Isanti 6,140, Stearns 7,004, Douglas 5,669, Clay 6,698 USD/acre; USDA NASS 2024 state cropland average $6,540"
   forest_north:
-    value: 0.003
-    low: 0.0015
-    high: 0.006
+    value: 0.0015
+    low: 0.0012
+    high: 0.003
     unit: MUSD/acre
-    conf: low
-    source: northern forest land; part is state/county tax-forfeit or federal land (negotiation, not purchase)
+    conf: "medium"
+    source: "UMN Land Economics 2024 timber: Carlton 1,913/1,854, St. Louis 1,322/1,503, Itasca 1,486/2,940 USD/acre; part is state/county/federal land (negotiation, not purchase)"
   wetland:
     value: 0.002
     low: 0.001
@@ -102,18 +102,18 @@ wetlands:
     source: embankment fills the whole width
   replacement_ratio:
     value: 2.0
-    low: 1.5
+    low: 1.0
     high: 2.5
     unit: acres replaced per acre filled
-    conf: low
-    source: Minnesota Wetland Conservation Act (BWSR) + USACE Section 404; ratio depends on location
+    conf: "medium"
+    source: "Minn. R. 8420.0522 subp. 4: 2.5 credits per acre impacted, -0.5 for a bank in the same service area (2:1); 1.5:1 or 1:1 in >80% areas and on agricultural land"
   credit_price:
-    value: 0.08
+    value: 0.07
     low: 0.03
-    high: 0.20
+    high: 0.12
     unit: MUSD/acre-credit
-    conf: placeholder
-    source: Minnesota wetland bank credit prices vary a lot by bank service area; check BWSR registry
+    conf: "medium"
+    source: "BWSR '2025 Average Cost per Credit' (2024 sales, standard credits): Lake Superior 51,183, St. Croix 90,909, Middle Mississippi (metro) 119,820, Lower Mississippi 46,332, Minnesota River 56,876, Mississippi Headwaters 29,403 USD"
 
 # Land held for a SECOND system beside the first (docs/PLAN.md, two-system corridor): build
 # system A now, run it while the next generation (B) goes up beside it, then alternate.
@@ -148,9 +148,9 @@ reserve:
     conf: placeholder
     source: willing sellers and purchase options, widening a corridor already being bought (less new severance than a separate route); legal limits on taking land for a future system still open (RESEARCH.md)
   lease_income:
-    value: 0.00025
+    value: 0.0002
     low: 0.00015
-    high: 0.00035
+    high: 0.00029
     unit: MUSD/acre/year
-    conf: low
-    source: cash rent for Minnesota cropland (~$150-350/acre/yr), reserved cropland leased back to farmers until system B is built; verify with NASS / U of MN cash rent data
+    conf: "medium"
+    source: "USDA NASS: Minnesota cropland cash rent $200/acre (2024 and 2025)"

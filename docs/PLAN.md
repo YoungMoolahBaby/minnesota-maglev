@@ -36,7 +36,7 @@ from the one before with measurements.
   structures, long-bridge foundations and stations for two from day one; build system A, run it
   while the next generation (B) goes up beside it, then alternate. Lines opt in with
   `reserve_second_system: true`; the report prices it for every line. Spine: P50 $8.1 bn (~12% of
-  the line). The land is cheap (~$1.0 bn with contingency); the build-for-two
+  the line, ~$9.9 bn after pass 2). The land is cheap (~$1.3 bn with contingency); the build-for-two
   provisions in cities and stations are most of it, and `costs.reserve.urban_provision` (30%,
   placeholder) is the number to research. Open: Minnesota eminent-domain limits on taking land for
   a future system (options, willing sellers, farm leaseback), one environmental review for both
@@ -49,12 +49,25 @@ from the one before with measurements.
   contingency point). Spine saving ~$1.7 bn P50 (~1.7%). Materials are ~4% of construction, so the
   ore itself barely moves cost; the case for it is supply security, price stability, jobs and Range
   revenue (production tax ~$2.3 M on the spine), which belong in the economics phase.
+- **2026-11-03, fusion power as part of the megaproject** (Jon): the megaproject builds its own
+  small fusion units (~50 MWe, Helion / Zap Energy class) instead of buying a slice of a big plant,
+  and builds MORE than the trains need instead of batteries; the surplus powers neighbouring users
+  (hydrogen steelmaking on the Range, data centres, the Midway hub district, de-icing) or the grid.
+  `settings.fusion: own` in network/lines.yaml, `params/power.yaml`, `src/mnmaglev/power.py`
+  (second-by-second timetable demand) and `fusion.py` (fleet sized to the 1-second peak + 10% + one
+  spare, added phase by phase, learning curve on later units). Spine: 24 MW average, 123 MW peak,
+  4 units, ~$6.9 bn P50, ~86% surplus. Strategic, not a cost saving at wholesale prices; no fusion
+  plant has made net electricity yet, and Minnesota's moratorium may cover it (unresolved).
 
-## Phase 1: research pass (in progress; pass 1 done 2026-11-03)
+## Phase 1: research pass (in progress; passes 1-2 done 2026-11-03)
 
 Pass 1 sourced the top cost drivers (docs/RESEARCH.md items 1-5, reference/benchmarks.yaml,
 `mnmaglev benchmarks`); the spine went from $77 bn to $101 bn P50. The benchmarks file and
 `tests/test_benchmarks.py` (every anchor inside its parameter range) are the pattern for the rest.
+Pass 2 sourced the verify items (climate, frost, census, land, wetlands, power price, Transrapid
+geometry and materials, ore) and stations, depot, switch, vehicles, crews and O&M, incl. the FRA
+2005 Report to Congress tables; the spine is $101 bn P50. Of 112 parameters: 17 high, 28 medium,
+29 low confidence, 38 still placeholders (mostly adders, reserve and local-supply rates, service).
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
 sourced numbers, tighten ranges, add `params/benchmarks.yaml` (real projects as checks: Shanghai,
@@ -101,9 +114,11 @@ sections, station layouts.
 
 ## Phase 5: power with Calliope (integrations/calliope)
 
-Traction demand time series (from OSRD runs or kinematics) at substation nodes along each line;
-MISO grid connection costs, winter peaks (heating + dense air), on-site/contracted wind and solar,
-storage. Output: power supply capital + energy price per kWh to feed back into params.
+The fusion fleet and its demand are already modelled (power.py, fusion.py, 2026-11-03). Calliope
+then optimises the mix hour by hour: fusion units, grid, flexible surplus users (electrolysers for
+H2-DRI steel, data centres, district heat), and whether staggering departures at the Midway hub
+shrinks the peak (and the fleet). Also: cfsem models the fusion units' pulsed air-core coils in
+`sim/` (cfsem has no iron, which suits these coil systems better than the maglev magnets).
 
 ## Phase 6: magnetics and the 3D view (sim/, Rust)
 

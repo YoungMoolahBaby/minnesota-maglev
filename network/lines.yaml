@@ -27,6 +27,10 @@ settings:
   # supply contracts with Minnesota mines and mills (params costs.local_supply.*). The report shows
   # the saving either way; this decides whether it counts in the totals.
   local_supply: true
+  # The megaproject's own small fusion units (params/power.yaml), sized from the timetable's
+  # second-by-second peak with headroom and a spare unit, no batteries; the surplus powers
+  # neighbouring users or goes to the grid. "none" = grid power only.
+  fusion: own
 
 lines:
   - id: spine

@@ -1,0 +1,73 @@
+# Power supply: the megaproject's own fusion units (network/lines.yaml settings.fusion).
+# Same leaf format as costs.yaml. Jon (2026-11-03): small fusion units, built MORE than the trains
+# need instead of batteries; the surplus powers other things around them (steelmaking on the Range,
+# stations and the Midway hub district, guideway de-icing, data centres, the grid).
+# Sizing uses the second-by-second demand of the timetable (src/mnmaglev/power.py), not a guess.
+# Sourced in the fusion research pass (2026-11-03); every number is a target or projection: no
+# fusion plant has made net electricity yet. The first unit costs capex_per_kw, later ones follow
+# learning_rate (cost x n^log2(1 - rate) for the n-th unit).
+
+fusion:
+  unit_mwe:
+    value: 50
+    low: 50
+    high: 50
+    unit: MWe per unit
+    conf: "medium"
+    source: "smallest grid-power fusion units announced: Helion Orion >=50 MWe after a ramp-up year (Malaga WA, Microsoft, licensed by Washington DOH June 2026), Zap Energy 50 MWe modules; others are 85-400 MWe (Tokamak Energy 85, General Fusion 150 per machine, Realta 200, Type One 350, Thea 390, CFS ARC 400)"
+  capex_per_kw:
+    value: 20000
+    low: 6000
+    high: 40000
+    unit: USD/kW (2026), overnight, before soft costs and contingency
+    conf: "low"
+    source: "first unit, 2026 USD. Review of 99 fusion cost estimates (Böhnlein et al. 2026, DIW/TU Berlin, arXiv 2606.26536): first-of-a-kind mean $12,592/kW, nth $6,991 (2018 USD; x1.76 construction index = ~22,100 / ~12,300) and the authors call them optimistic; ARC-type 350 MWe $8,800-22,200/kW (Applied Energy 2025); ARPA-E-based 400 MW nth ~$2,370/kW (Handley et al. 2021) is the optimistic floor. No cost is published for a ~50 MWe pulsed unit; small units cost more per kW. Later units get the learning curve (learning_rate)"
+  fixed_om_per_kw_year:
+    value: 130
+    low: 100
+    high: 350
+    unit: USD per kW-year
+    conf: "low"
+    source: "DIW review medians ~78 (first-of-a-kind) to ~106 $/kW-yr (2018 USD; x~1.34 CPI to 2026), magneto-inertial designs up to ~265; staffing not published"
+  capacity_factor:
+    value: 0.85
+    low: 0.5
+    high: 0.9
+    unit: share of the year at full output
+    conf: "low"
+    source: "design targets, not demonstrated: Thea Helios 88% (84 days of maintenance every two years), ARPA-E-based 90%; DIW review: 'design targets rather than empirically validated performance'. The low end allows for first-of-a-kind teething"
+  sizing_margin:
+    value: 0.10
+    low: 0.10
+    high: 0.10
+    unit: headroom over the 1-second network peak
+    conf: medium
+    source: design choice so the units cover every instantaneous peak without batteries
+  spare_units:
+    value: 1
+    low: 1
+    high: 1
+    unit: extra units (N+1)
+    conf: medium
+    source: design choice; one unit can be down for maintenance without stopping the trains
+  first_power_year:
+    value: 2035
+    low: 2030
+    high: 2045
+    unit: year the first Minnesota unit could deliver power
+    conf: "low"
+    source: "Helion Orion targets operation by 2028 but scaled its Polaris goal back to 'demonstrating electricity from fusion' (Axios, Sep 2026); other small designs target the early-to-mid 2030s. A Minnesota unit also needs the NRC fusion rule (proposed Feb 2026, final not yet issued) and the state moratorium question (Minn. Stat. 216B.243 subd. 3b, unresolved for fusion)"
+  surplus_value:
+    value: 40
+    low: 30
+    high: 53
+    unit: USD/MWh for power the trains don't use
+    conf: "medium"
+    source: "MISO 2025 State of the Market (Potomac Economics): day-ahead energy averaged almost $43/MWh, all-in about $53 (up 67% from 2024); Minnesota Hub average not published separately. A contract with a neighbouring user (H2-DRI steel, data centres) could pay more"
+  learning_rate:
+    value: 0.10
+    low: 0.05
+    high: 0.20
+    unit: cost reduction per doubling of units built
+    conf: low
+    source: "standard learning-curve rates for repeated plants (5-20% per doubling); the DIW review's first-of-a-kind to nth-of-a-kind drop (12,592 -> 6,991 $/kW) is steeper, but it assumes many plants industry-wide"

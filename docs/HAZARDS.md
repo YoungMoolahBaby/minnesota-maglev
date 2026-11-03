@@ -36,7 +36,7 @@ instead of splitting the corridor. So the corridor is designed for the worst cas
 |---|---|
 | A flood takes out both | piers and stations of BOTH systems above the climate-adjusted 500-yr flood + freeboard (not yet priced for the reserve: add the floodplain adder to its bridge provisions) |
 | An ice storm or blizzard stops both | heated switches and guideway de-icing on both; snow storage in the separation strip, never on the other guideway |
-| One power failure stops both | each system fed from different substations and different grid nodes (Calliope phase), so one outage can't drop both |
+| One power failure stops both | each system fed from different substations and different grid nodes; the fusion fleet is sized N+1 (one spare 50 MW unit) with the grid as backup, so one unit or one outage can't drop both |
 | A tornado, derecho or crash debris hits both | the 50 m separation keeps most crash debris from one off the other; tornado debris travels much farther, so both guideways and their power need wind and debris design, not distance |
 | Construction on one hurts the other | the 50 m separation keeps crane and piling-rig fall zones off the live guideway, so works need no slow orders |
 | Shared stations are a single point of failure | the Midway hub and end stations get two independent sets of platforms, power and access |

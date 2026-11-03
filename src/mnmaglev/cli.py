@@ -48,8 +48,10 @@ def cmd_report(args) -> int:
         return 1
     out = Path(args.out) if args.out else ROOT / "out" / (args.variant or "")
     out.mkdir(parents=True, exist_ok=True)
-    local = load_settings()["local_supply"] if args.local_supply is None else args.local_supply == "on"
-    net = run_network(lines, params, n=args.n, seed=args.seed, local_supply=local)
+    settings = load_settings()
+    local = settings["local_supply"] if args.local_supply is None else args.local_supply == "on"
+    fusion = settings["fusion"] if args.fusion is None else args.fusion
+    net = run_network(lines, params, n=args.n, seed=args.seed, local_supply=local, fusion=fusion)
     net["variant"] = args.variant
     write_markdown(net, out / "report.md")
     write_json(net, out / "results.json")
@@ -77,6 +79,8 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--variant", default=None, help=f"network variant from network/variants/ ({', '.join(list_variants())})")
     rp.add_argument("--local-supply", choices=["on", "off"], default=None,
                     help="override settings.local_supply in network/lines.yaml")
+    rp.add_argument("--fusion", choices=["own", "none"], default=None,
+                    help="override settings.fusion in network/lines.yaml")
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")
     rp.add_argument("--seed", type=int, default=1)
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")

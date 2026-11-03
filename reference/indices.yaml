@@ -6,11 +6,16 @@ target: {label: "2026 USD", nhcci: 3.1348, cpi: 336.940}   # NHCCI 2026 Q1 (late
 
 nhcci:
   source: FHWA National Highway Construction Cost Index, base 2003 Q1 = 1, annual mean of quarters, data.transportation.gov dataset r94d-n4f9 (downloaded 2026-11-03; FHWA has since rebased to 2021 Q2 = 1, use ratios within this vintage only)
-  note: starts 2003; years before 2003 use 2003 (understates ~3%/yr; ENR CCI 2000 6221 -> 2004 7115)
+  note: starts 2003; earlier years are carried to 2003 with the ENR CCI (below), then NHCCI
   annual: {2003: 1.0138, 2004: 1.1098, 2005: 1.3267, 2006: 1.5353, 2007: 1.5442, 2008: 1.6560,
            2009: 1.4429, 2010: 1.4392, 2011: 1.5099, 2012: 1.6016, 2013: 1.6130, 2014: 1.6816,
            2015: 1.6984, 2016: 1.6606, 2017: 1.6745, 2018: 1.7861, 2019: 1.9246, 2020: 1.9208,
            2021: 2.0593, 2022: 2.6014, 2023: 3.0142, 2024: 3.2369, 2025: 3.2254, 2026: 3.1348}
+
+enr_cci:
+  source: ENR Construction Cost Index history, 1913 = 100, annual averages, https://www.enr.com/articles/17268-construction-cost-index-history
+  annual: {1990: 4732, 1991: 4835, 1992: 4985, 1993: 5210, 1994: 5408, 1995: 5471, 1996: 5620,
+           1997: 5826, 1998: 5920, 1999: 6059, 2000: 6221, 2001: 6343, 2002: 6538, 2003: 6694}
 
 cpi:
   source: BLS CPI-U US city average all items (CUUR0000SA0), annual averages; 2025 has 11 months (Oct 2025 not collected); 2026 = Sep 2026 (BLS release 2026-10-14)
@@ -19,6 +24,7 @@ cpi:
 usd_per:
   source: Federal Reserve G.5A annual average exchange rates
   EUR: {2002: 0.9454, 2007: 1.3711, 2008: 1.4726}
+  DEM: {1993: 0.60441}   # 1.6545 DM per USD, G.5A release of 1997-01-07 (columns 1996..1993)
   AUD: {2008: 0.8537}
   CNY: {2004: 0.12082}
   JPY: {2014: 0.009457}

@@ -44,3 +44,16 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
 | [Calliope](https://calliope.readthedocs.io/) | energy system optimisation (power supply) | Apache-2.0 |
 | cfsem | magnetics (stator and magnet sizing) | check crate |
 | CortenForge | simulation and 3D view | Jon's project |
+
+## Fusion power (params/power.yaml)
+
+- Böhnlein et al. (2026), review of 99 fusion cost estimates, DIW / TU Berlin: https://arxiv.org/abs/2606.26536
+- Handley, Slesinski, Hsu (2021), ARPA-E-based fusion plant costing: https://arxiv.org/abs/2101.09150
+- Helion Orion (Malaga, WA; Washington DOH licences, June 2026): https://www.helionenergy.com/newsroom/helion-clears-key-regulatory-milestone-on-the-path-to-building-and-operating-the-worlds-first-fusion-power-plant
+- Helion and Nucor, 500 MWe plant for steelmaking (2023): https://www.helionenergy.com/newsroom/helion-nucor-collaboration-to-deploy-500-mw-fusion-power-plant
+- Zap Energy 50 MWe modules: https://neimagazine.com/news/zap-energy-launches-fusion-prototype/
+- NRC proposed fusion rule (Feb 2026): https://www.powermag.com/nrc-proposes-first-dedicated-regulatory-framework-for-commercial-fusion-machines/
+- Minnesota as an NRC Agreement State: https://www.nrc.gov/agreement-states/minnesota.html
+- Minn. Stat. 216B.243 (moratorium in subd. 3b): https://www.revisor.mn.gov/statutes/cite/216B.243 ; HF 387 (2023): https://www.revisor.mn.gov/bills/93/2023/0/HF/387
+- MISO 2025 State of the Market (Potomac Economics): https://www.potomaceconomics.com/wp-content/uploads/2026/07/2025-State-of-the-Market-Report.pdf
+- NRRI hydrogen DRI pre-FEED with U.S. Steel: https://nrri.umn.edu/news/doe-82m-industry-innovation

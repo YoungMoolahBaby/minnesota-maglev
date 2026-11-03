@@ -71,42 +71,45 @@ def _leg_pieces(segs: list[Segment], cruise: float, urban: float) -> tuple[list,
     return pieces, zones
 
 
-def run_leg(segs: list[Segment], P: dict[str, float]) -> LegResult:
+def leg_power_cells(segs: list[Segment], P, season: str):
+    """Per distance cell of one leg: duration (s), electrical power (W, negative = returned), speeds.
+
+    Traction = (mass x acceleration + drag) x speed. While pulling it costs traction / efficiency;
+    while braking the net (drag already helps slow the train) is regenerated at regen x efficiency.
+    Levitation and hotel loads run throughout. kinematics energy and power.py both use this.
+    """
     cruise = P["system.vehicle.cruise_speed"] / 3.6
     urban = P["system.vehicle.urban_speed"] / 3.6
-    a = P["system.vehicle.accel"]
     sections = P["costs.vehicles.sections_per_train"]
     mass = P["system.vehicle.section_mass"] * sections * 1000.0  # kg
     cda = P["system.vehicle.drag_coefficient"] * P["system.vehicle.frontal_area"]
     eff = P["system.vehicle.propulsion_efficiency"]
     regen = P["system.vehicle.regen_fraction"]
-    lev_w = P["system.vehicle.levitation_power"] * 1000.0 * mass / 1000.0  # kW/t * t -> W
+    base_w = (P["system.vehicle.levitation_power"] * mass  # kW/t x kg = W
+              + P[f"system.vehicle.hotel_power_{season}"] * 1000.0 * sections)
 
     pieces, zones = _leg_pieces(segs, cruise, urban)
-    ds, v = speed_profile(pieces, a)
-    vmid = 0.5 * (v[:-1] + v[1:])
-    dt = 2 * ds / np.maximum(v[:-1] + v[1:], 1e-9)
-    time_s = float(dt.sum())
-
-    # zone per cell, for air density
+    ds, v = speed_profile(pieces, P["system.vehicle.accel"])
     cell_zone = []
     for (length, _), z in zip(pieces, zones):
         cell_zone += [z] * max(int(round(length / STEP_M)), 1)
-    dke = 0.5 * mass * (v[1:] ** 2 - v[:-1] ** 2)  # J per cell
-    gain = np.clip(dke, 0, None).sum()
-    brake = -np.clip(dke, None, 0).sum()
+    rho = np.array([air_density(P[f"climate.{z}.{season}_mean_temp"]) for z in cell_zone])
+    dt = 2 * ds / np.maximum(v[:-1] + v[1:], 1e-9)
+    vmid = 0.5 * (v[:-1] + v[1:])
+    accel = (v[1:] ** 2 - v[:-1] ** 2) / (2 * ds)
+    mech = (mass * accel + 0.5 * rho * cda * vmid**2) * vmid
+    elec = np.where(mech > 0, mech / eff, mech * eff * regen) + base_w
+    return dt, elec, v
 
+
+def run_leg(segs: list[Segment], P: dict[str, float]) -> LegResult:
     out = {}
     for season in ("winter", "summer"):
-        rho = np.array([air_density(P[f"climate.{z}.{season}_mean_temp"]) for z in cell_zone])
-        drag = (0.5 * rho * cda * vmid**2 * ds).sum()  # J
-        hotel_w = P[f"system.vehicle.hotel_power_{season}"] * 1000.0 * sections
-        joules = (drag + gain) / eff - brake * regen * eff + (lev_w + hotel_w) * time_s
-        out[season] = joules / 3.6e6
-
+        dt, elec, v = leg_power_cells(segs, P, season)
+        out[season] = float((elec * dt).sum()) / 3.6e6
     return LegResult(
         start=segs[0].a.id, end=segs[-1].b.id,
-        length_km=sum(s.length_km for s in segs), time_s=time_s,
+        length_km=sum(s.length_km for s in segs), time_s=float(dt.sum()),
         energy_kwh_winter=out["winter"], energy_kwh_summer=out["summer"],
         top_speed_kmh=float(v.max() * 3.6),
     )

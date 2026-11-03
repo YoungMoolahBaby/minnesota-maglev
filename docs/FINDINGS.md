@@ -40,6 +40,35 @@ works), date, details. One section per tool.
   one beam plant; taconite aggregate ~$1 M per northern line (hauls eat the saving). Production tax
   on Minnesota pellets in the spine's steel ~$2.3 M. Answer: a supply-security and Range-economy
   case, not a cost cut.
+- 2026-11-03, research pass 2 (three agents): found the FRA 2005 maglev Report to Congress cost
+  tables via the National Transportation Library (rosap.ntl.bts.gov/view/dot/83590; FRA's own site
+  blocks automated fetches). Pittsburgh's 100%-elevated guideway converts to ~$79 M/km 2026, so
+  elevated went 60 -> 65. Stations, depot, switch, vehicle, crew and O&M now sourced; the maglev switch
+  dropped 15 -> 7 (Berlin-Hamburg ~2 Mio DM each), crews rose 1.5 -> 2.5 M per train-year.
+- 2026-11-03: my Nov-Mar temperatures were 3-4 C too cold (I had used Dec-Feb values from memory);
+  NOAA normals fixed them. Two census populations were wrong (Virginia, Bemidji).
+- 2026-11-03: the energy model was ~30% low against Transrapid figures (20.5 vs 28.1 Wh/seat-km for
+  TR08 at 300 km/h). Wikipedia's Cd 0.26 can't describe a 128 m, 5-section train; an effective 0.41
+  reproduces TR08 and gives ~44 Wh/seat-km at 400 km/h (TR07 simulation: 49). Spine energy is now
+  ~21 kWh per train-km. Test `test_energy_matches_tr08_at_300_kmh` holds it.
+- 2026-11-03: pre-2003 figures are now carried to 2003 with the ENR CCI (1990-2003), and 1993 DM
+  convert at the Fed G.5A rate (1.6545 DM/USD). The Pittsburgh 2001 promoter figure rose 77 -> 81.
+- 2026-11-03: after pass 2 the spine is $100.8 bn P50 ($87-116 bn), up from $99.0 bn (mostly elevated
+  60 -> 65 and stations). 2 research agents of 3 hit sites that block automated fetches (FRA, Census
+  QuickFacts); mirrors (ROSA P, Wikipedia lists) worked.
+- 2026-11-03: I told Jon the spine would use ~22 GWh/yr (2.5 MW); that was my mental arithmetic
+  off by 10x (I dropped a factor in the train-km). The model had it right all along: 216 GWh/yr,
+  ~25 MW. Lesson: quote the model, not head math.
+- 2026-11-03, power profile: every train on the timetable, second by second, both directions. Spine:
+  24 MW average, 99 MW 1-minute peak, 123 MW 1-second peak; full network 132 MW average, 485 MW
+  1-second peak (departures aligned on the hour, a peaky worst case). Building it exposed a small
+  bias in the old energy formula (it billed drag during braking at 1/efficiency, though drag slows
+  the train for free); energy and power now share one per-cell calculation and agree within 0.25%.
+- 2026-11-03, fusion fleet: 4 units (200 MW) for the spine, 12 (600 MW) for everything, ~74-86%
+  of output surplus. At $20,000/kW for the first unit (learning curve after), the spine's units
+  cost ~$6.9 bn P50; at wholesale prices the surplus value plus avoided grid energy only just beats
+  the fleet's O&M, so fusion is a strategic choice (carbon-free, energy security, Range industry),
+  not a cost saving. Spine with fusion $107.8 bn P50, without $100.8 bn.
 
 ## OSRD
 

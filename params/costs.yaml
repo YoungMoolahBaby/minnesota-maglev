@@ -12,20 +12,20 @@
 
 guideway:
   elevated:
-    value: 60
-    low: 40
-    high: 95
+    value: 65
+    low: 42
+    high: 100
     unit: MUSD/km
-    conf: low
-    source: "benchmarks (2026 USD): Transrapid Munich itemised estimate ~60 (Vieregg-Rössler 2007, net of planning/contingency), SCMaglev DEIS viaduct ~76 (tall, suburban), Pittsburgh maglev 2001 ~77 (promoter, likely incl. stator)"
+    conf: "low"
+    source: "benchmarks (2026 USD): FRA 2005 Report to Congress, Pittsburgh (100% elevated) guideway ~79; Transrapid Munich itemised ~60 (Vieregg-Rössler 2007, net of planning/contingency); SCMaglev DEIS viaduct ~76; Pittsburgh promoter 2001 ~81. Whether FRA unit costs carry contingency is not stated, so the value sits below their median"
     note: dual-track concrete or hybrid beams on piers, rural. The default for Minnesota (snow, drifting, farm and wildlife crossings).
   at_grade:
-    value: 48
-    low: 32
-    high: 78
+    value: 52
+    low: 34
+    high: 82
     unit: MUSD/km
-    conf: low
-    source: "Transrapid Munich at-grade ~50 (2026 USD, benchmarks); elevated/at-grade superstructure ratio 1.22-1.26 in two German derivations, because 'at grade' Transrapid is still a beam on low piers"
+    conf: "low"
+    source: "Transrapid Munich at-grade ~50 (2026 USD); elevated/at-grade superstructure ratio 1.22-1.26 (two German derivations) applied to the elevated value"
     note: beams on low piers or a slab; needs snow clearance under the vehicle skirt and fencing.
   urban_viaduct:
     value: 150
@@ -50,21 +50,21 @@ guideway:
     conf: low
     source: "Minnesota river bridges in 2026 USD: St. Croix Crossing ~0.47, Hastings ~0.42 (4-lane highway decks, ~$19-24k per m2); a dual maglev deck is narrower (~12-13 m) but heavier-spec. I-35W (~1.28, 10 lanes, emergency) is context only"
   switch_each:
-    value: 15
-    low: 8
-    high: 30
+    value: 7
+    low: 4
+    high: 15
     unit: MUSD
-    conf: placeholder
-    source: steel bending-beam maglev switch, heated for Minnesota winters
+    conf: "low"
+    source: "Berlin-Hamburg planning: ~2 Mio DM per maglev switch (1993; ~10x a rail switch of the same length) = ~4.8 M 2026 USD (benchmarks); high end for heating and planners' underestimates (VR found 45-76% elsewhere)"
 
 systems:
   propulsion_power_control:
     value: 27
-    low: 17
+    low: 10
     high: 45
     unit: MUSD/km
-    conf: low
-    source: "long stator (iron packs + windings), substations and feeders, operations control, comms. Transrapid Munich itemised ~27 (2026 USD, benchmarks; critic doubled the study's power cost); official Berlin-Hamburg planning puts systems at ~0.57x civil guideway (0.57 x 60 = 34)"
+    conf: "low"
+    source: "FRA 2005 (2026 USD, propulsion/control/comms + power distribution): Baltimore-Washington ~32, Munich ~34, Pittsburgh ~14 (adjusted for 38% single track); Transrapid Munich itemised ~27 (Vieregg-Rössler)"
     note: the long stator lives in the guideway, so this scales with km, not with trains.
 
 adders:
@@ -99,26 +99,26 @@ adders:
 
 stations:
   terminal_major:
-    value: 450
+    value: 420
     low: 200
-    high: 1000
+    high: 900
     unit: MUSD each
-    conf: placeholder
-    source: downtown terminal incl. approach, platforms for 5-section trains, transit connections
+    conf: "low"
+    source: "FRA 2005 Baltimore-Washington station ~418 (2026 USD); St. Paul Union Depot renovation incl. land ~476; CA HSR Central Valley stations ~287 each (2024 BoE, YOE)"
   airport:
     value: 280
     low: 120
     high: 650
     unit: MUSD each
-    conf: placeholder
-    source: engineering guess
+    conf: "low"
+    source: "between the FRA 2005 terminal (~418) and city-station figures; Orlando airport intermodal terminal ($684 M incl. garage, unconfirmed) as context"
   city:
-    value: 130
-    low: 60
-    high: 300
+    value: 180
+    low: 70
+    high: 350
     unit: MUSD each
-    conf: placeholder
-    source: engineering guess
+    conf: "low"
+    source: "2026 USD: CA HSR Central Valley stations ~287 (YOE), FRA 2005 Pittsburgh ~239 and Anaheim ~132, Berlin-Hamburg 50 Mio DM ~120, Brightline Boca Raton ~68 (floor)"
   switches_per_station:
     value: 4
     low: 2
@@ -129,21 +129,21 @@ stations:
 
 depot:
   per_line:
-    value: 300
-    low: 150
-    high: 650
+    value: 350
+    low: 100
+    high: 700
     unit: MUSD
-    conf: placeholder
-    source: maintenance and storage facility, one per line, winter-proofed (indoor storage)
+    conf: "low"
+    source: "CA HSR heavy maintenance facility ~640 (2024 BoE, YOE; light facility ~364), Berlin-Hamburg vehicle works 150 Mio DM ~360, Brightline Orlando VMF ~104 (2026 USD)"
 
 vehicles:
   per_section:
-    value: 28
-    low: 20
-    high: 40
+    value: 32
+    low: 22
+    high: 48
     unit: MUSD
-    conf: low
-    source: Transrapid Australia 2008 quote A$16.5-20 M per section, inflated, US build + winterisation
+    conf: "medium"
+    source: "2026 USD: FRA 2005 per section Baltimore-Washington ~37, Pittsburgh ~27, Munich ~42; Transrapid Australia 2008 ~29; Berlin-Hamburg 9.5 Mio DM ~23; high end for US tariffs (~20%, CA HSR Siemens contract 2026) and a first-batch premium"
   sections_per_train:
     value: 5
     low: 5
@@ -177,33 +177,33 @@ soft:
 
 operations:
   energy_price:
-    value: 0.10
-    low: 0.07
-    high: 0.15
+    value: 0.1
+    low: 0.09
+    high: 0.135
     unit: USD/kWh
-    conf: low
-    source: Minnesota industrial rates, placeholder until a tariff is checked
+    conf: "medium"
+    source: "EIA Electric Power Monthly table 5.6.B: Minnesota industrial 9.78 c/kWh Jan-Aug 2026 (9.26 in 2025); transportation sector 13.51 c (high end); Transrapid peak demand 2-3x rail implies demand charges"
   om_per_km_year:
     value: 0.6
     low: 0.35
     high: 1.0
     unit: MUSD/km/year
-    conf: placeholder
-    source: guideway, stator and systems maintenance; maglev has no wheel/rail wear
+    conf: "low"
+    source: "FRA 2005 project O&M: Baltimore-Washington $53 M/yr for 40 mi (~0.82 M/route-km, 2020$), Pittsburgh $37.3 M/yr for 47 mi (~0.49, 2012$), energy ~28% of that; CA HSR 0.91-1.19 M/route-km (2015$, all-in); Berlin-Hamburg 0.83-1.29 Mio DM/km/yr (1993, all-in). Net of energy and crews ~0.5-0.8"
   winter_per_km_year:
     value: 0.05
     low: 0.02
     high: 0.12
     unit: MUSD/km/year
-    conf: placeholder
-    source: snow and ice clearing, switch heating, inspection after ice storms
+    conf: "placeholder"
+    source: "no per-km figure found. Emsland test track: snow does not stay on the elevated guideway and blows off; the stator sits under the deck; caked snow over 15 cm or icing after a night pause is cleared with a clearing vehicle (Bundestag Drs. 11/2488, 1988). Swedish switch heating ~EUR 800 per switch-year"
   staff_per_train_year:
-    value: 1.5
-    low: 1.0
-    high: 2.5
+    value: 2.5
+    low: 1.5
+    high: 4.0
     unit: MUSD/train/year
-    conf: placeholder
-    source: crews, cleaning, station staff share
+    conf: "low"
+    source: "Berlin-Hamburg train formation and operation 26-37 Mio DM/yr for 15-19 trains (~1.4-2.5 Mio DM per train-year, 1993); CA HSR train operations $285 M/yr for 78 trainsets (~3.65 M, 2015$, incl. energy)"
 
 # Build-for-two provisions when a line reserves room for a second system (see land.yaml reserve).
 reserve:

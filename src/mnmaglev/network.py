@@ -105,7 +105,8 @@ SEGMENT_KEYS = (
 
 
 VARIANTS_DIR = NETWORK_DIR / "variants"
-SETTINGS_DEFAULTS = {"local_supply": False}
+SETTINGS_DEFAULTS = {"local_supply": False, "fusion": "none"}
+FUSION_CHOICES = ("own", "none")
 
 
 def load_settings(path: Path = NETWORK_DIR / "lines.yaml") -> dict:
@@ -115,6 +116,8 @@ def load_settings(path: Path = NETWORK_DIR / "lines.yaml") -> dict:
     unknown = set(out) - set(SETTINGS_DEFAULTS)
     if unknown:
         raise ValueError(f"unknown settings {unknown}; known: {sorted(SETTINGS_DEFAULTS)}")
+    if out["fusion"] not in FUSION_CHOICES:
+        raise ValueError(f"settings.fusion must be one of {FUSION_CHOICES}, got {out['fusion']!r}")
     return out
 
 

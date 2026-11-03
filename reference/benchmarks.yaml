@@ -43,7 +43,7 @@ benchmarks:
     source: US House hearing 107-27, Magnetic Levitation Transportation Issues (June 2001), https://commdocs.house.gov/committees/Trans/hpw107-27.000/hpw107-27_0.htm
     quote: "Construction cost for a dual guideway maglev is $40 million per mile."
     conf: low
-    note: promoter figure; NHCCI starts 2003, so 2003 is used (understates inflation slightly)
+    note: promoter figure; 2001 carried to 2003 with ENR CCI, then NHCCI
     anchor: true
 
   # --- at-grade guideway, civil (costs.guideway.at_grade) ---
@@ -216,6 +216,276 @@ benchmarks:
     source: Wikipedia, Transrapid
     quote: "US$43.6 million, including trains and stations"
     conf: medium
+    anchor: false
+
+
+  # ===== Research pass 2 (2026-11-03) =====
+  # FRA 2005 Report to Congress, "Costs and Benefits of Magnetic Levitation" (Sept 2005), Annex A
+  # Table A-3 unit costs, read from the National Transportation Library: https://rosap.ntl.bts.gov/view/dot/83590
+  - id: fra2005_pittsburgh_guideway
+    param: costs.guideway.elevated
+    value: 25.48
+    currency: USD
+    year: 2003
+    unit: MUSD/km
+    scope: Pittsburgh full line (100% elevated), guideway $20.5 M per track-mile, x2 tracks / 1.609 = per dual km (derived); whether it carries contingency is not stated
+    source: FRA 2005 Report to Congress, Annex A Table A-3, https://rosap.ntl.bts.gov/view/dot/83590
+    quote: "Guideway, $M/track-mi ... Pittsburgh full 20.5"
+    conf: high
+    anchor: true
+  - id: fra2005_bw_guideway_mix
+    param: costs.guideway.elevated
+    value: 26.97
+    currency: USD
+    year: 2002
+    unit: MUSD/km
+    scope: Baltimore-Washington guideway $21.7 M per track-mile (derived per dual km), a mix of 32.6% elevated, 51.7% at grade and 15.7% tunnel
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Guideway, $M/track-mi ... Balt-Wash 21.7"
+    conf: high
+    anchor: false
+  - id: fra2005_bw_systems
+    param: costs.systems.propulsion_power_control
+    value: 10.13
+    currency: USD
+    year: 2002
+    unit: MUSD/km
+    scope: Baltimore-Washington propulsion/control/comms 15.1 + power distribution 1.2 $M per route-mile (derived per km)
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Propulsion/control/comms, $M/route-mi 15.1; Power distribution 1.2"
+    conf: high
+    anchor: true
+  - id: fra2005_munich_systems
+    param: costs.systems.propulsion_power_control
+    value: 10.69
+    currency: USD
+    year: 2002
+    unit: MUSD/km
+    scope: Munich airport link propulsion/control/comms 15.7 + power 1.5 $M per route-mile (derived per km)
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Propulsion/control/comms 15.7; Power distribution 1.5 (Munich, 2002$)"
+    conf: high
+    anchor: true
+  - id: fra2005_pittsburgh_systems
+    param: costs.systems.propulsion_power_control
+    value: 3.54
+    currency: USD
+    year: 2003
+    unit: MUSD/km
+    adjust: {factor: 1.235, why: "Pittsburgh is only 61.9% dual track; scaled to all-dual (1/0.81, single track ~half)"}
+    scope: Pittsburgh full line propulsion/control/comms 4.5 + power 1.2 $M per route-mile (derived per km)
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Propulsion/control/comms 4.5; Power distribution 1.2 (Pittsburgh full, 2003$)"
+    conf: high
+    anchor: true
+  - id: fra2005_bw_station
+    param: costs.stations.terminal_major
+    value: 132
+    currency: USD
+    year: 2002
+    unit: MUSD each
+    scope: Baltimore-Washington maglev station, $M each
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Station, $M each ... Balt-Wash 132"
+    conf: high
+    anchor: true
+  - id: st_paul_union_depot
+    param: costs.stations.terminal_major
+    value: 243
+    currency: USD
+    year: 2012
+    unit: MUSD each
+    scope: Union Depot restoration incl. land acquisition (construction ~$150 M), finished 2012
+    source: REBusiness Online (2012-12-12), https://rebusinessonline.com/243m-restoration-of-union-depot-complete/
+    quote: "$243 million restoration project"
+    conf: high
+    anchor: true
+  - id: fra2005_pittsburgh_station
+    param: costs.stations.city
+    value: 77.2
+    currency: USD
+    year: 2003
+    unit: MUSD each
+    scope: Pittsburgh maglev station, $M each
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Station, $M each ... Pittsburgh full 77.2"
+    conf: high
+    anchor: true
+  - id: fra2005_anaheim_station
+    param: costs.stations.city
+    value: 39.7
+    currency: USD
+    year: 2000
+    unit: MUSD each
+    scope: Anaheim-Ontario maglev station, $M each
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Station, $M each ... Anaheim-Ont 39.7"
+    conf: high
+    anchor: true
+  - id: cahsr_central_valley_station
+    param: costs.stations.city
+    value: 287
+    currency: USD
+    year: 2026
+    unit: MUSD each
+    scope: CA HSR Merced, Fresno, Kings-Tulare, Bakersfield stations at P50 $1,147 M for 4 (full buildout incl. contingency), year-of-expenditure dollars treated as 2026
+    source: CA HSR 2024 Business Plan Basis of Estimate, https://hsr.ca.gov/wp-content/uploads/2024/05/2024_Business_Plan_Basis_of_Estimate-FINAL.pdf
+    quote: "P50 $1,147M"
+    conf: high
+    anchor: true
+  - id: berlin_hamburg_station
+    param: costs.stations.city
+    value: 50
+    currency: DEM
+    year: 1993
+    unit: MUSD each
+    scope: Berlin-Hamburg Transrapid, 5 stations at 50 Mio DM each (1993 prices)
+    source: Vieregg-Rössler (1997), http://www.vr-transport.de/transrapid-wirtsch/n004t.html
+    quote: "5 Bahnhoefe zu je 50 Mio. DM"
+    conf: medium
+    anchor: true
+  - id: target_field_station
+    param: costs.stations.city
+    value: 79.3
+    currency: USD
+    year: 2014
+    unit: MUSD each
+    scope: Minneapolis Target Field Station (commuter rail + LRT hub, 2014)
+    source: Hennepin County, https://www.hennepin.us/targetfieldstation
+    quote: "about $79.3M"
+    conf: high
+    anchor: false
+  - id: cahsr_heavy_maintenance
+    param: costs.depot.per_line
+    value: 640
+    currency: USD
+    year: 2026
+    unit: MUSD each
+    scope: CA HSR heavy maintenance facility (light facility P50 $364 M + $275 M for the heavy balance), YOE treated as 2026
+    source: CA HSR 2024 Business Plan Basis of Estimate
+    quote: "P50 $364M (light) ... heavy-facility balance $275M"
+    conf: high
+    anchor: true
+  - id: berlin_hamburg_depot
+    param: costs.depot.per_line
+    value: 150
+    currency: DEM
+    year: 1993
+    unit: MUSD each
+    scope: Berlin-Hamburg vehicle maintenance works
+    source: Vieregg-Rössler (1997), http://www.vr-transport.de/transrapid-wirtsch/n004t.html
+    quote: "Instandhaltungswerk fuer Fahrzeuge zu 150 Mio. DM"
+    conf: medium
+    anchor: true
+  - id: brightline_orlando_vmf
+    param: costs.depot.per_line
+    value: 100
+    currency: USD
+    year: 2023
+    unit: MUSD each
+    scope: Brightline Orlando vehicle maintenance facility (conventional trains)
+    source: Brightline / contractor reporting (agent summary)
+    quote: "$100M vehicle maintenance facility"
+    conf: medium
+    anchor: true
+  - id: berlin_hamburg_switch
+    param: costs.guideway.switch_each
+    value: 2
+    currency: DEM
+    year: 1993
+    unit: MUSD each
+    scope: Berlin-Hamburg maglev switch (57 planned), ~10x a rail switch of the same length
+    source: Vieregg-Rössler (1997), http://www.vr-transport.de/transrapid-wirtsch/n004t.html
+    quote: "rund 2 Mio. DM pro Weiche"
+    conf: medium
+    anchor: true
+  - id: fra2005_bw_vehicle
+    param: costs.vehicles.per_section
+    value: 11.7
+    currency: USD
+    year: 2002
+    unit: MUSD each
+    scope: Baltimore-Washington maglev vehicle section
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Vehicle (section), $M each ... Balt-Wash 11.7"
+    conf: high
+    anchor: true
+  - id: fra2005_pittsburgh_vehicle
+    param: costs.vehicles.per_section
+    value: 8.7
+    currency: USD
+    year: 2003
+    unit: MUSD each
+    scope: Pittsburgh maglev vehicle section
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Vehicle (section), $M each ... Pittsburgh full 8.7"
+    conf: high
+    anchor: true
+  - id: fra2005_munich_vehicle
+    param: costs.vehicles.per_section
+    value: 13.4
+    currency: USD
+    year: 2002
+    unit: MUSD each
+    scope: Munich airport link vehicle section
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Vehicle (section), $M each ... Munich 13.4"
+    conf: high
+    anchor: true
+  - id: transrapid_australia_section
+    param: costs.vehicles.per_section
+    value: 18
+    currency: AUD
+    year: 2008
+    unit: MUSD each
+    scope: Transrapid Australia quote to Victoria, A$16.5 M (commuter) to A$20 M (luxury) per section, midpoint
+    source: Wikipedia, Transrapid (citing a ThyssenKrupp submission; original link dead)
+    quote: "between A$16.5 million (commuter) and A$20 million (luxury) per section"
+    conf: medium
+    anchor: true
+  - id: berlin_hamburg_section
+    param: costs.vehicles.per_section
+    value: 9.5
+    currency: DEM
+    year: 1993
+    unit: MUSD each
+    scope: Berlin-Hamburg Transrapid section (vs ~4 Mio DM per ICE 3 car)
+    source: Vieregg-Rössler (1997), http://www.vr-transport.de/transrapid-wirtsch/n004t.html
+    quote: "9,5 Mio. DM pro Sektion"
+    conf: medium
+    anchor: true
+  - id: fra2005_bw_allin
+    param: allin_per_km
+    value: 59.48
+    currency: USD
+    year: 2002
+    unit: MUSD/km
+    scope: Baltimore-Washington total $95.7 M per route-mile (derived per km)
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Total, $M/route-mi ... Balt-Wash 95.7"
+    conf: high
+    anchor: false
+  - id: fra2005_pittsburgh_allin
+    param: allin_per_km
+    value: 42.57
+    currency: USD
+    year: 2003
+    unit: MUSD/km
+    scope: Pittsburgh full total $68.5 M per route-mile (derived per km), 100% elevated, 61.9% dual
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Total, $M/route-mi ... Pittsburgh full 68.5"
+    conf: high
+    anchor: false
+  - id: fra2005_munich_allin
+    param: allin_per_km
+    value: 53.76
+    currency: USD
+    year: 2002
+    unit: MUSD/km
+    scope: Munich airport link total $86.5 M per route-mile (derived per km)
+    source: FRA 2005 Report to Congress, Annex A Table A-3
+    quote: "Total, $M/route-mi ... Munich 86.5"
+    conf: high
     anchor: false
 
 # Soft costs and contingency (no conversion; shares):

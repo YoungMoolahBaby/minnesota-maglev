@@ -4,19 +4,19 @@
 
 guideway:
   concrete_elevated:
-    value: 5500
-    low: 3800
-    high: 8000
+    value: 7500
+    low: 6000
+    high: 10000
     unit: m^3/km
-    conf: placeholder
-    source: two box beams ~1.9 m^2 each (3,800 m^3/km) + piers and footings below frost (~1,700)
+    conf: "low"
+    source: "Shanghai girders: 2,551 girders, most 24 m and 175 tons (ENR) = ~6.6 t/m = ~2.6 m3/m per guideway, ~5,300 m3/km of dual beams alone (derived); plus piers and footings below the frost line (not found, estimated ~2,000)"
   concrete_at_grade:
-    value: 4200
-    low: 3000
-    high: 6000
+    value: 3500
+    low: 2500
+    high: 5000
     unit: m^3/km
-    conf: placeholder
-    source: low beams on a slab/embankment cap
+    conf: "low"
+    source: "at-grade guideway deck ~2,010 m3 concrete per double-track km without foundations (Gers 1997, Transrapid vs ICE ecology study); plus foundations"
   concrete_urban:
     value: 7500
     low: 5000
@@ -39,19 +39,19 @@ guideway:
     conf: low
     source: prestressing strand in post-tensioned beams
   stator_steel:
-    value: 370
-    low: 200
-    high: 550
+    value: 300
+    low: 220
+    high: 400
     unit: t/km
-    conf: placeholder
-    source: laminated electrical-steel stator packs, both sides of both tracks (~92 kg/m per side); cfsem sizing will replace this
+    conf: "low"
+    source: "stator pack 1,032 x 158 x ~90 mm (GRIN, Der Linearmotor und die Technik des Transrapids) = ~110 kg solid, ~75 kg net of slots, ~73 kg/m per side, x4 = ~290 t per dual km (derived); pack mass not published"
   stator_aluminium:
-    value: 15
-    low: 8
-    high: 30
+    value: 20
+    low: 15
+    high: 23
     unit: t/km
-    conf: placeholder
-    source: 3-phase aluminium cable windings laid in the stator packs (Transrapid uses aluminium conductors; to verify)
+    conf: "medium"
+    source: "Gers 1997: ~20 t aluminium per double-track km; GRIN: aluminium conductor 300 mm2, cable length per phase 2.35x guideway = ~23 t per dual km (derived)"
   guidance_steel:
     value: 110
     low: 60
@@ -60,12 +60,12 @@ guideway:
     conf: placeholder
     source: side guidance rails, gliding strips, fixings
   copper:
-    value: 10
-    low: 5
-    high: 20
+    value: 11.6
+    low: 8
+    high: 15
     unit: t/km
-    conf: placeholder
-    source: feeder cables, substations, earthing, signalling and comms
+    conf: "medium"
+    source: "Gers 1997: ~11.6 t copper per double-track km in line cables"
 
 tunnel:
   concrete:
@@ -86,25 +86,25 @@ ore:
     source: ~65% Fe pellets to ~98% Fe steel incl. losses (blast furnace or DRI-EAF)
   taconite_per_t_pellets:
     value: 3.0
-    low: 2.5
+    low: 3.0
     high: 3.5
     unit: t crude taconite / t pellets
-    conf: low
-    source: Mesabi taconite ~25-30% Fe magnetite concentrated to ~65% Fe pellets
+    conf: "medium"
+    source: "EPA AP-42 11.23: crude taconite 30-35% Fe, pellets average 63% Fe, ~33% of crude becomes product; MN DNR via Mesabi Tribune (2019): ~3.5 t crude per t"
   cu_ore_grade:
     value: 0.0029
     low: 0.0025
-    high: 0.0035
+    high: 0.0063
     unit: fraction Cu in ore
-    conf: low
-    source: Duluth Complex NorthMet-type disseminated sulfide, ~0.3% Cu (verify against the NewRange technical report)
+    conf: "medium"
+    source: "NorthMet Feasibility Update (Dec 2022): reserves 289.2 M short tons at 0.290% Cu, 0.084% Ni (measured+indicated 0.252%); Twin Metals Maturi measured 0.63% Cu at 0.3% cut-off (2014) sets the high end"
   cu_recovery:
-    value: 0.9
-    low: 0.85
-    high: 0.93
+    value: 0.91
+    low: 0.9
+    high: 0.934
     unit: fraction
-    conf: low
-    source: typical flotation recovery
+    conf: "medium"
+    source: "NorthMet Feasibility Update (2022): Cu recovery 91.0%; Twin Metals Maturi 93.4%"
   cement_per_m3:
     value: 0.35
     low: 0.30
@@ -203,3 +203,10 @@ mn_ore:
     unit: share without a local-supply policy
     conf: placeholder
     source: "US steel from blast furnaces is largely Lake Superior pellets, but EAF mills (most rebar) run on scrap"
+  annual_pellets:
+    value: 34.5
+    low: 28.6
+    high: 34.6
+    unit: Mt pellets per year produced in Minnesota (long tons ~ tonnes for scale)
+    conf: high
+    source: "Minnesota Minerals Tax Office via Mesabi Tribune (2025-12-12): 34.5 M tons 2023, 34.6 M 2024, ~28.55 M dry long tons estimated 2025"

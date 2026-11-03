@@ -45,16 +45,34 @@ trains per hour (needs the demand model) and the second-system urban provision.
 
 ## Verify items flagged in the YAML
 
-8. [ ] NOAA 1991-2020 normals for Duluth, MSP, Rochester, St. Cloud (`params/climate.yaml`).
-9. [ ] MN Rules 1303.1600 frost zones by county, and DLI's proposed air-freezing-index zones.
-10. [ ] 2020 Census populations (`network/cities.yaml`).
-11. [ ] U of MN Land Economics county land values (cropland south/central, forest).
-12. [ ] BWSR wetland bank credit prices by bank service area; WCA replacement ratios.
-13. [ ] Transrapid guideway geometry: 12 deg max cant, max gradient, unbalanced lateral limit,
-    beam cross-sections (concrete per km), stator pack mass per metre, winding material.
-14. [ ] Duluth Complex grades (NewRange NorthMet technical report; Twin Metals); Mesabi pellet Fe
-    and taconite ratios; Minnesota annual pellet output, for scale.
-15. [ ] Minnesota industrial electricity rates and MISO interconnection costs.
+Research pass 2 (2026-11-03) did items 8-15 with three research agents; figures and sources are in
+the parameter `source` fields and reference/benchmarks.yaml.
+
+8. [x] NOAA 1991-2020 normals: my Nov-Mar temperatures were 3-4 C too cold (they matched Dec-Feb).
+   Now Duluth -6.6 / 12.9 C / 229 cm, MSP -3.7 / 16.8 / 130, Rochester -4.5 / 15.4 / 135.
+   Not found: freezing-rain days per station (NCEI normals don't carry them).
+9. [x] Frost zones (Minn. R. 1303.1600): Zone I 5 ft (St. Louis, Carlton, Pine, Douglas, Clay, ...),
+   Zone II 3.5 ft (metro, south). Pine (Hinckley), Douglas (Alexandria) and Clay (Moorhead) are Zone I
+   but sit in segments with the central zone: the GIS phase should assign zones by county.
+   DLI's air-freezing-index zones are proposed, not adopted.
+10. [x] 2020 Census: Virginia 8,421 (was 8,354), Bemidji 14,574 (was 15,434), Brainerd/Baxter 23,007.
+11. [x] Land values (UMN Land Economics 2024): south ~10-11.5k/acre, central 2.7-7k, northern
+    timber 1.3-2.9k (was 3k). NASS cash rent $200 (was 250). Downtown Minneapolis ~3 M/acre (1-10).
+    Still open: suburban land per acre, MnDOT right-of-way unit costs.
+12. [x] BWSR 2025 average cost per credit by service area ($18k-120k; metro $120k) and the WCA
+    ratios (Minn. R. 8420.0522: 2.5:1 base, 2:1 same service area, 1:1-1.5:1 in >80% areas).
+13. [x] Transrapid geometry from the German design rules (12 deg cant, 10% grade, 1.5 m/s2
+    unbalanced -> 3,980 m minimum radius at 430 km/h); beams (Shanghai 2,551 girders of ~175 t),
+    Gers 1997 material totals, stator pack size, aluminium windings. Energy: the model was ~30% low;
+    drag coefficient calibrated to TR08 (28.1 Wh/seat-km at 300 km/h), test added.
+    Still open: stator pack mass, concrete in piers and footings, substation rating.
+14. [x] NorthMet 0.290% Cu reserves (2022 feasibility update, 91% recovery), Twin Metals Maturi
+    0.63% Cu; EPA AP-42 taconite grades; Minnesota pellets 34.5 Mt (2023), 34.6 (2024), ~28.6 (2025).
+15. [x] EIA: Minnesota industrial power 9.78 c/kWh (Jan-Aug 2026), transportation sector 13.51 c.
+
+Also from pass 2: the FRA 2005 Report to Congress cost tables (rosap.ntl.bts.gov/view/dot/83590),
+used for guideway, systems, stations and vehicles; stations, depot, switch, vehicle, O&M and crew
+costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Depot, Brightline).
 
 ## Second-system reserve
 
@@ -81,3 +99,21 @@ trains per hour (needs the demand model) and the second-system urban provision.
     quote or CRU/Fastmarkets), PC strand, fabricated guidance rails, aggregate (USGS MCS).
 19. [ ] Where the steel really comes from: which mills make rebar, strand, plate and electrical
     steel from Minnesota pellets (Cleveland-Cliffs, U.S. Steel), Buy America rules for FRA money.
+
+## Fusion power
+
+20. [x] Small fusion units, costs, operations, timelines (fusion research pass 2026-11-03): sizes
+    (Helion/Zap ~50 MWe, others 85-400), capital (DIW review of 99 estimates: first-of-a-kind
+    ~$12,600/kW, nth ~$7,000, 2018 USD, "rather optimistic"), O&M (~78-106 $/kW-yr), capacity
+    factor (design targets 85-90%), MISO 2025 prices ($43 day-ahead, $53 all-in). All targets and
+    projections; nothing has made net electricity yet.
+21. [ ] Minnesota law: does Minn. Stat. 216B.243 subd. 3b ("new nuclear-powered electric generating
+    plant") cover fusion? HF 387 (2023) would have exempted it and died; a state study of the
+    moratorium is due January 2027. Certificate of need starts at 50 MW combined per site
+    (216B.2421): could sub-50 MW units at separate sites (substations, depots) avoid it? Needs counsel.
+    Minnesota is an NRC Agreement State (MDH), so it would license fusion under the NRC's fusion
+    rule (proposed Feb 2026, final pending).
+22. [ ] Surplus users: an H2-DRI plant on the Range (NRRI pre-FEED with U.S. Steel; ~1 GW of power),
+    data centres near the Midway hub or the Range, district heat; what they would pay per MWh.
+23. [ ] Peak shaving by timetable: stagger the lines' departures at the Midway hub and see how far
+    the 485 MW network peak (and the fleet) drops.

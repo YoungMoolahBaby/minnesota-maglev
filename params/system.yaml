@@ -32,11 +32,11 @@ vehicle:
     source: design choice
   section_mass:
     value: 60
-    low: 50
-    high: 70
+    low: 55
+    high: 66
     unit: t
-    conf: placeholder
-    source: loaded section mass; cargo limit 15 t per car (Wikipedia) bounds the payload part
+    conf: "medium"
+    source: "TR08 3 sections: 149.5 t empty + 27.9 t payload = ~59 t per loaded section; TR09 ~70 t (de.wikipedia Transrapid); TR07 45 t + 20 t payload (Sands, UCTC WP 183)"
   seats_per_section:
     value: 88
     low: 70
@@ -45,12 +45,12 @@ vehicle:
     conf: medium
     source: Shanghai max 440 seats per 5-section train (Wikipedia)
   drag_coefficient:
-    value: 0.26
-    low: 0.24
-    high: 0.30
+    value: 0.41
+    low: 0.32
+    high: 0.5
     unit: "-"
-    conf: medium
-    source: Wikipedia, Transrapid
+    conf: "low"
+    source: "effective whole-train drag, calibrated so the model reproduces TR08 5-section energy of 28.1 Wh/seat-km at 300 km/h (Schach et al., via de.wikipedia Transrapid; tests/test_model.py). Wikipedia's 0.26 underestimates a 128 m train. TR07 simulation 32/49 Wh/seat-km cruising at 300/400 km/h (Bundestag Drs. 11/2069)"
   frontal_area:
     value: 16
     low: 15
@@ -100,22 +100,22 @@ geometry:
     low: 12
     high: 12
     unit: deg
-    conf: medium
-    source: Transrapid guideway tilts up to 12 deg (to verify against the German MSB design rules)
+    conf: "high"
+    source: "German maglev design rules (EBA Fahrweg Teil IV Trassierung, via BMVI Machbarkeitsstudie 2021 table 2-3): 12 deg on open track, 3 deg at platforms; ANL Survey of Foreign Maglev Systems (1993)"
   unbalanced_lateral:
-    value: 1.0
-    low: 0.8
-    high: 1.2
+    value: 1.5
+    low: 1.0
+    high: 2.0
     unit: m/s^2
-    conf: placeholder
-    source: passenger comfort limit, to verify
+    conf: "high"
+    source: "German maglev design rules: unbalanced lateral acceleration limit 1.5 m/s2 (2.0 in switches) (BMVI Machbarkeitsstudie 2021); de.wikipedia radii 3,415 m at 400 km/h and 5,382 m at 500 match 12 deg + 1.5"
   max_gradient:
     value: 0.10
     low: 0.10
     high: 0.10
     unit: "-"
-    conf: low
-    source: Transrapid literature claims 10%; check against climb power and icing
+    conf: "high"
+    source: "German maglev design rules: 100 per mille on open track, 5 at platforms (BMVI 2021); Pittsburgh planned max 8.1% (FRA 2005)"
 
 service:
   trains_per_hour:

@@ -26,5 +26,6 @@ def test_conversion_arithmetic():
     assert to_usd(1.0, "EUR", 2007) == pytest.approx(1.3711)
     assert inflate(1.0, 2007) == pytest.approx(3.1348 / 1.5442)
     assert to_2026_usd(10.0, "USD", 2026) == pytest.approx(10.0)
-    # before the index starts (2003), 2003 is used
-    assert inflate(1.0, 2001) == pytest.approx(3.1348 / 1.0138)
+    # before NHCCI starts (2003): ENR CCI to 2003, then NHCCI
+    assert inflate(1.0, 2001) == pytest.approx(6694 / 6343 * 3.1348 / 1.0138)
+    assert to_usd(1.0, "DEM", 1993) == pytest.approx(0.60441)

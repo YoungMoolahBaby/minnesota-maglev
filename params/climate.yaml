@@ -12,90 +12,90 @@
 
 north:
   winter_mean_temp:
-    value: -10
-    low: -13
-    high: -7
+    value: -6.6
+    low: -8.5
+    high: -5.0
     unit: degC (Nov-Mar)
-    conf: low
-    source: Duluth area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Duluth (USW00014913), Nov-Mar mean of monthly TAVG"
   summer_mean_temp:
-    value: 13
-    low: 11
-    high: 15
+    value: 12.9
+    low: 12.0
+    high: 14.0
     unit: degC (Apr-Oct)
-    conf: low
-    source: Duluth area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Duluth, Apr-Oct mean"
   snowfall:
-    value: 220
-    low: 180
+    value: 229
+    low: 200
     high: 260
     unit: cm/year
-    conf: low
-    source: Duluth ~85-90 in/yr, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Duluth 90.2 in/yr"
   frost:
     value: 1
     low: 1
     high: 1
     unit: "1 = north frost zone"
-    conf: low
-    source: MN Rules 1303.1600 zones, verify county list
+    conf: "high"
+    source: "Minn. R. 1303.1600: Zone I (5 ft footings) incl. St. Louis, Carlton, Pine, Douglas, Clay, Crow Wing, Itasca; DLI air-freezing-index zones proposed, not adopted"
 
 central:
   winter_mean_temp:
-    value: -8
-    low: -11
-    high: -5
+    value: -3.7
+    low: -6.0
+    high: -3.0
     unit: degC (Nov-Mar)
-    conf: low
-    source: Minneapolis-St. Paul area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, MSP Nov-Mar (St. Cloud -6.0 sets the low end)"
   summer_mean_temp:
-    value: 16
-    low: 14
-    high: 18
+    value: 16.8
+    low: 14.7
+    high: 17.5
     unit: degC (Apr-Oct)
-    conf: low
-    source: Minneapolis-St. Paul area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, MSP Apr-Oct (St. Cloud 14.7)"
   snowfall:
     value: 130
-    low: 105
-    high: 160
+    low: 120
+    high: 140
     unit: cm/year
-    conf: low
-    source: MSP ~50-55 in/yr, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, MSP 51.2 in/yr (St. Cloud 47.9)"
   frost:
     value: 0
     low: 0
     high: 0
     unit: "0 = south frost zone"
-    conf: low
-    source: MN Rules 1303.1600 zones, verify county list
+    conf: "high"
+    source: "Minn. R. 1303.1600: Zone II (3.5 ft footings) incl. Anoka, Ramsey, Hennepin, Dakota, Chisago, Isanti, Sherburne, Stearns, Benton; Pine (Hinckley) is Zone I"
 
 south:
   winter_mean_temp:
-    value: -7
-    low: -10
-    high: -4
+    value: -4.5
+    low: -5.5
+    high: -3.5
     unit: degC (Nov-Mar)
-    conf: low
-    source: Rochester area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Rochester (USW00014925) Nov-Mar"
   summer_mean_temp:
-    value: 16
-    low: 14
-    high: 18
+    value: 15.4
+    low: 14.5
+    high: 16.5
     unit: degC (Apr-Oct)
-    conf: low
-    source: Rochester area normals, verify NOAA
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Rochester Apr-Oct"
   snowfall:
-    value: 125
-    low: 100
-    high: 155
+    value: 135
+    low: 120
+    high: 150
     unit: cm/year
-    conf: low
-    source: Rochester ~50 in/yr, verify NOAA; more freezing rain and wind than the north
+    conf: "high"
+    source: "NOAA NCEI 1991-2020 normals, Rochester 53.1 in/yr"
   frost:
     value: 0
     low: 0
     high: 0
     unit: "0 = south frost zone"
-    conf: low
-    source: MN Rules 1303.1600 zones, verify county list
+    conf: "high"
+    source: "Minn. R. 1303.1600: Zone II incl. Dakota, Goodhue, Olmsted, Rice, Steele, Blue Earth, Winona"

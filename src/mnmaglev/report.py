@@ -11,6 +11,7 @@ import numpy as np
 
 from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
+from .fusion import fleet_money, size_by_phase
 from .kinematics import line_summary
 from .network import Line
 from .params import Param, nominal, sample
@@ -41,7 +42,7 @@ def sensitivity(params: dict[str, Param], samples: dict[str, np.ndarray], total:
 
 
 def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1,
-                local_supply: bool = False) -> dict:
+                local_supply: bool = False, fusion: str = "none") -> dict:
     P0 = nominal(params)
     PS = sample(params, n, seed)
     seen: set[str] = set()
@@ -66,13 +67,22 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
             "materials": line_materials(line, P0, local_supply),
             "local_saving": local_saving,
         })
+    # power supply: the fusion fleet, sized from the network's second-by-second peak
+    sizing = size_by_phase([r["line"] for r in results], P0)
+    fus0, fusS = fleet_money(sizing, P0), fleet_money(sizing, PS)
+    own = fusion == "own"
+    fusion_cum = {s["phase"]: sum(f["capital"] for f in fusS if f["phase"] <= s["phase"]) for s in sizing}
+    if own:
+        net_total = net_total + fusion_cum[max(fusion_cum)]
     return {
         "P0": P0, "results": results, "n": n, "seed": seed,
         "sensitivity": sensitivity(params, PS, net_total),
         "phase_totals": {
-            ph: _pct(sum(r["capS"]["total"] for r in results if r["line"].phase <= ph))
+            ph: _pct(sum(r["capS"]["total"] for r in results if r["line"].phase <= ph)
+                     + (fusion_cum[ph] if own else 0.0))
             for ph in sorted({r["line"].phase for r in results})
         },
+        "fusion": fusion, "fusion0": fus0, "fusionS": fusS,
         "min_radius_m": curve_radius_note(P0),
         "benchmarks": benchmark_table(params),
         "conf_counts": Counter(p.conf for p in params.values()),
@@ -98,6 +108,7 @@ def write_markdown(net: dict, path: Path) -> None:
              f"({net['n']:,} Monte Carlo samples, seed {net['seed']}). USD 2026.\n")
     L.append(f"Local supply policy: **{'on' if net.get('local_supply') else 'off'}** "
              "(network/lines.yaml settings.local_supply; `--local-supply on|off` overrides).\n")
+    L.append(f"Fusion: **{net.get('fusion', 'none')}** (see Power and fusion below).\n")
     cc = net["conf_counts"]
     L.append("> Concept-stage numbers. Parameters by confidence: "
              + ", ".join(f"{k} {cc.get(k, 0)}" for k in ("high", "medium", "low", "placeholder"))
@@ -244,13 +255,52 @@ def write_markdown(net: dict, path: Path) -> None:
                  f"| {float(mat['mn_pellets_t']):,.0f} | {float(mat['mn_production_tax_musd']):,.1f} |")
     L.append(f"\nNetwork: local supply saves ~**${sav_tot / 1000:,.1f} bn** P50 (sum of line medians) and pays "
              f"~${tax_tot:,.1f} M in taconite production tax to the Range.\n")
+    pellets_all = sum(float(r["materials"]["iron_pellets_t"]) for r in R)
+    annual = net["P0"]["materials.mn_ore.annual_pellets"] * 1e6
+    L.append(f"All the steel in these lines needs ~{pellets_all / 1e6:,.1f} Mt of iron pellets, "
+             f"{pellets_all / annual:.1%} of one year of Minnesota pellet output "
+             f"({annual / 1e6:,.1f} Mt, 2023-24): {pellets_all / annual / 15:.1%}-{pellets_all / annual / 10:.1%} "
+             f"of output a year over a 10-15 year build.\n")
+
+    L.append("## Power and fusion\n")
+    fz = net.get("fusion", "none")
+    L.append(f"Fusion setting: **{fz}** (network/lines.yaml settings.fusion; `--fusion own|none` overrides). "
+             "Demand comes from every train on the timetable, second by second, both directions, "
+             "departures aligned on the hour and half hour at every line (a conservative, peaky "
+             "timetable), in winter air. Braking trains feed power to pulling ones. The fleet covers "
+             "the 1-second peak plus headroom and one spare unit, no batteries; everything the trains "
+             "don't use is surplus for neighbouring users or the grid.\n")
+    L.append("| Through phase | Avg demand MW (24 h / service) | Peak MW (1 min / 1 s) | Units (new) | Capacity MW "
+             "| Capital P50 new units | Surplus GWh/yr (share) | Surplus value P50 /yr | Fusion O&M P50 /yr "
+             "| Grid energy avoided P50 /yr |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
+    for f0, fS in zip(net["fusion0"], net["fusionS"]):
+        share = float(f0["surplus_mwh"]) / float(f0["production_mwh"]) if float(f0["production_mwh"]) else 0.0
+        L.append(
+            f"| {f0['phase']} | {f0['avg_mw']:,.0f} / {f0['avg_service_mw']:,.0f} "
+            f"| {f0['peak_1min_mw']:,.0f} / {f0['peak_mw']:,.0f} | {f0['units']} ({f0['new_units']}) "
+            f"| {f0['capacity_mw']:,.0f} | {_bn(_pct(fS['capital'])['p50'])} "
+            f"| {float(f0['surplus_mwh']) / 1000:,.0f} ({share:.0%}) "
+            f"| ${_pct(fS['surplus_value_per_year'])['p50']:,.0f} M "
+            f"| ${_pct(fS['om_per_year'])['p50']:,.0f} M "
+            f"| ${_pct(fS['grid_energy_avoided_per_year'])['p50']:,.0f} M |"
+        )
+    first = net["P0"]["power.fusion.first_power_year"]
+    L.append(f"\nCapital includes soft costs and contingency{' and counts in the phase totals above' if fz == 'own' else ' but is NOT in the totals (fusion off)'}. "
+             f"Until the first unit delivers power (most likely ~{first:.0f}, `power.fusion.first_power_year`), "
+             "the trains buy grid power: that is the energy line in each line's opex, so the opex columns "
+             "already show the 'fusion late' case.\n")
     path.write_text("\n".join(L), encoding="utf-8")
 
 
 def write_json(net: dict, path: Path) -> None:
     out = {"generated": date.today().isoformat(), "n": net["n"], "seed": net["seed"],
            "min_radius_m": net["min_radius_m"], "phase_totals_musd": net["phase_totals"],
-           "sensitivity": net["sensitivity"], "lines": []}
+           "sensitivity": net["sensitivity"], "lines": [],
+           "fusion": {"setting": net.get("fusion", "none"),
+                      "phases": [{k: (float(v) if not isinstance(v, int) else v) for k, v in f.items()}
+                                 for f in net["fusion0"]],
+                      "capital_musd_p": [_pct(f["capital"]) for f in net["fusionS"]]}}
     for r in net["results"]:
         line = r["line"]
         out["lines"].append({
