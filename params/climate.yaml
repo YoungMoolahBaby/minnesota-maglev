@@ -1,0 +1,101 @@
+# Climate zones. Each segment in network/lines.yaml names one zone.
+# Same leaf format as costs.yaml. Values are rounded from memory of NOAA 1991-2020 normals and
+# must be checked against NOAA NCEI station normals (Duluth DLH, Minneapolis MSP, Rochester RST,
+# St. Cloud STC, ...). The GIS phase swaps zones for gridded data (PRISM/nClimGrid, Atlas 14/15).
+#
+# How climate enters the model now:
+#   winter/summer mean temperature -> air density -> aerodynamic drag energy (computed, not guessed)
+#   snowfall -> scales the winter O&M cost (reference 130 cm/yr = factor 1.0)
+#   frost -> picks the frost foundation adder in costs.yaml (frost_north / frost_south)
+# Not modelled yet (see docs/HAZARDS.md): freezing rain and guideway icing, wind limits on high
+# viaducts, flood stage per crossing, freeze-thaw cycles on concrete, lake-effect snow near Duluth.
+
+north:
+  winter_mean_temp:
+    value: -10
+    low: -13
+    high: -7
+    unit: degC (Nov-Mar)
+    conf: low
+    source: Duluth area normals, verify NOAA
+  summer_mean_temp:
+    value: 13
+    low: 11
+    high: 15
+    unit: degC (Apr-Oct)
+    conf: low
+    source: Duluth area normals, verify NOAA
+  snowfall:
+    value: 220
+    low: 180
+    high: 260
+    unit: cm/year
+    conf: low
+    source: Duluth ~85-90 in/yr, verify NOAA
+  frost:
+    value: 1
+    low: 1
+    high: 1
+    unit: "1 = north frost zone"
+    conf: low
+    source: MN Rules 1303.1600 zones, verify county list
+
+central:
+  winter_mean_temp:
+    value: -8
+    low: -11
+    high: -5
+    unit: degC (Nov-Mar)
+    conf: low
+    source: Minneapolis-St. Paul area normals, verify NOAA
+  summer_mean_temp:
+    value: 16
+    low: 14
+    high: 18
+    unit: degC (Apr-Oct)
+    conf: low
+    source: Minneapolis-St. Paul area normals, verify NOAA
+  snowfall:
+    value: 130
+    low: 105
+    high: 160
+    unit: cm/year
+    conf: low
+    source: MSP ~50-55 in/yr, verify NOAA
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: "0 = south frost zone"
+    conf: low
+    source: MN Rules 1303.1600 zones, verify county list
+
+south:
+  winter_mean_temp:
+    value: -7
+    low: -10
+    high: -4
+    unit: degC (Nov-Mar)
+    conf: low
+    source: Rochester area normals, verify NOAA
+  summer_mean_temp:
+    value: 16
+    low: 14
+    high: 18
+    unit: degC (Apr-Oct)
+    conf: low
+    source: Rochester area normals, verify NOAA
+  snowfall:
+    value: 125
+    low: 100
+    high: 155
+    unit: cm/year
+    conf: low
+    source: Rochester ~50 in/yr, verify NOAA; more freezing rain and wind than the north
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: "0 = south frost zone"
+    conf: low
+    source: MN Rules 1303.1600 zones, verify county list

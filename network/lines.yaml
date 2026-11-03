@@ -1,0 +1,218 @@
+# The network, the part you edit like a city builder.
+# A line runs through points (ids from cities.yaml); a segment joins two neighbouring points.
+# Every segment takes the line's `defaults`, then its own overrides.
+#
+# Segment fields:
+#   detour            route length / straight-line length (terrain, lakes, following corridors)
+#   zone              climate zone in params/climate.yaml
+#   urban_start_km    km of urban structure leaving the `from` point (speed-limited, urban costs)
+#   urban_end_km      km of urban structure arriving at the `to` point
+#   urban_tunnel      share of the urban km in tunnel (rest = urban viaduct)
+#   structure         shares of the RURAL km: elevated / at_grade (sum to 1)
+#   land              shares of the route by land class in params/land.yaml (sum to 1)
+#   floodplain        share of the route on mapped floodplain (FEMA NFHL in the GIS phase)
+#   peat              share on peat / soft ground (deep piles)
+#   bridges           long crossings: name + length_m (costed per metre, not as guideway)
+#
+# All shares and crossings are PLANNER ESTIMATES until the GIS phase (docs/PLAN.md, phase 2)
+# measures them from lidar, land cover, NWI wetlands, FEMA floodplains and parcels.
+
+lines:
+  - id: spine
+    name: Arrowhead - Twin Cities - Med City
+    phase: 1
+    points: [duluth, hinckley, minneapolis, msp, rochester]
+    note: >
+      The priority corridor. Alternative to study: a St. Paul Union Depot stop between Hinckley and
+      Minneapolis, or MSP-only for the Twin Cities with light-rail links. The Duluth approach
+      descends ~200 m from the hilltop to the harbour (fine for 10% maglev grades, check icing).
+    defaults:
+      detour: 1.10
+      zone: central
+      urban_start_km: 0
+      urban_end_km: 0
+      urban_tunnel: 0.0
+      structure: {elevated: 0.75, at_grade: 0.25}
+      land: {cropland_central: 0.6, suburban: 0.1, existing_corridor: 0.2, wetland: 0.1}
+      floodplain: 0.05
+      peat: 0.02
+      bridges: []
+    segments:
+      - from: duluth
+        to: hinckley
+        zone: north
+        detour: 1.12
+        urban_start_km: 6
+        structure: {elevated: 0.85, at_grade: 0.15}
+        land: {urban_core: 0.02, suburban: 0.04, forest_north: 0.45, wetland: 0.2, cropland_central: 0.09, existing_corridor: 0.2}
+        floodplain: 0.06
+        peat: 0.15
+        bridges: [{name: St. Louis River, length_m: 450}, {name: Kettle River, length_m: 250}]
+      - from: hinckley
+        to: minneapolis
+        detour: 1.12
+        urban_end_km: 18
+        urban_tunnel: 0.25
+        land: {forest_north: 0.15, wetland: 0.12, cropland_central: 0.38, suburban: 0.15, urban_core: 0.02, existing_corridor: 0.18}
+        floodplain: 0.05
+        peat: 0.06
+        bridges: [{name: Mississippi River (Minneapolis), length_m: 450}]
+      - from: minneapolis
+        to: msp
+        detour: 1.15
+        urban_start_km: 15
+        urban_tunnel: 0.3
+        land: {urban_core: 0.25, suburban: 0.45, existing_corridor: 0.3}
+        floodplain: 0.0
+        peat: 0.0
+      - from: msp
+        to: rochester
+        detour: 1.10
+        zone: south
+        urban_start_km: 6
+        urban_end_km: 6
+        structure: {elevated: 0.7, at_grade: 0.3}
+        land: {suburban: 0.12, cropland_south: 0.6, existing_corridor: 0.2, wetland: 0.05, urban_core: 0.03}
+        floodplain: 0.08
+        peat: 0.02
+        bridges: [{name: Minnesota River valley, length_m: 1500}, {name: Cannon River, length_m: 300}, {name: Zumbro River, length_m: 200}]
+
+  - id: iron_range
+    name: Duluth - Iron Range
+    phase: 2
+    points: [duluth, virginia, hibbing]
+    note: Serves the Mesabi Range, where the guideway steel's iron ore comes from.
+    defaults:
+      detour: 1.12
+      zone: north
+      urban_start_km: 0
+      urban_end_km: 2
+      urban_tunnel: 0.0
+      structure: {elevated: 0.85, at_grade: 0.15}
+      land: {forest_north: 0.55, wetland: 0.25, existing_corridor: 0.15, suburban: 0.05}
+      floodplain: 0.05
+      peat: 0.25
+      bridges: []
+    segments:
+      - from: duluth
+        to: virginia
+        urban_start_km: 5
+        bridges: [{name: Cloquet / St. Louis River, length_m: 300}]
+      - from: virginia
+        to: hibbing
+        detour: 1.15
+        note: around active and former open pits
+
+  - id: west
+    name: Twin Cities - St. Cloud - Fargo/Moorhead
+    phase: 2
+    points: [minneapolis, st_cloud, alexandria, moorhead]
+    defaults:
+      detour: 1.08
+      zone: central
+      urban_start_km: 0
+      urban_end_km: 3
+      urban_tunnel: 0.0
+      structure: {elevated: 0.65, at_grade: 0.35}
+      land: {cropland_central: 0.65, existing_corridor: 0.2, wetland: 0.1, suburban: 0.05}
+      floodplain: 0.05
+      peat: 0.03
+      bridges: []
+    segments:
+      - from: minneapolis
+        to: st_cloud
+        urban_start_km: 12
+        urban_tunnel: 0.0
+        land: {suburban: 0.3, cropland_central: 0.4, existing_corridor: 0.25, wetland: 0.05}
+      - from: st_cloud
+        to: alexandria
+      - from: alexandria
+        to: moorhead
+        floodplain: 0.15
+        note: Red River valley, flood history 1997 and 2009; Red River crossing only if serving Fargo directly
+        bridges: [{name: Buffalo River, length_m: 150}]
+
+  - id: southwest
+    name: Twin Cities - Mankato
+    phase: 2
+    points: [msp, mankato]
+    defaults:
+      detour: 1.10
+      zone: south
+      urban_start_km: 8
+      urban_end_km: 3
+      urban_tunnel: 0.0
+      structure: {elevated: 0.7, at_grade: 0.3}
+      land: {suburban: 0.15, cropland_south: 0.6, existing_corridor: 0.2, wetland: 0.05}
+      floodplain: 0.15
+      peat: 0.02
+      bridges: [{name: Minnesota River, length_m: 600}]
+
+  - id: north_woods
+    name: St. Cloud - Brainerd - Bemidji
+    phase: 3
+    points: [st_cloud, brainerd, bemidji]
+    defaults:
+      detour: 1.12
+      zone: north
+      urban_start_km: 2
+      urban_end_km: 2
+      urban_tunnel: 0.0
+      structure: {elevated: 0.75, at_grade: 0.25}
+      land: {forest_north: 0.45, cropland_central: 0.25, wetland: 0.2, existing_corridor: 0.1}
+      floodplain: 0.05
+      peat: 0.15
+      bridges: [{name: Mississippi River, length_m: 300}]
+
+  - id: southern_link
+    name: Rochester - Owatonna - Mankato
+    phase: 3
+    points: [rochester, owatonna, mankato]
+    defaults:
+      detour: 1.08
+      zone: south
+      urban_start_km: 3
+      urban_end_km: 3
+      urban_tunnel: 0.0
+      structure: {elevated: 0.6, at_grade: 0.4}
+      land: {cropland_south: 0.75, existing_corridor: 0.15, wetland: 0.05, suburban: 0.05}
+      floodplain: 0.06
+      peat: 0.02
+      bridges: []
+
+  - id: great_lakes
+    name: Rochester - La Crosse - Madison - Milwaukee - Chicago
+    phase: 3
+    points: [rochester, winona, la_crosse, madison, milwaukee, chicago]
+    note: Out of state past Winona; needs Wisconsin and Illinois partners. Climate zones are a stretch here.
+    defaults:
+      detour: 1.10
+      zone: south
+      urban_start_km: 4
+      urban_end_km: 4
+      urban_tunnel: 0.0
+      structure: {elevated: 0.7, at_grade: 0.3}
+      land: {cropland_south: 0.55, forest_north: 0.1, existing_corridor: 0.2, wetland: 0.08, suburban: 0.07}
+      floodplain: 0.08
+      peat: 0.02
+      bridges: []
+    segments:
+      - from: rochester
+        to: winona
+        note: descends the Mississippi bluffs (~180 m)
+      - from: winona
+        to: la_crosse
+        floodplain: 0.3
+        bridges: [{name: Mississippi River and backwaters, length_m: 2500}]
+      - from: la_crosse
+        to: madison
+        detour: 1.15
+        note: Driftless Area ridges and valleys
+      - from: madison
+        to: milwaukee
+      - from: milwaukee
+        to: chicago
+        urban_start_km: 8
+        urban_end_km: 20
+        urban_tunnel: 0.4
+        land: {suburban: 0.4, urban_core: 0.1, existing_corridor: 0.4, cropland_south: 0.1}

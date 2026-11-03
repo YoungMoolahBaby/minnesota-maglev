@@ -1,0 +1,206 @@
+# Capital and operating cost parameters. Money in USD millions (MUSD), 2026 dollars.
+# Every leaf: value (most likely), low/high (the range Monte Carlo samples, triangular),
+# unit, conf (high | medium | low | placeholder), source, note.
+# "placeholder" = an engineering guess waiting for research (see docs/RESEARCH.md).
+#
+# Benchmarks behind the guideway numbers (all dual track, all-in incl. trains and stations):
+#   Shanghai maglev 2004: US$1.33 bn / 30.5 km = US$43.6 M/km (Wikipedia, Transrapid)
+#   Transrapid Australia quote to Victoria 2008: A$34 M/km, 50% at grade, 50% elevated
+#   UK Ultraspeed proposal: ~US$46 M/km
+#   Munich airport link (cancelled 2008): EUR 1.85 bn for 37 km, then rose "mainly due to the track"
+# US costs run well above China and Europe for the same work, so the ranges reach high.
+
+guideway:
+  elevated:
+    value: 42
+    low: 28
+    high: 75
+    unit: MUSD/km
+    conf: low
+    source: Shanghai/Victoria/Ultraspeed benchmarks above, civil part only, inflated to 2026, US premium
+    note: dual-track concrete or hybrid beams on piers, rural. The default for Minnesota (snow, drifting, farm and wildlife crossings).
+  at_grade:
+    value: 30
+    low: 20
+    high: 55
+    unit: MUSD/km
+    conf: low
+    source: Victoria 50/50 quote implies at-grade well below elevated
+    note: beams on a low embankment or slab; needs snow clearance under the vehicle skirt and fencing.
+  urban_viaduct:
+    value: 110
+    low: 65
+    high: 250
+    unit: MUSD/km
+    conf: placeholder
+    source: engineering guess, utility relocation, traffic staging, taller piers
+  tunnel:
+    value: 450
+    low: 220
+    high: 1000
+    unit: MUSD/km
+    conf: placeholder
+    source: US twin-bore transit tunnel costs (excl. stations); maglev needs a large bore for 400+ km/h
+    note: only where nothing else works (downtown approaches).
+  bridge_per_m:
+    value: 0.16
+    low: 0.08
+    high: 0.35
+    unit: MUSD/m
+    conf: placeholder
+    source: long-span dual-track bridge over a navigable river or wide floodplain
+  switch_each:
+    value: 15
+    low: 8
+    high: 30
+    unit: MUSD
+    conf: placeholder
+    source: steel bending-beam maglev switch, heated for Minnesota winters
+
+systems:
+  propulsion_power_control:
+    value: 18
+    low: 10
+    high: 32
+    unit: MUSD/km
+    conf: low
+    source: long stator (iron packs + windings), substations, operations control, comms; the share of the all-in benchmarks not in civil works
+    note: the long stator lives in the guideway, so this scales with km, not with trains.
+
+adders:
+  floodplain:
+    value: 0.15
+    low: 0.05
+    high: 0.35
+    unit: fraction of guideway cost on floodplain km
+    conf: placeholder
+    source: taller piers above the climate-adjusted 500-yr flood + freeboard, scour protection
+  frost_north:
+    value: 0.05
+    low: 0.02
+    high: 0.10
+    unit: fraction of guideway cost
+    conf: placeholder
+    source: deeper pier foundations; MN Rules 1303.1600 frost zones (north ~60 in vs south ~42 in, verify)
+  frost_south:
+    value: 0.02
+    low: 0.01
+    high: 0.05
+    unit: fraction of guideway cost
+    conf: placeholder
+    source: as frost_north
+  peat_soft_ground:
+    value: 0.20
+    low: 0.08
+    high: 0.45
+    unit: fraction of guideway cost on peat/soft-ground km
+    conf: placeholder
+    source: deep piles through peat (Shanghai was built on very soft soil and needed extensive piling)
+
+stations:
+  terminal_major:
+    value: 450
+    low: 200
+    high: 1000
+    unit: MUSD each
+    conf: placeholder
+    source: downtown terminal incl. approach, platforms for 5-section trains, transit connections
+  airport:
+    value: 280
+    low: 120
+    high: 650
+    unit: MUSD each
+    conf: placeholder
+    source: engineering guess
+  city:
+    value: 130
+    low: 60
+    high: 300
+    unit: MUSD each
+    conf: placeholder
+    source: engineering guess
+  switches_per_station:
+    value: 4
+    low: 2
+    high: 6
+    unit: count
+    conf: low
+    source: passing tracks at stations
+
+depot:
+  per_line:
+    value: 300
+    low: 150
+    high: 650
+    unit: MUSD
+    conf: placeholder
+    source: maintenance and storage facility, one per line, winter-proofed (indoor storage)
+
+vehicles:
+  per_section:
+    value: 28
+    low: 20
+    high: 40
+    unit: MUSD
+    conf: low
+    source: Transrapid Australia 2008 quote A$16.5-20 M per section, inflated, US build + winterisation
+  sections_per_train:
+    value: 5
+    low: 5
+    high: 5
+    unit: count
+    conf: medium
+    source: design choice (Shanghai runs up to 5 sections, 440 seats max)
+  spare_ratio:
+    value: 0.2
+    low: 0.15
+    high: 0.3
+    unit: fraction
+    conf: medium
+    source: typical fleet spare margin
+
+soft:
+  engineering_admin:
+    value: 0.25
+    low: 0.18
+    high: 0.35
+    unit: fraction of construction
+    conf: medium
+    source: design, program management, permitting, insurance; US megaproject norms
+  contingency:
+    value: 0.40
+    low: 0.30
+    high: 0.70
+    unit: fraction of construction + soft
+    conf: medium
+    source: concept stage (AACE class 5 accuracy -50%/+100%)
+
+operations:
+  energy_price:
+    value: 0.10
+    low: 0.07
+    high: 0.15
+    unit: USD/kWh
+    conf: low
+    source: Minnesota industrial rates, placeholder until a tariff is checked
+  om_per_km_year:
+    value: 0.6
+    low: 0.35
+    high: 1.0
+    unit: MUSD/km/year
+    conf: placeholder
+    source: guideway, stator and systems maintenance; maglev has no wheel/rail wear
+  winter_per_km_year:
+    value: 0.05
+    low: 0.02
+    high: 0.12
+    unit: MUSD/km/year
+    conf: placeholder
+    source: snow and ice clearing, switch heating, inspection after ice storms
+  staff_per_train_year:
+    value: 1.5
+    low: 1.0
+    high: 2.5
+    unit: MUSD/train/year
+    conf: placeholder
+    source: crews, cleaning, station staff share

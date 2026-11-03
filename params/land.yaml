@@ -1,0 +1,116 @@
+# Land, right-of-way and wetlands. Same leaf format as costs.yaml.
+# Land classes are what segments in network/lines.yaml split their length into.
+# The GIS phase replaces the per-segment shares with parcel-level data (county parcels via
+# MnGeo, assessed values, land cover). Until then: planner estimates.
+
+row_width:
+  elevated:
+    value: 20
+    low: 15
+    high: 30
+    unit: m
+    conf: placeholder
+    source: dual guideway ~12 m wide plus maintenance access; piers leave the land under it farmable
+  at_grade:
+    value: 30
+    low: 25
+    high: 40
+    unit: m
+    conf: placeholder
+    source: fenced corridor incl. snow storage strips
+  urban:
+    value: 15
+    low: 10
+    high: 25
+    unit: m
+    conf: placeholder
+    source: viaduct in street or rail corridor
+
+price_per_acre:
+  urban_core:
+    value: 1.5
+    low: 0.5
+    high: 4.0
+    unit: MUSD/acre
+    conf: placeholder
+    source: downtown Minneapolis/St. Paul/Duluth/Rochester parcels incl. buildings
+  suburban:
+    value: 0.35
+    low: 0.12
+    high: 0.9
+    unit: MUSD/acre
+    conf: placeholder
+    source: developed suburban land incl. structures
+  cropland_south:
+    value: 0.011
+    low: 0.008
+    high: 0.016
+    unit: MUSD/acre
+    conf: low
+    source: southern MN cropland; check U of MN Land Economics (landeconomics.umn.edu) county averages
+  cropland_central:
+    value: 0.007
+    low: 0.005
+    high: 0.010
+    unit: MUSD/acre
+    conf: low
+    source: as cropland_south
+  forest_north:
+    value: 0.003
+    low: 0.0015
+    high: 0.006
+    unit: MUSD/acre
+    conf: low
+    source: northern forest land; part is state/county tax-forfeit or federal land (negotiation, not purchase)
+  wetland:
+    value: 0.002
+    low: 0.001
+    high: 0.004
+    unit: MUSD/acre
+    conf: placeholder
+    source: purchase price only; the mitigation cost is separate (below)
+  existing_corridor:
+    value: 0.05
+    low: 0.0
+    high: 0.2
+    unit: MUSD/acre
+    conf: placeholder
+    source: sharing a highway or rail right-of-way (MnDOT/BNSF agreements), cost of access not land
+
+acquisition_multiplier:
+  value: 1.6
+  low: 1.3
+  high: 2.2
+  unit: x land price
+  conf: placeholder
+  source: severance damages (cut farm fields), relocations, appraisal and legal, eminent domain delays
+
+wetlands:
+  impact_fraction_elevated:
+    value: 0.15
+    low: 0.08
+    high: 0.30
+    unit: fraction of ROW in wetlands that is filled
+    conf: placeholder
+    source: pier footprints and construction access only
+  impact_fraction_at_grade:
+    value: 1.0
+    low: 0.9
+    high: 1.0
+    unit: fraction
+    conf: medium
+    source: embankment fills the whole width
+  replacement_ratio:
+    value: 2.0
+    low: 1.5
+    high: 2.5
+    unit: acres replaced per acre filled
+    conf: low
+    source: Minnesota Wetland Conservation Act (BWSR) + USACE Section 404; ratio depends on location
+  credit_price:
+    value: 0.08
+    low: 0.03
+    high: 0.20
+    unit: MUSD/acre-credit
+    conf: placeholder
+    source: Minnesota wetland bank credit prices vary a lot by bank service area; check BWSR registry

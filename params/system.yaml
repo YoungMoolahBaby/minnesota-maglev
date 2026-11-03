@@ -1,0 +1,141 @@
+# The vehicle and guideway system: a Transrapid-style long-stator EMS maglev.
+# Same leaf format as costs.yaml.
+
+vehicle:
+  cruise_speed:
+    value: 430
+    low: 350
+    high: 505
+    unit: km/h
+    conf: medium
+    source: Shanghai ran 431 km/h; TR09 cruise 505 km/h (Wikipedia, Transrapid)
+  urban_speed:
+    value: 200
+    low: 120
+    high: 250
+    unit: km/h
+    conf: placeholder
+    source: noise limit in built-up areas, to be set from a noise study
+  accel:
+    value: 0.9
+    low: 0.7
+    high: 1.0
+    unit: m/s^2
+    conf: medium
+    source: Transrapid ~1 m/s^2 (Wikipedia); lower for standing passengers
+  dwell:
+    value: 120
+    low: 60
+    high: 180
+    unit: s
+    conf: low
+    source: design choice
+  section_mass:
+    value: 60
+    low: 50
+    high: 70
+    unit: t
+    conf: placeholder
+    source: loaded section mass; cargo limit 15 t per car (Wikipedia) bounds the payload part
+  seats_per_section:
+    value: 88
+    low: 70
+    high: 100
+    unit: seats
+    conf: medium
+    source: Shanghai max 440 seats per 5-section train (Wikipedia)
+  drag_coefficient:
+    value: 0.26
+    low: 0.24
+    high: 0.30
+    unit: "-"
+    conf: medium
+    source: Wikipedia, Transrapid
+  frontal_area:
+    value: 16
+    low: 15
+    high: 17
+    unit: m^2
+    conf: medium
+    source: Wikipedia, Transrapid
+  levitation_power:
+    value: 1.7
+    low: 1.4
+    high: 2.2
+    unit: kW/t
+    conf: medium
+    source: Wikipedia, Transrapid (levitation and guidance)
+  propulsion_efficiency:
+    value: 0.85
+    low: 0.75
+    high: 0.9
+    unit: "-"
+    conf: medium
+    source: Wikipedia, Transrapid (aerodynamic power 3.53 MW -> 4.2 MW at 400 km/h)
+  regen_fraction:
+    value: 0.6
+    low: 0.4
+    high: 0.8
+    unit: "-"
+    conf: low
+    source: braking energy is fed back to the grid (Wikipedia); share recovered is a guess
+  hotel_power_winter:
+    value: 45
+    low: 25
+    high: 80
+    unit: kW/section
+    conf: placeholder
+    source: cabin heating at -25 C plus lighting, doors, HVAC fans
+  hotel_power_summer:
+    value: 20
+    low: 10
+    high: 40
+    unit: kW/section
+    conf: placeholder
+    source: cooling and base loads
+
+geometry:
+  superelevation_max:
+    value: 12
+    low: 12
+    high: 12
+    unit: deg
+    conf: medium
+    source: Transrapid guideway tilts up to 12 deg (to verify against the German MSB design rules)
+  unbalanced_lateral:
+    value: 1.0
+    low: 0.8
+    high: 1.2
+    unit: m/s^2
+    conf: placeholder
+    source: passenger comfort limit, to verify
+  max_gradient:
+    value: 0.10
+    low: 0.10
+    high: 0.10
+    unit: "-"
+    conf: low
+    source: Transrapid literature claims 10%; check against climb power and icing
+
+service:
+  trains_per_hour:
+    value: 2
+    low: 1
+    high: 4
+    unit: trains/h/direction
+    conf: placeholder
+    source: design choice until a demand model exists
+  service_hours:
+    value: 18
+    low: 16
+    high: 20
+    unit: h/day
+    conf: low
+    source: design choice
+  winter_share:
+    value: 0.42
+    low: 0.38
+    high: 0.48
+    unit: fraction of the year
+    conf: low
+    source: Nov-Mar ~5 of 12 months; heating loads and dense cold air apply

@@ -1,0 +1,121 @@
+# Material takeoff per km of DUAL-track guideway, and how much ore that means.
+# Same leaf format as costs.yaml. Most quantities are first-principles guesses (conf placeholder)
+# until replaced by published Transrapid beam/stator data or by the cfsem stator sizing (sim/).
+
+guideway:
+  concrete_elevated:
+    value: 5500
+    low: 3800
+    high: 8000
+    unit: m^3/km
+    conf: placeholder
+    source: two box beams ~1.9 m^2 each (3,800 m^3/km) + piers and footings below frost (~1,700)
+  concrete_at_grade:
+    value: 4200
+    low: 3000
+    high: 6000
+    unit: m^3/km
+    conf: placeholder
+    source: low beams on a slab/embankment cap
+  concrete_urban:
+    value: 7500
+    low: 5000
+    high: 11000
+    unit: m^3/km
+    conf: placeholder
+    source: taller piers, heavier foundations
+  rebar_per_m3:
+    value: 0.15
+    low: 0.10
+    high: 0.20
+    unit: t/m^3 of concrete
+    conf: low
+    source: typical reinforced and prestressed bridge concrete
+  strand_per_m3:
+    value: 0.03
+    low: 0.02
+    high: 0.045
+    unit: t/m^3 of concrete
+    conf: low
+    source: prestressing strand in post-tensioned beams
+  stator_steel:
+    value: 370
+    low: 200
+    high: 550
+    unit: t/km
+    conf: placeholder
+    source: laminated electrical-steel stator packs, both sides of both tracks (~92 kg/m per side); cfsem sizing will replace this
+  stator_aluminium:
+    value: 15
+    low: 8
+    high: 30
+    unit: t/km
+    conf: placeholder
+    source: 3-phase aluminium cable windings laid in the stator packs (Transrapid uses aluminium conductors; to verify)
+  guidance_steel:
+    value: 110
+    low: 60
+    high: 200
+    unit: t/km
+    conf: placeholder
+    source: side guidance rails, gliding strips, fixings
+  copper:
+    value: 10
+    low: 5
+    high: 20
+    unit: t/km
+    conf: placeholder
+    source: feeder cables, substations, earthing, signalling and comms
+
+tunnel:
+  concrete:
+    value: 30000
+    low: 20000
+    high: 45000
+    unit: m^3/km
+    conf: placeholder
+    source: segmental lining of a large twin bore
+
+ore:
+  pellets_per_t_steel:
+    value: 1.45
+    low: 1.35
+    high: 1.6
+    unit: t pellets / t steel
+    conf: low
+    source: ~65% Fe pellets to ~98% Fe steel incl. losses (blast furnace or DRI-EAF)
+  taconite_per_t_pellets:
+    value: 3.0
+    low: 2.5
+    high: 3.5
+    unit: t crude taconite / t pellets
+    conf: low
+    source: Mesabi taconite ~25-30% Fe magnetite concentrated to ~65% Fe pellets
+  cu_ore_grade:
+    value: 0.0029
+    low: 0.0025
+    high: 0.0035
+    unit: fraction Cu in ore
+    conf: low
+    source: Duluth Complex NorthMet-type disseminated sulfide, ~0.3% Cu (verify against the NewRange technical report)
+  cu_recovery:
+    value: 0.9
+    low: 0.85
+    high: 0.93
+    unit: fraction
+    conf: low
+    source: typical flotation recovery
+  cement_per_m3:
+    value: 0.35
+    low: 0.30
+    high: 0.42
+    unit: t cement / m^3 concrete
+    conf: medium
+    source: structural concrete mixes (300-420 kg/m^3)
+  aggregate_per_m3:
+    value: 1.9
+    low: 1.8
+    high: 2.0
+    unit: t aggregate / m^3 concrete
+    conf: medium
+    source: sand + coarse aggregate in normal-weight concrete; taconite tailings are a candidate aggregate (verify MnDOT use)

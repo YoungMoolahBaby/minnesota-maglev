@@ -1,0 +1,26 @@
+# Places the network can stop at or pass through.
+# type: terminal_major | airport | city | waypoint (waypoint = no station, shapes the route)
+# pop: 2020 Census city population, from memory, VERIFY against census.gov before quoting.
+# Coordinates: city centres (approximate), station sites are a later design step.
+
+minneapolis:   {name: Minneapolis,           lat: 44.9778, lon: -93.2650, pop: 429954, type: terminal_major}
+st_paul:       {name: St. Paul,              lat: 44.9480, lon: -93.0860, pop: 311527, type: terminal_major}
+msp:           {name: MSP Airport,           lat: 44.8848, lon: -93.2223, pop: 0,      type: airport}
+duluth:        {name: Duluth,                lat: 46.7867, lon: -92.1005, pop: 86697,  type: terminal_major}
+rochester:     {name: Rochester,             lat: 44.0121, lon: -92.4802, pop: 121395, type: terminal_major}
+hinckley:      {name: Hinckley (waypoint),   lat: 46.0110, lon: -92.9440, pop: 0,      type: waypoint}
+hibbing:       {name: Hibbing,               lat: 47.4272, lon: -92.9377, pop: 16214,  type: city}
+virginia:      {name: Virginia,              lat: 47.5233, lon: -92.5366, pop: 8354,   type: city}
+st_cloud:      {name: St. Cloud,             lat: 45.5579, lon: -94.1632, pop: 68881,  type: city}
+alexandria:    {name: Alexandria,            lat: 45.8852, lon: -95.3775, pop: 14335,  type: city}
+moorhead:      {name: Moorhead / Fargo,      lat: 46.8738, lon: -96.7678, pop: 44505,  type: city}
+mankato:       {name: Mankato,               lat: 44.1636, lon: -93.9994, pop: 44488,  type: city}
+owatonna:      {name: Owatonna,              lat: 44.0838, lon: -93.2260, pop: 26420,  type: city}
+brainerd:      {name: Brainerd / Baxter,     lat: 46.3580, lon: -94.2008, pop: 14395,  type: city}
+bemidji:       {name: Bemidji,               lat: 47.4736, lon: -94.8803, pop: 15434,  type: city}
+winona:        {name: Winona,                lat: 44.0499, lon: -91.6393, pop: 25948,  type: city}
+# Out of state (phase 3, needs partner states):
+la_crosse:     {name: La Crosse WI,          lat: 43.8014, lon: -91.2396, pop: 52680,  type: city}
+madison:       {name: Madison WI,            lat: 43.0731, lon: -89.4012, pop: 269840, type: terminal_major}
+milwaukee:     {name: Milwaukee WI,          lat: 43.0389, lon: -87.9065, pop: 577222, type: terminal_major}
+chicago:       {name: Chicago IL,            lat: 41.8786, lon: -87.6400, pop: 2746388, type: terminal_major}
