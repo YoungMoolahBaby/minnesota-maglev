@@ -39,20 +39,6 @@ heating:
     unit: share of the route also heated continuously (grades like the Duluth descent, shaded cuts, drift-prone at-grade stretches)
     conf: placeholder
     source: design assumption until the GIS phase finds these stretches
-  icing_hours:
-    value: 150
-    low: 50
-    high: 400
-    unit: hours per year the critical heating runs (freezing rain, wet snow, icing fog)
-    conf: placeholder
-    source: "to source: Minnesota freezing-rain and icing hours (NOAA ASOS records); NCEI normals don't carry them"
-  icing_nights:
-    value: 30
-    low: 10
-    high: 60
-    unit: nights per year with overnight warming of the whole guideway
-    conf: placeholder
-    source: forecast-driven (ice or wet snow expected before morning service); to source with the icing hours
   warm_hours_per_km:
     value: 2
     low: 1

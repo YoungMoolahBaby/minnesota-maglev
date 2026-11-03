@@ -81,6 +81,13 @@ works), date, details. One section per tool.
   the hub at the same minute the spine arrived; the transfer rule fixed it. With fewer units,
   overnight ice warming stopped fitting in the idle capacity for phases 2-3, so the fleet is now sized
   to whichever is larger. Fleet 14 -> 10 units; spine $110.0 -> $108.5 bn, all $470.6 -> $465.6 bn.
+- 2026-11-03, measured icing: 20 years of hourly ASOS reports (80 station-years, all ~8,760 h
+  complete). Icing hours/yr: Duluth 224, MSP 124, St. Cloud 115, Rochester 166; freezing rain or
+  drizzle only 35 / 18 / 4 / 21 (St. Cloud's sensor reports 'unknown precipitation' where MSP reports
+  freezing rain, so central uses the MSP/STC average). My placeholders (150 h, 30 nights, statewide)
+  were close overall. Spine heating energy 17.4 -> 14.4 GWh/yr; the fleet is unchanged, because the
+  fleet is set by heating POWER (overnight warming time per km), not by how often it ices. I had
+  told Jon the icing hours were the number that matters most for the fleet; that was wrong.
 
 ## OSRD
 

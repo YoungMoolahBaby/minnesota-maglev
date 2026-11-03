@@ -84,8 +84,10 @@ slow orders and bus backup for the worst storms (Emsland, Metro Transit); (4) ne
 guideway overnight on icing nights, in rotation, with fusion units the trains aren't using (82 MW
 vs 150 MW idle on the spine). The magnets and stator sit under the deck where ice can't form; the
 heated parts are the side guidance rails (10 mm magnet gap) and gliding strips. Heating the whole
-line during storms instead would more than double the fusion fleet (9 units for the spine instead of 4). Heating numbers
-are still mostly placeholders (docs/RESEARCH.md 24).
+line during storms instead would more than double the fusion fleet (9 units for the spine instead of 4). How often it
+ices is measured: 20 years of hourly airport weather reports give 224 icing hours a year at Duluth,
+~120 in the Twin Cities and St. Cloud, 166 at Rochester (`scripts/icing_hours.py`). The heated
+surface, heater cost and overnight warming time are still placeholders (docs/RESEARCH.md 24b-26).
 
 **Staggered timetable** (`network/timetable.yaml`): every line still runs every 30 minutes each way,
 but `mnmaglev timetable --write` shifts each direction's departures by whole minutes so trains

@@ -120,9 +120,15 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
 
 ## Winter ice
 
-24. [ ] Icing frequency in Minnesota: hours per year of freezing rain, freezing drizzle and wet snow
-    at Duluth, MSP, Rochester, St. Cloud (NOAA ASOS hourly present-weather codes), and nights per
-    year with ice forecast before morning (`winter.heating.icing_hours`, `icing_nights`).
+24. [x] Icing frequency (2026-11-03): 20 years (2006-2025) of hourly ASOS reports for Duluth, MSP,
+    St. Cloud and Rochester (`scripts/icing_hours.py` -> reference/icing.yaml), now per climate zone
+    (`climate.<zone>.icing_hours`, `icing_nights`). Icing hours/yr (all conditions): DLH 224, MSP
+    124, STC 115, RST 166; freezing rain or drizzle only: 35 / 18 / 4 / 21 (STC's sensor reports
+    unknown precipitation instead). Icing nights: 27 / 16 / 19 / 26.
+24b. [ ] How long each km must be warmed per icing night (`winter.heating.warm_hours_per_km`, 2 h,
+    placeholder): this, not the icing hours, sets the overnight warming power and so the full
+    network's fleet size. Heat-transfer estimate for steel guidance rails from -10 C to above 0 C
+    under wind, or field data from rail and road anti-icing systems.
 25. [ ] Heated surfaces and power: Transrapid guidance rail and gliding strip dimensions
     (`winter.heating.area_per_m`), anti-icing (keep above 0 C) vs snow melting heat flux for steel
     rails, rail switch heater ratings (DB, Trafikverket, nVent), installed cost of rail and deck

@@ -45,12 +45,18 @@ def night_mw(line: Line, P, mode: str, night_hours: float) -> float:
     return line.length_km * mw_per_km(P) * P["winter.heating.warm_hours_per_km"] / night_hours
 
 
+def zone_weighted(line: Line, P, field: str):
+    """A climate-zone value (e.g. icing_hours) averaged over the line by segment length."""
+    return sum(s.length_km * P[f"climate.{s.zone}.{field}"] for s in line.segments) / line.length_km
+
+
 def heating_mwh(line: Line, P, mode: str) -> float:
-    """Heating energy per year (MWh)."""
-    storm = storm_mw(line, P, mode) * P["winter.heating.icing_hours"]
+    """Heating energy per year (MWh), with each zone's icing hours and nights (NOAA/ASOS, reference/icing.yaml)."""
+    storm = storm_mw(line, P, mode) * zone_weighted(line, P, "icing_hours")
     night = 0.0
     if mode == "targeted":
-        night = line.length_km * mw_per_km(P) * P["winter.heating.warm_hours_per_km"] * P["winter.heating.icing_nights"]
+        night = (line.length_km * mw_per_km(P) * P["winter.heating.warm_hours_per_km"]
+                 * zone_weighted(line, P, "icing_nights"))
     return storm + night
 
 

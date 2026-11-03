@@ -39,6 +39,20 @@ north:
     unit: "1 = north frost zone"
     conf: "high"
     source: "Minn. R. 1303.1600: Zone I (5 ft footings) incl. St. Louis, Carlton, Pine, Douglas, Clay, Crow Wing, Itasca; DLI air-freezing-index zones proposed, not adopted"
+  icing_hours:
+    value: 224
+    low: 39
+    high: 331
+    unit: hours per year with icing conditions
+    conf: medium
+    source: "Duluth (DLH) hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), scripts/icing_hours.py -> reference/icing.yaml. value = any icing condition (freezing rain/drizzle, ice pellets, freezing fog, unknown precip at <=1 C, wet snow at -2..+1 C); low = freezing precipitation only (FZRA/FZDZ/PL/UP); high = 90th-percentile year"
+  icing_nights:
+    value: 27
+    low: 7
+    high: 35
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: "Duluth (DLH), same data; low = nights with freezing rain or drizzle only (6.5/yr)"
 
 central:
   winter_mean_temp:
@@ -69,6 +83,20 @@ central:
     unit: "0 = south frost zone"
     conf: "high"
     source: "Minn. R. 1303.1600: Zone II (3.5 ft footings) incl. Anoka, Ramsey, Hennepin, Dakota, Chisago, Isanti, Sherburne, Stearns, Benton; Pine (Hinckley) is Zone I"
+  icing_hours:
+    value: 120
+    low: 18
+    high: 172
+    unit: hours per year with icing conditions
+    conf: medium
+    source: "mean of Minneapolis-St. Paul (MSP 124) and St. Cloud (STC 115); hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), scripts/icing_hours.py -> reference/icing.yaml. value = any icing condition (freezing rain/drizzle, ice pellets, freezing fog, unknown precip at <=1 C, wet snow at -2..+1 C); low = freezing precipitation only (FZRA/FZDZ/PL/UP); high = 90th-percentile year. STC reports little freezing rain (3.7 h/yr vs MSP 17.9) and more unknown precipitation, a sensor-classification difference, hence the average"
+  icing_nights:
+    value: 17.5
+    low: 2
+    high: 24
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: "MSP 16.4, STC 18.6 nights/yr; low = freezing rain or drizzle nights only (~2/yr)"
 
 south:
   winter_mean_temp:
@@ -99,3 +127,17 @@ south:
     unit: "0 = south frost zone"
     conf: "high"
     source: "Minn. R. 1303.1600: Zone II incl. Dakota, Goodhue, Olmsted, Rice, Steele, Blue Earth, Winona"
+  icing_hours:
+    value: 166
+    low: 56
+    high: 213
+    unit: hours per year with icing conditions
+    conf: medium
+    source: "Rochester (RST) hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), scripts/icing_hours.py -> reference/icing.yaml. value = any icing condition (freezing rain/drizzle, ice pellets, freezing fog, unknown precip at <=1 C, wet snow at -2..+1 C); low = freezing precipitation only (FZRA/FZDZ/PL/UP); high = 90th-percentile year. Rochester has the most freezing precipitation of the four (~56 h/yr incl. unknown precip)"
+  icing_nights:
+    value: 26
+    low: 5
+    high: 36
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: "Rochester (RST), same data; low = freezing rain or drizzle nights only (4.8/yr)"

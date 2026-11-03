@@ -57,3 +57,10 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
 - Minn. Stat. 216B.243 (moratorium in subd. 3b): https://www.revisor.mn.gov/statutes/cite/216B.243 ; HF 387 (2023): https://www.revisor.mn.gov/bills/93/2023/0/HF/387
 - MISO 2025 State of the Market (Potomac Economics): https://www.potomaceconomics.com/wp-content/uploads/2026/07/2025-State-of-the-Market-Report.pdf
 - NRRI hydrogen DRI pre-FEED with U.S. Steel: https://nrri.umn.edu/news/doe-82m-industry-innovation
+
+## Weather observations
+
+- Hourly ASOS reports (NWS/FAA airport weather stations DLH, MSP, STC, RST), 2006-2025, from the
+  Iowa Environmental Mesonet archive: https://mesonet.agron.iastate.edu/request/download.phtml
+  (`scripts/icing_hours.py` downloads them to data/raw/noaa_asos, gitignored; the yearly summary is
+  reference/icing.yaml). Public-domain US government observations.
