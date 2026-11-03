@@ -1,0 +1,69 @@
+# Winter: guideway heating against ice (network/lines.yaml settings.winter_heating).
+# Same leaf format as costs.yaml. Jon (2026-11-03) took all four ideas from how cold railways work:
+#   1. heat only the critical spots (switches, stations, river bridges, grades, drift-prone stretches)
+#      during icing, as Shinkansen, Boston, St. Louis and every switch heater do;
+#   2. storm trains and sweepers through icing nights (St. Louis MetroLink), in operations.winter_per_km_year;
+#   3. clearing vehicles, slow orders and bus backup for the worst storms (Emsland, Metro Transit);
+#   4. new: warm the whole guideway overnight on icing nights, in rotation, with the fusion units
+#      the trains aren't using.
+# What freezes on a Transrapid: the levitation magnets and long stator sit under the deck where ice
+# normally can't form (Bundestag Drs. 11/2488); the side guidance rails (~10 mm magnet gap) and the
+# gliding strips are exposed, freezing rain coats vertical faces: those are the heated surfaces.
+
+heating:
+  w_per_m2:
+    value: 450
+    low: 400
+    high: 540
+    unit: W per m2 of heated surface
+    conf: low
+    source: "snow-melting design heat flux: ~400 W/m2 chosen as practical for an electrically heated bridge deck (carbon-fibre deck study), ~536 W/m2 for an exposed site (Ottawa, GeoEdmonton 2018); rail switch heaters run ~330 W per metre of rail (patent EP3850154B1)"
+  area_per_m:
+    value: 1.4
+    low: 0.9
+    high: 2.0
+    unit: m2 of heated surface per metre of dual guideway
+    conf: placeholder
+    source: "side guidance rail faces (~0.25 m) and gliding strips (~0.10 m), both sides of both tracks: 2 x (2 x 0.25 + 2 x 0.10) = 1.4 (derived from Transrapid layout, dimensions to verify)"
+  station_heated_km:
+    value: 1.5
+    low: 1.0
+    high: 3.0
+    unit: km heated continuously around each station (platforms, switches, approaches)
+    conf: placeholder
+    source: design assumption; every cold railway heats its switches
+  extra_critical_share:
+    value: 0.05
+    low: 0.02
+    high: 0.10
+    unit: share of the route also heated continuously (grades like the Duluth descent, shaded cuts, drift-prone at-grade stretches)
+    conf: placeholder
+    source: design assumption until the GIS phase finds these stretches
+  icing_hours:
+    value: 150
+    low: 50
+    high: 400
+    unit: hours per year the critical heating runs (freezing rain, wet snow, icing fog)
+    conf: placeholder
+    source: "to source: Minnesota freezing-rain and icing hours (NOAA ASOS records); NCEI normals don't carry them"
+  icing_nights:
+    value: 30
+    low: 10
+    high: 60
+    unit: nights per year with overnight warming of the whole guideway
+    conf: placeholder
+    source: forecast-driven (ice or wet snow expected before morning service); to source with the icing hours
+  warm_hours_per_km:
+    value: 2
+    low: 1
+    high: 4
+    unit: hours each km is warmed per icing night (in rotation)
+    conf: placeholder
+    source: design assumption; enough to bring the rails above freezing before the first train
+  heater_capex_per_km:
+    value: 0.7
+    low: 0.3
+    high: 2.0
+    unit: MUSD per km of dual guideway (heating elements along the whole line, switch heaters, controls, feeders)
+    conf: placeholder
+    source: "~1.4 m2/m x ~$500/m2 for embedded electric heating (to source); the whole line needs heaters for the overnight warming"

@@ -69,6 +69,11 @@ works), date, details. One section per tool.
   cost ~$6.9 bn P50; at wholesale prices the surplus value plus avoided grid energy only just beats
   the fleet's O&M, so fusion is a strategic choice (carbon-free, energy security, Range industry),
   not a cost saving. Spine with fusion $107.8 bn P50, without $100.8 bn.
+- 2026-11-03, winter heating: targeted heating of 29 km of the spine (stations, bridges, 5% of the
+  route) adds 18 MW during icing and one fusion unit (4 -> 5); the whole spine heated at once would
+  be ~245 MW and 10 units. Overnight warming of the whole spine in rotation needs ~82 MW, well
+  inside the 200 MW idle overnight. Heating energy ~17 GWh/yr on the spine (~8% of traction). Spine
+  total $107.8 -> $110.0 bn P50 (one more unit, heaters along the line).
 
 ## OSRD
 

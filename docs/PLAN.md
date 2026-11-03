@@ -58,6 +58,12 @@ from the one before with measurements.
   spare, added phase by phase, learning curve on later units). Spine: 24 MW average, 123 MW peak,
   4 units, ~$6.9 bn P50, ~86% surplus. Strategic, not a cost saving at wholesale prices; no fusion
   plant has made net electricity yet, and Minnesota's moratorium may cover it (unresolved).
+- **2026-11-03, winter ice: all four measures** (Jon): targeted heating of critical spots during
+  icing, storm trains and sweepers, clearing vehicles / slow orders / bus backup, and overnight
+  warming of the whole guideway with idle fusion units (new; no railway found doing it). Modelled
+  in params/winter.yaml and src/mnmaglev/winter.py, `settings.winter_heating: targeted`. Heating
+  adds to the storm-time peak in fusion sizing (spine 4 -> 5 units); heating the whole line during
+  icing would need 10. Overnight warming fits in the idle units.
 
 ## Phase 1: research pass (in progress; passes 1-2 done 2026-11-03)
 

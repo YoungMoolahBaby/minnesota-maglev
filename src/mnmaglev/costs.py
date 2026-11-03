@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from .winter import heater_capital
+
 from .network import Line, Segment
 
 ACRE_M2 = 4046.8564224
@@ -133,7 +135,8 @@ def fleet_size(round_trip_s: float, P) -> np.ndarray | float:
     return np.ceil(in_service * (1 + P["costs.vehicles.spare_ratio"]))
 
 
-def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_supply: bool = False) -> dict:
+def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_supply: bool = False,
+                 heating: str = "none") -> dict:
     segs = [segment_capital(s, P) for s in line.segments]
     total = lambda k: sum(sc[k] for sc in segs)  # noqa: E731
 
@@ -144,7 +147,9 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
     trains = fleet_size(2 * (end_to_end_s + turnaround_s), P)
     vehicles = trains * P["costs.vehicles.sections_per_train"] * P["costs.vehicles.per_section"]
 
-    construction = total("guideway") + total("adders") + total("systems") + stations + switches + depot + vehicles
+    heaters = heater_capital(line, P, heating)
+    construction = (total("guideway") + total("adders") + total("systems") + stations + switches + depot
+                    + vehicles + heaters)
     # local supply (Minnesota beam and stator plants, tailings aggregate, supply contracts)
     local = local_supply_savings(line, P, total("systems"))
     contingency_rate = P["costs.soft.contingency"]
@@ -168,6 +173,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         "switches": switches,
         "depot": depot,
         "vehicles": vehicles,
+        "heaters": heaters,
         "trains": trains,
         "construction": construction,
         "soft": soft,
@@ -183,10 +189,10 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
     }
 
 
-def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease=0.0) -> dict:
+def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease=0.0, heating_mwh=0.0) -> dict:
     """Annual operating cost, MUSD/year. reserve_lease: farm lease income from a held reserve."""
     train_km = 2 * P["system.service.trains_per_hour"] * P["system.service.service_hours"] * 365 * line.length_km
-    energy = train_km * kwh_per_train_km * P["costs.operations.energy_price"] / 1e6
+    energy = (train_km * kwh_per_train_km + heating_mwh * 1000.0) * P["costs.operations.energy_price"] / 1e6
     om = line.length_km * P["costs.operations.om_per_km_year"]
     winter = sum(
         s.length_km * P["costs.operations.winter_per_km_year"] * P[f"climate.{s.zone}.snowfall"] / 130.0

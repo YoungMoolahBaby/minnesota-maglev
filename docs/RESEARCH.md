@@ -117,3 +117,15 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     data centres near the Midway hub or the Range, district heat; what they would pay per MWh.
 23. [ ] Peak shaving by timetable: stagger the lines' departures at the Midway hub and see how far
     the 485 MW network peak (and the fleet) drops.
+
+## Winter ice
+
+24. [ ] Icing frequency in Minnesota: hours per year of freezing rain, freezing drizzle and wet snow
+    at Duluth, MSP, Rochester, St. Cloud (NOAA ASOS hourly present-weather codes), and nights per
+    year with ice forecast before morning (`winter.heating.icing_hours`, `icing_nights`).
+25. [ ] Heated surfaces and power: Transrapid guidance rail and gliding strip dimensions
+    (`winter.heating.area_per_m`), anti-icing (keep above 0 C) vs snow melting heat flux for steel
+    rails, rail switch heater ratings (DB, Trafikverket, nVent), installed cost of rail and deck
+    heating per metre (`heater_capex_per_km`), any Transrapid or Chinese maglev de-icing studies.
+26. [ ] Lessons from Metro Transit's Blue Line freezing-rain shutdowns and St. Louis MetroLink's
+    storm trains: how fast ice builds on exposed steel, what kept or failed to keep service running.

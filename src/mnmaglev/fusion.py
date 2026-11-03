@@ -15,6 +15,7 @@ import numpy as np
 from .kinematics import line_summary
 from .network import Line
 from .power import demand_summary, line_day_profile
+from .winter import critical_km, heating_mwh, night_mw, storm_mw
 
 HOURS_PER_YEAR = 8760.0
 
@@ -26,7 +27,7 @@ def annual_demand_mwh(line: Line, P) -> float:
     return train_km * s["kwh_per_train_km"] / 1000.0
 
 
-def size_by_phase(lines: list[Line], P0: dict[str, float]) -> list[dict]:
+def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none") -> list[dict]:
     """Cumulative demand, peaks and units per phase (nominal; sizing is a design decision)."""
     f = "power.fusion."
     unit = P0[f + "unit_mwe"]
@@ -37,9 +38,13 @@ def size_by_phase(lines: list[Line], P0: dict[str, float]) -> list[dict]:
     for ph in phases:
         built = [l for l in lines if l.phase <= ph]
         d = demand_summary(sum(profiles[l.id] for l in built))
-        units = math.ceil(d["peak_mw"] * (1 + P0[f + "sizing_margin"]) / unit) + int(P0[f + "spare_units"])
+        storm = sum(storm_mw(l, P0, heating) for l in built)  # icing doesn't wait for quiet hours
+        night_hours = 24.0 - P0["system.service.service_hours"]
+        night = sum(night_mw(l, P0, heating, night_hours) for l in built)
+        units = math.ceil((d["peak_mw"] + storm) * (1 + P0[f + "sizing_margin"]) / unit) + int(P0[f + "spare_units"])
         units = max(units, prev_units)
-        demand = sum(mwh[l.id] for l in built)
+        heat_mwh = sum(heating_mwh(l, P0, heating) for l in built)
+        demand = sum(mwh[l.id] for l in built) + heat_mwh
         out.append({
             "phase": ph,
             "demand_mwh": demand,
@@ -50,6 +55,13 @@ def size_by_phase(lines: list[Line], P0: dict[str, float]) -> list[dict]:
             "units": units,
             "new_units": units - prev_units,
             "capacity_mw": units * unit,
+            "heating": heating,
+            "storm_heating_mw": storm,
+            "night_warming_mw": night,
+            "night_idle_mw": (units - int(P0[f + "spare_units"])) * unit,
+            "heating_mwh": heat_mwh,
+            "critical_km": sum(critical_km(l, P0) for l in built) if heating == "targeted" else
+                           (sum(l.length_km for l in built) if heating == "full" else 0.0),
         })
         prev_units = units
     return out

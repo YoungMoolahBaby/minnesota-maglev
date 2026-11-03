@@ -12,6 +12,7 @@ import numpy as np
 from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
 from .fusion import fleet_money, size_by_phase
+from .winter import heating_mwh
 from .kinematics import line_summary
 from .network import Line
 from .params import Param, nominal, sample
@@ -42,7 +43,7 @@ def sensitivity(params: dict[str, Param], samples: dict[str, np.ndarray], total:
 
 
 def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1,
-                local_supply: bool = False, fusion: str = "none") -> dict:
+                local_supply: bool = False, fusion: str = "none", heating: str = "none") -> dict:
     P0 = nominal(params)
     PS = sample(params, n, seed)
     seen: set[str] = set()
@@ -52,14 +53,14 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         new = [c for c in line.stations if c.id not in seen]
         seen |= {c.id for c in new}
         kin = line_summary(line, P0)
-        cap0 = line_capital(line, P0, new, kin["end_to_end_s"], local_supply)
-        capS = line_capital(line, PS, new, kin["end_to_end_s"], local_supply)
-        alt = line_capital(line, PS, new, kin["end_to_end_s"], not local_supply)["total"]
+        cap0 = line_capital(line, P0, new, kin["end_to_end_s"], local_supply, heating)
+        capS = line_capital(line, PS, new, kin["end_to_end_s"], local_supply, heating)
+        alt = line_capital(line, PS, new, kin["end_to_end_s"], not local_supply, heating)["total"]
         local_saving = (alt - capS["total"]) if local_supply else (capS["total"] - alt)
         lease0 = cap0["reserve"]["lease_income"] if line.reserve else 0.0
         leaseS = capS["reserve"]["lease_income"] if line.reserve else 0.0
-        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0)
-        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"], leaseS)
+        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0, heating_mwh(line, P0, heating))
+        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"], leaseS, heating_mwh(line, PS, heating))
         net_total = net_total + capS["total"]
         results.append({
             "line": line, "new_stations": new, "kin": kin,
@@ -68,7 +69,8 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
             "local_saving": local_saving,
         })
     # power supply: the fusion fleet, sized from the network's second-by-second peak
-    sizing = size_by_phase([r["line"] for r in results], P0)
+    sizing = size_by_phase([r["line"] for r in results], P0, heating)
+    sizing_full = size_by_phase([r["line"] for r in results], P0, "full") if heating != "full" else sizing
     fus0, fusS = fleet_money(sizing, P0), fleet_money(sizing, PS)
     own = fusion == "own"
     fusion_cum = {s["phase"]: sum(f["capital"] for f in fusS if f["phase"] <= s["phase"]) for s in sizing}
@@ -82,7 +84,7 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
                      + (fusion_cum[ph] if own else 0.0))
             for ph in sorted({r["line"].phase for r in results})
         },
-        "fusion": fusion, "fusion0": fus0, "fusionS": fusS,
+        "fusion": fusion, "fusion0": fus0, "fusionS": fusS, "heating": heating, "sizing_full": sizing_full,
         "min_radius_m": curve_radius_note(P0),
         "benchmarks": benchmark_table(params),
         "conf_counts": Counter(p.conf for p in params.values()),
@@ -108,6 +110,7 @@ def write_markdown(net: dict, path: Path) -> None:
              f"({net['n']:,} Monte Carlo samples, seed {net['seed']}). USD 2026.\n")
     L.append(f"Local supply policy: **{'on' if net.get('local_supply') else 'off'}** "
              "(network/lines.yaml settings.local_supply; `--local-supply on|off` overrides).\n")
+    L.append(f"Winter heating: **{net.get('heating', 'none')}** (see Power and fusion below).\n")
     L.append(f"Fusion: **{net.get('fusion', 'none')}** (see Power and fusion below).\n")
     cc = net["conf_counts"]
     L.append("> Concept-stage numbers. Parameters by confidence: "
@@ -181,7 +184,7 @@ def write_markdown(net: dict, path: Path) -> None:
                  "optimistic (the classic megaproject trap). Plan with the P50 and P90 above.\n")
         L.append("| Item | MUSD |")
         L.append("|---|---|")
-        for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles",
+        for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters",
                   "soft", "land", "wetlands", "contingency"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
         rv = c0["reserve"]
@@ -290,6 +293,26 @@ def write_markdown(net: dict, path: Path) -> None:
              f"Until the first unit delivers power (most likely ~{first:.0f}, `power.fusion.first_power_year`), "
              "the trains buy grid power: that is the energy line in each line's opex, so the opex columns "
              "already show the 'fusion late' case.\n")
+
+    L.append("### Winter: heating, storm trains and clearing\n")
+    hm = net.get("heating", "none")
+    L.append(f"Winter heating: **{hm}** (network/lines.yaml settings.winter_heating; `--winter-heating "
+             "targeted|full|none` overrides; params/winter.yaml). The levitation magnets and long stator sit "
+             "under the deck where ice normally can't form; the heated surfaces are the side guidance rails "
+             "(~10 mm magnet gap) and gliding strips. Targeted = critical spots (stations and their switches, "
+             "river bridges, a share for grades, shaded cuts and drifts) heated during icing, on top of the "
+             "trains' peak, plus the whole line warmed overnight on icing nights in rotation with units the "
+             "trains aren't using. Storm trains, sweepers and clearing vehicles are in each line's winter O&M. "
+             "Heater capital is in each line's construction; heating energy is in its opex (at grid price).\n")
+    L.append("| Through phase | Heated continuously (km) | Heating during icing MW | Units with heating "
+             "| Units if the whole line were heated (full) | Overnight warming MW vs idle fleet MW | Heating GWh/yr |")
+    L.append("|---|---|---|---|---|---|---|")
+    for f0, ff in zip(net["fusion0"], net["sizing_full"]):
+        fits = "fits" if f0["night_warming_mw"] <= f0["night_idle_mw"] else "DOES NOT FIT"
+        L.append(f"| {f0['phase']} | {float(f0['critical_km']):,.0f} | {float(f0['storm_heating_mw']):,.0f} "
+                 f"| {f0['units']} | {ff['units']} | {float(f0['night_warming_mw']):,.0f} vs {f0['night_idle_mw']:,.0f} ({fits}) "
+                 f"| {float(f0['heating_mwh']) / 1000:,.1f} |")
+    L.append("")
     path.write_text("\n".join(L), encoding="utf-8")
 
 
@@ -298,7 +321,7 @@ def write_json(net: dict, path: Path) -> None:
            "min_radius_m": net["min_radius_m"], "phase_totals_musd": net["phase_totals"],
            "sensitivity": net["sensitivity"], "lines": [],
            "fusion": {"setting": net.get("fusion", "none"),
-                      "phases": [{k: (float(v) if not isinstance(v, int) else v) for k, v in f.items()}
+                      "phases": [{k: (v if isinstance(v, (int, str)) else float(v)) for k, v in f.items()}
                                  for f in net["fusion0"]],
                       "capital_musd_p": [_pct(f["capital"]) for f in net["fusionS"]]}}
     for r in net["results"]:

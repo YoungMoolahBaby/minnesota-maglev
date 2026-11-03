@@ -31,6 +31,9 @@ settings:
   # second-by-second peak with headroom and a spare unit, no batteries; the surplus powers
   # neighbouring users or goes to the grid. "none" = grid power only.
   fusion: own
+  # Guideway heating against ice (params/winter.yaml): targeted = critical spots during icing plus
+  # overnight warming of the whole line with idle fusion units; full = whole line during icing; none.
+  winter_heating: targeted
 
 lines:
   - id: spine

@@ -239,3 +239,22 @@ def test_fusion_learning_curve_makes_later_units_cheaper(world):
     soft = (1 + P0["costs.soft.engineering_admin"]) * (1 + P0["costs.soft.contingency"])
     assert flat[0]["capital"] == pytest.approx(sizing[0]["new_units"] * per_unit_flat * soft)
     assert all(l["capital"] < f["capital"] for l, f in zip(learn[1:], flat[1:]) if f["capital"] > 0)
+
+
+def test_winter_heating_modes(world):
+    from mnmaglev.fusion import size_by_phase
+    from mnmaglev.winter import critical_km, heater_capital, heating_mwh, mw_per_km, storm_mw
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    # 450 W/m2 x 1.4 m2/m = 0.63 MW per km
+    assert mw_per_km(P0) == pytest.approx(P0["winter.heating.w_per_m2"] * P0["winter.heating.area_per_m"] / 1000)
+    assert 0 < critical_km(spine, P0) < spine.length_km
+    assert storm_mw(spine, P0, "none") == 0 < storm_mw(spine, P0, "targeted") < storm_mw(spine, P0, "full")
+    assert heating_mwh(spine, P0, "none") == 0 and heater_capital(spine, P0, "none") == 0
+    # more heating never shrinks the fleet; targeted overnight warming fits in the idle units
+    units = {m: size_by_phase([spine], P0, m)[0] for m in ("none", "targeted", "full")}
+    assert units["none"]["units"] <= units["targeted"]["units"] <= units["full"]["units"]
+    t = units["targeted"]
+    assert t["night_warming_mw"] <= t["night_idle_mw"]
