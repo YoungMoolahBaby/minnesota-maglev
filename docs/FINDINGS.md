@@ -108,6 +108,24 @@ works), date, details. One section per tool.
   took ~70 minutes for the spine. The TR08 energy test failed after the reroute (31.0 Wh/seat-km vs
   28.1 +-10%): it took 'segment 3 with detour 2', meant as ~230 km, which on the measured route is a
   79 km leg with more of its energy in accelerating. It now builds an explicit 230 km leg: 27.9.
+- 2026-11-03, GIS slice 3 (suburbs and freeway corridors, spine): NLCD 2021 impervious surface on
+  the spine grid, roads left out: developed-open-space cells median 11% (p90 19%), low-intensity
+  (single-family) 36%, medium 55%, high 80%; farmland, forest and wetland ~0%. Pricing cells from 20%
+  to 35% as built-up doubled the spine's urban-viaduct km (15 -> 33): line +$6.9 bn P50. Freeways:
+  the old `existing_corridor` price ($50k/acre flat) was five times the farmland beside it, so the
+  route would have avoided highways; it is now a share of the surrounding land (23 U.S.C. 142(f),
+  23 CFR 810.212: free to a public transit authority). Even so the route follows freeways for only
+  ~12 km, because in the model the land saved in the country (~$0.07 M/km) is tiny next to the cost
+  of building beside traffic (~$3 M/km at a 5% adder). I had told Jon following I-35 would change the
+  alignment through the north woods; at these prices it doesn't. The reasons lines like Brightline
+  West use highway medians (permits, environmental review, public acceptance) are not in the model.
+  The route north of Cannon Falls stayed within ~1 km; south of it, over flat farmland where many
+  paths cost nearly the same, it moved up to 7 km. Fusion went back from 3 to 4 units: units come in
+  50 MW steps, 3 need a phase-1 peak under ~73 MW, and with only the spine running every offset gets
+  tried (60 restarts give the same 75 MW), so the ~$1.5 bn swing between slices is a step, not a
+  trend. Spine with fusion $94.0 -> $102.8 bn (estimates: $109.1 bn); all phases $452 -> $462 bn. The
+  planner lines moved by up to +$1.5 bn because of the new corridor adder on their assumed corridor
+  shares.
 
 ## OSRD
 

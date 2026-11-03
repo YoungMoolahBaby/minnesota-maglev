@@ -73,4 +73,21 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
   https://www.mrlc.gov/geoserver/mrlc_download/NLCD_2021_Land_Cover_L48/wcs
 - FEMA National Flood Hazard Layer, flood hazard zones (MapServer layer 28, public domain):
   https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28
+- NLCD 2021 impervious surface and impervious descriptor, MRLC GeoServer WCS (public domain):
+  coverages NLCD_2021_Impervious_L48 and NLCD_2021_Impervious_descriptor_L48 at
+  https://www.mrlc.gov/geoserver/mrlc_download/wcs (descriptor codes: 20 primary road, 21 secondary
+  road, 24 non-road non-energy impervious; roads from 2018 NavStreets, per the LANDFIRE data
+  dictionary https://www.landfire.gov/sites/default/files/DataDictionary/LF2023/LF23_RoadsADD_240.pdf)
 All are cached in data/raw/gis (gitignored); the alignment and measurements are committed.
+
+## Highway right-of-way
+
+- 23 U.S.C. 142(f), right-of-way of federal-aid highways available with or without charge:
+  https://www.law.cornell.edu/uscode/text/23/142
+- 23 CFR 810 subpart C (810.212), highway right-of-way for publicly owned mass transit, use may be
+  without charge: https://www.ecfr.gov/current/title-23/chapter-I/subchapter-I/part-810/subpart-C
+- Brightline West in I-15 right-of-way: Caltrans lease (2020)
+  https://dot.ca.gov/caltrans-near-me/district-8/district-8-news/caltrans-and-xpresswest-complete-lease-agreement ;
+  ENR https://enr.com/articles/49684-vegas-la-high-speed-rail-line-can-use-interstate-15-right-of-way
+- Shared rail corridors (track centres 25-200 ft, set case by case): FRA catalog of common-use rail
+  corridors https://rosap.ntl.bts.gov/view/dot/40227

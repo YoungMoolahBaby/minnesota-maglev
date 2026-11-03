@@ -4,33 +4,33 @@
 # and the fusion sizing read this file; delete it to go back to aligned departures.
 offsets:
   spine:
-    forward: 3
+    forward: 27
     reverse: 0
   iron_range:
-    forward: 3
-    reverse: 6
+    forward: 20
+    reverse: 10
   west:
-    forward: 3
-    reverse: 12
+    forward: 2
+    reverse: 16
   southwest:
-    forward: 15
-    reverse: 23
+    forward: 21
+    reverse: 7
   north_woods:
-    forward: 0
-    reverse: 6
-  southern_link:
-    forward: 8
-    reverse: 11
-  great_lakes:
     forward: 19
-    reverse: 4
+    reverse: 16
+  southern_link:
+    forward: 21
+    reverse: 13
+  great_lakes:
+    forward: 2
+    reverse: 0
 peaks_mw:
 - phase: 1
-  peak_aligned_mw: 92.3
-  peak_staggered_mw: 65.4
+  peak_aligned_mw: 94.6
+  peak_staggered_mw: 74.6
 - phase: 2
-  peak_aligned_mw: 265.2
-  peak_staggered_mw: 132.5
+  peak_aligned_mw: 267.5
+  peak_staggered_mw: 135.5
 - phase: 3
-  peak_aligned_mw: 525.0
-  peak_staggered_mw: 235.3
+  peak_aligned_mw: 527.3
+  peak_staggered_mw: 236.4

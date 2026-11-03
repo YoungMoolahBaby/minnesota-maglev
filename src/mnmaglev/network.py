@@ -12,7 +12,8 @@ from .geo import haversine_km
 
 STATION_TYPES = ("terminal_major", "airport", "city")
 POINT_TYPES = STATION_TYPES + ("waypoint",)
-STRUCTURES = ("elevated", "at_grade")
+CORRIDOR = "existing_corridor"  # land class priced as a share of the land around it
+STRUCTURES = ("elevated", "at_grade", "urban_viaduct")  # urban_viaduct here = built-up km outside the urban ends
 
 
 @dataclass(frozen=True)
@@ -230,7 +231,7 @@ def check_network(lines: list[Line], cities: dict[str, City], param_names: set[s
             if abs(sum(s.land.values()) - 1) > 1e-6:
                 problems.append(f"{tag}: land shares sum to {sum(s.land.values()):.3f}")
             for cls in s.land:
-                if f"land.price_per_acre.{cls}" not in param_names:
+                if cls != CORRIDOR and f"land.price_per_acre.{cls}" not in param_names:
                     problems.append(f"{tag}: land class {cls!r} has no price in params/land.yaml")
             if f"climate.{s.zone}.snowfall" not in param_names:
                 problems.append(f"{tag}: climate zone {s.zone!r} not in params/climate.yaml")
@@ -251,9 +252,10 @@ OPEN_LAND = {"north": "cropland_central", "central": "cropland_central", "south"
 def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) -> tuple[list, list[dict]] | None:
     """Points and segment specs from network/measured/<line>.yaml (the GIS alignment), or None.
 
-    Measured: detour, zone, land shares, urban km at each end, bridges; peat = wetland share
-    (proxy until SSURGO). Not measured yet, so inherited from the planner segment that starts or
-    ends at the same station (else the line defaults): structure mix, urban tunnel share, floodplain.
+    Measured: detour, zone, land shares (incl. freeway right-of-way), urban km at each end, built-up
+    share (priced as urban viaduct), bridges, floodplain where FEMA has maps; peat = wetland share
+    (proxy until SSURGO). Inherited from the planner segment that starts or ends at the same
+    station (else the line defaults): elevated / at-grade split, urban tunnel share.
     """
     path = MEASURED_DIR / f"{line_id}.yaml"
     if not path.exists():
@@ -285,6 +287,15 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
                 OPEN_LAND[piece["zone"]]: sh["open"], "wetland": sh["wetland"]}
         total = sum(land.values())
         land = {k: v / total for k, v in land.items() if v > 0}
+        # beside a freeway: that share of the land is highway right-of-way
+        c = piece.get("highway_corridor_share", 0.0)
+        if c > 0:
+            land = {**{k: v * (1 - c) for k, v in land.items()}, CORRIDOR: c}
+        # built-up km outside the urban ends are priced as urban viaduct, the rest by the planner's mix
+        built = piece.get("built_up_share", 0.0)
+        structure = {k: v * (1 - built) for k, v in base["structure"].items() if k != "urban_viaduct"}
+        if built > 0:
+            structure["urban_viaduct"] = built
         specs.append({
             **base,
             "detour": piece["detour"],
@@ -292,6 +303,7 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             "urban_start_km": piece["urban_start_km"],
             "urban_end_km": piece["urban_end_km"],
             "land": land,
+            "structure": structure,
             "peat": sh["wetland"],
             # measured where FEMA maps cover the piece, the estimate where they don't
             "floodplain": (piece["flood_map_coverage"] * piece["floodplain_share"]

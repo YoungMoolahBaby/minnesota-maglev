@@ -10,9 +10,22 @@ import numpy as np
 
 from .winter import heater_capital
 
-from .network import Line, Segment
+from .network import CORRIDOR, Line, Segment
 
 ACRE_M2 = 4046.8564224
+
+
+def land_price_per_acre(s: Segment, P):
+    """Mean price per acre over the segment's land classes. Highway right-of-way (existing_corridor)
+    costs land.corridor.price_factor x the price of the other land on the segment."""
+    others = {c: v for c, v in s.land.items() if c != CORRIDOR}
+    base = sum(v * P[f"land.price_per_acre.{c}"] for c, v in others.items())
+    corr = s.land.get(CORRIDOR, 0.0)
+    if not corr:
+        return base
+    total = sum(others.values())
+    around = base / total if total > 0 else P["land.price_per_acre.cropland_central"]
+    return base + corr * P["land.corridor.price_factor"] * around
 
 
 def segment_quantities(s: Segment) -> dict[str, float]:
@@ -21,7 +34,8 @@ def segment_quantities(s: Segment) -> dict[str, float]:
     return {
         "elevated_km": rural * s.structure.get("elevated", 0.0),
         "at_grade_km": rural * s.structure.get("at_grade", 0.0),
-        "urban_viaduct_km": s.urban_km * (1 - s.urban_tunnel),
+        # urban ends, plus built-up km between them (suburbs) where the GIS measured them
+        "urban_viaduct_km": s.urban_km * (1 - s.urban_tunnel) + rural * s.structure.get("urban_viaduct", 0.0),
         "tunnel_km": s.urban_km * s.urban_tunnel,
         "bridge_m": s.bridge_km * 1000.0,
         "route_km": s.length_km,
@@ -43,6 +57,7 @@ def segment_capital(s: Segment, P) -> dict:
     adders = civil * (
         P["costs.adders.floodplain"] * s.floodplain
         + P["costs.adders.peat_soft_ground"] * s.peat
+        + P["costs.adders.highway_corridor"] * s.land.get(CORRIDOR, 0.0)
         + P[f"costs.adders.{frost_key}"]
     )
     systems = q["route_km"] * P["costs.systems.propulsion_power_control"]
@@ -55,7 +70,7 @@ def segment_capital(s: Segment, P) -> dict:
         + q["bridge_m"] / 1000.0 * P["land.row_width.elevated"]
     )
     acres = width_km_m * 1000.0 / ACRE_M2
-    price = sum(share * P[f"land.price_per_acre.{cls}"] for cls, share in s.land.items())
+    price = land_price_per_acre(s, P)
     land = acres * price * P["land.acquisition_multiplier"]
 
     wet_share = s.land.get("wetland", 0.0)
@@ -93,7 +108,7 @@ def segment_reserve(s: Segment, P) -> dict:
     )
     rural_acres = rural_width_km_m * 1000.0 / ACRE_M2
     urban_acres = q["urban_viaduct_km"] * 1000.0 * P["land.reserve.width_urban"] / ACRE_M2
-    price = sum(share * P[f"land.price_per_acre.{cls}"] for cls, share in s.land.items())
+    price = land_price_per_acre(s, P)
     land = (rural_acres + urban_acres) * price * P["land.reserve.acquisition_multiplier"]
     urban_civil = q["urban_viaduct_km"] * P[g + "urban_viaduct"] + q["tunnel_km"] * P[g + "tunnel"]
     bridge_civil = q["bridge_m"] * P[g + "bridge_per_m"]

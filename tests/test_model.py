@@ -304,3 +304,34 @@ def test_measured_spine_loads_and_validates(world):
     assert check_network([measured], cities, set(params)) == []
     assert [p.id for p in measured.stations] == [p.id for p in planner.stations]
     assert 0.8 * planner.length_km < measured.length_km < 1.2 * planner.length_km
+
+
+def test_corridor_land_costs_a_share_of_the_land_around_it(world):
+    """Highway right-of-way is priced as price_factor x the other land on the segment."""
+    from dataclasses import replace
+
+    from mnmaglev.costs import land_price_per_acre
+
+    params, _, lines = world
+    P0 = nominal(params)
+    seg = next(l for l in lines if l.id == "spine").segments[0]
+    farm = replace(seg, land={"cropland_central": 1.0})
+    half = replace(seg, land={"cropland_central": 0.5, "existing_corridor": 0.5})
+    crop = P0["land.price_per_acre.cropland_central"]
+    f = P0["land.corridor.price_factor"]
+    assert land_price_per_acre(farm, P0) == pytest.approx(crop)
+    assert land_price_per_acre(half, P0) == pytest.approx(0.5 * crop + 0.5 * f * crop)
+    assert land_price_per_acre(half, {**P0, "land.corridor.price_factor": 0.0}) == pytest.approx(0.5 * crop)
+
+
+def test_built_up_km_are_priced_as_urban_viaduct(world):
+    """A built-up share in the structure mix moves rural km from elevated to urban viaduct."""
+    from dataclasses import replace
+
+    params, _, lines = world
+    seg = next(l for l in lines if l.id == "spine").segments[0]
+    plain = replace(seg, structure={"elevated": 1.0})
+    built = replace(seg, structure={"elevated": 0.7, "urban_viaduct": 0.3})
+    q0, q1 = segment_quantities(plain), segment_quantities(built)
+    assert q1["urban_viaduct_km"] - q0["urban_viaduct_km"] == pytest.approx(0.3 * seg.rural_guideway_km)
+    assert q0["elevated_km"] - q1["elevated_km"] == pytest.approx(0.3 * seg.rural_guideway_km)

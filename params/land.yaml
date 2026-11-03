@@ -69,13 +69,35 @@ price_per_acre:
     unit: MUSD/acre
     conf: placeholder
     source: purchase price only; the mitigation cost is separate (below)
-  existing_corridor:
-    value: 0.05
+
+# Land class `existing_corridor` (highway or rail right-of-way shared with the guideway) has no
+# price of its own: it costs a share of the price of the other land on the segment.
+corridor:
+  price_factor:
+    value: 0.25
     low: 0.0
-    high: 0.2
-    unit: MUSD/acre
-    conf: placeholder
-    source: sharing a highway or rail right-of-way (MnDOT/BNSF agreements), cost of access not land
+    high: 1.0
+    unit: x the price of the land around it
+    conf: "low"
+    source: "23 U.S.C. 142(f): a state may make federal-aid highway right-of-way available 'with or without charge'; 23 CFR 810.212: use by a publicly owned transit authority may be without charge, the authority bears the incidental costs (low = free). Brightline West builds in I-15 right-of-way under Caltrans use agreements (2020, 2023; rent not public) and an NDOT occupancy permit. High = paying full value"
+
+# Built-up land (GIS): a 210 m cell is priced as urban viaduct by a ramp on its non-road
+# impervious surface (NLCD 2021 impervious %, interstates and highways left out).
+developed:
+  impervious_low:
+    value: 20
+    low: 20
+    high: 20
+    unit: "% non-road impervious in a 210 m cell (below: priced as rural)"
+    conf: "medium"
+    source: "~90th percentile of NLCD developed-open-space cells on the spine grid (parks, lawns, road verges: median 11%, p90 19%), so those stay rural"
+  impervious_high:
+    value: 35
+    low: 35
+    high: 35
+    unit: "% non-road impervious in a 210 m cell (above: priced fully as built-up)"
+    conf: "medium"
+    source: "median of NLCD low-intensity cells on the spine grid (single-family suburbs: p10 28%, median 36%, p90 43%), so a typical suburb is fully built-up; medium intensity median 55%, high 80%"
 
 acquisition_multiplier:
   value: 1.6

@@ -8,8 +8,11 @@
 #   urban_start_km    km of urban structure leaving the `from` point (speed-limited, urban costs)
 #   urban_end_km      km of urban structure arriving at the `to` point
 #   urban_tunnel      share of the urban km in tunnel (rest = urban viaduct)
-#   structure         shares of the RURAL km: elevated / at_grade (sum to 1)
-#   land              shares of the route by land class in params/land.yaml (sum to 1)
+#   structure         shares of the RURAL km: elevated / at_grade (sum to 1); GIS-measured lines
+#                     add urban_viaduct for built-up km between the urban ends (suburbs)
+#   land              shares of the route by land class in params/land.yaml (sum to 1);
+#                     existing_corridor = highway / rail right-of-way, priced as
+#                     land.corridor.price_factor x the other land on the segment
 #   floodplain        share of the route on mapped floodplain (FEMA NFHL in the GIS phase)
 #   peat              share on peat / soft ground (deep piles)
 #   bridges           long crossings: name + length_m (costed per metre, not as guideway)

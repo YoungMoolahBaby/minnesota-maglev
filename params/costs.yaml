@@ -68,6 +68,13 @@ systems:
     note: the long stator lives in the guideway, so this scales with km, not with trains.
 
 adders:
+  highway_corridor:
+    value: 0.05
+    low: 0.02
+    high: 0.12
+    unit: fraction of guideway cost on km beside a freeway
+    conf: placeholder
+    source: "pier crash protection and barriers next to traffic (AASHTO LRFD pier protection), lane closures and traffic control while building, highway authority review; offset by existing access for construction"
   floodplain:
     value: 0.15
     low: 0.05

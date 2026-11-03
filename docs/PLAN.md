@@ -114,10 +114,22 @@ where FEMA has maps and the estimate elsewhere. Spine 353 km, 5.7% in flood zone
 floodway bridges 0.9 km (Mississippi) and 2.0 km (Minnesota River); line +$2.1 bn P50, spine with
 fusion $94.0 bn (one unit fewer after re-optimising the timetable).
 
-Next slices, in order of how much they move the result: developed-land treatment for suburbs
-(NLCD impervious %), existing highway and
-rail corridors (OSM / MnDOT; cheaper land, fewer severed farms), SSURGO organic soils (real peat),
-parcels and buildings, public and tribal lands; then the other lines.
+**Slice 3 done 2026-11-03 (spine): suburbs and freeway corridors.** NLCD 2021 impervious surface
+and impervious descriptor (MRLC WCS, same 30 m grid). Built-up share per cell = ramp on non-road
+impervious % (primary and secondary roads left out) from `land.developed.impervious_low` 20% to
+`impervious_high` 35%, set from the spine grid's own cells (developed open space p90 19%,
+low-intensity median 36%); built-up km are priced as urban viaduct (structure share
+`urban_viaduct` on the measured pieces). Freeway corridor = cells with a primary road (descriptor
+20, interstates and freeways, 2018 NavStreets) along at least one cell length; there the land is
+class `existing_corridor`, now priced as `land.corridor.price_factor` x the land around it (was a
+flat $50k/acre, more than the farmland beside it), and guideway gets `costs.adders.highway_corridor`.
+Spine 356 km; built-up viaduct 15 -> 33 km; ~12 km beside freeways; line +$6.9 bn; spine with
+fusion $102.8 bn (4 units: the new route's 1-second peak is 75 MW, the slice-2 route's was 65).
+Rail corridors not modelled (freight railroads set separations case by case, 25-200 ft).
+
+Next slices, in order of how much they move the result: the other lines (phase 2 first), SSURGO
+organic soils (real peat), parcels and buildings, public and tribal lands, and a price for what
+following a highway saves in permits and review.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

@@ -135,3 +135,10 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     heating per metre (`heater_capex_per_km`), any Transrapid or Chinese maglev de-icing studies.
 26. [ ] Lessons from Metro Transit's Blue Line freezing-rain shutdowns and St. Louis MetroLink's
     storm trains: how fast ice builds on exposed steel, what kept or failed to keep service running.
+27. [ ] Highway corridors: what MnDOT would charge for interstate right-of-way (`land.corridor.price_factor`,
+    0.25 placeholder; 23 CFR 810.212 allows free use by a public transit authority), what building
+    beside traffic adds (`costs.adders.highway_corridor`, 5% placeholder: pier protection, lane
+    closures), and a price for what following a highway saves in permitting and environmental review
+    (not in the model, the main reason Brightline West uses I-15). Freight-rail separation rules from
+    BNSF / CPKC / UP for a guideway beside their main lines.
+

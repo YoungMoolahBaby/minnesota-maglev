@@ -1,22 +1,26 @@
-"""GIS phase, slices 1-2: a real alignment for a line from elevation, land cover and flood zones.
+"""GIS phase, slices 1-3: a real alignment for a line from elevation, land cover, flood zones,
+built-up land and freeways.
 
 1. Data (cached in data/raw/gis, gitignored): USGS 3DEP elevation (ImageServer exportImage) and
    NLCD 2021 land cover (MRLC WCS, 30 m class codes), both in EPSG:5070 (CONUS Albers, metres),
    on a 210 m grid = exactly 7 x 7 land-cover pixels per cell, so every cell gets class fractions.
    FEMA NFHL flood zones (MapServer layer 28, queried per 25 km tile): 1% and 0.2% annual-chance
    zones and regulatory floodways, rasterised at 30 m and averaged per cell, plus whether FEMA has
-   digital maps for the tile at all.
+   digital maps for the tile at all. NLCD 2021 impervious surface and its descriptor (roads by
+   class, buildings): how built-up each cell is with roads left out, and where interstates run.
 2. Cost surface: what a km of guideway through each cell costs, priced with the model's own
    nominal parameters: structure (rural elevated / urban viaduct / bridge over water), right-of-way
    land by cover class and zone, wetland mitigation, and a terrain penalty for steep ground;
-   floodways are priced as bridge, other flood zones get the floodplain adder.
+   floodways are priced as bridge, other flood zones get the floodplain adder; built-up cells
+   (ramp on non-road impervious %) as urban viaduct; in interstate right-of-way the land costs
+   land.corridor.price_factor x the land around it and building beside traffic gets an adder.
 3. Route: least-cost path between the line's stations (skimage MCP), then simplified and given
    circular curves no tighter than the minimum radius (cruise speed in the country, urban speed near
    stations); vertices too sharp for a curve are dropped and the line re-simplified.
 4. Measure along the final alignment: length, detour, land shares, wetland, water crossings
-   and floodways (bridges), floodplain share, urban km, grades. Written to network/alignments/<line>.geojson and network/measured/<line>.yaml.
+   and floodways (bridges), floodplain share, built-up share, km beside freeways, urban km, grades. Written to network/alignments/<line>.geojson and network/measured/<line>.yaml.
 
-Not yet (later slices): suburbs as developed land, SSURGO peat, parcels, existing highway / rail corridors,
+Not yet (later slices): SSURGO peat, parcels and single buildings, rail corridors,
 public and tribal land, and the at-grade / elevated choice per cell.
 Requires the optional extra: uv sync --extra gis
 """
@@ -42,9 +46,14 @@ RAW = ROOT / "data" / "raw" / "gis"
 DEM_URL = ("https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage"
            "?bbox={x0},{y0},{x1},{y1}&bboxSR=5070&imageSR=5070&size={w},{h}&format=tiff&pixelType=F32"
            "&interpolation=RSP_BilinearInterpolation&f=image")
-NLCD_URL = ("https://www.mrlc.gov/geoserver/mrlc_download/NLCD_2021_Land_Cover_L48/wcs?service=WCS"
-            "&version=2.0.1&request=GetCoverage&coverageid=mrlc_download__NLCD_2021_Land_Cover_L48"
+MRLC_URL = ("https://www.mrlc.gov/geoserver/mrlc_download/{cov}/wcs?service=WCS"
+            "&version=2.0.1&request=GetCoverage&coverageid=mrlc_download__{cov}"
             "&subset=X({x0},{x1})&subset=Y({y0},{y1})&format=image/geotiff")
+NLCD_URL = MRLC_URL.replace("{cov}", "NLCD_2021_Land_Cover_L48")
+# NLCD 2021 impervious descriptor: 20 primary road (interstates, freeways), 21 secondary road,
+# 22 tertiary road, 24 non-road non-energy impervious (buildings, parking), ... (2018 NavStreets roads)
+HIGHWAY_CODES = (20,)
+MAJOR_ROAD_CODES = (20, 21)
 
 # NLCD class -> our groups
 GROUPS = {
@@ -126,18 +135,18 @@ def fetch_dem(g: Grid, folder: Path) -> np.ndarray:
     return dem
 
 
-def fetch_landcover_fractions(g: Grid, folder: Path) -> dict[str, np.ndarray]:
-    """Fraction of each group per 210 m cell from 30 m NLCD (7 x 7 blocks)."""
+def _mrlc_blocks(g: Grid, folder: Path, cov: str, prefix: str):
+    """Yield (r0, c0, blocks) per tile of a 30 m MRLC coverage; blocks[i, 7, j, 7] = the 7 x 7
+    pixels of cell (r0 + i, c0 + j)."""
     import rasterio
     tile = 300  # cells per request side (2100 x 2100 NLCD pixels)
-    frac = {k: np.zeros((g.ny, g.nx), dtype=np.float32) for k in GROUPS}
     for r0 in range(0, g.ny, tile):
         for c0 in range(0, g.nx, tile):
             h, w = min(tile, g.ny - r0), min(tile, g.nx - c0)
             x0 = g.x0 + c0 * CELL
             y1 = g.y1 - r0 * CELL
-            p = _get(NLCD_URL.format(x0=x0, y0=y1 - h * CELL, x1=x0 + w * CELL, y1=y1),
-                     folder / f"nlcd_{r0}_{c0}.tif")
+            p = _get(MRLC_URL.format(cov=cov, x0=x0, y0=y1 - h * CELL, x1=x0 + w * CELL, y1=y1),
+                     folder / f"{prefix}_{r0}_{c0}.tif")
             with rasterio.open(p) as src:
                 a = src.read(1)
                 # align: the WCS may pad by a pixel; cut from the tile's top-left corner
@@ -145,17 +154,51 @@ def fetch_landcover_fractions(g: Grid, folder: Path) -> dict[str, np.ndarray]:
                 row = int(round((src.bounds.top - y1) / NLCD_PX))
                 a = a[row:row + h * 7, col:col + w * 7]
             hh, ww = a.shape[0] // 7, a.shape[1] // 7
-            blocks = a[: hh * 7, : ww * 7].reshape(hh, 7, ww, 7)
-            for k, codes in GROUPS.items():
-                frac[k][r0:r0 + hh, c0:c0 + ww] = np.isin(blocks, codes).mean(axis=(1, 3))
+            yield r0, c0, a[: hh * 7, : ww * 7].reshape(hh, 7, ww, 7)
+
+
+def fetch_landcover_fractions(g: Grid, folder: Path) -> dict[str, np.ndarray]:
+    """Fraction of each group per 210 m cell from 30 m NLCD (7 x 7 blocks)."""
+    frac = {k: np.zeros((g.ny, g.nx), dtype=np.float32) for k in GROUPS}
+    for r0, c0, blocks in _mrlc_blocks(g, folder, "NLCD_2021_Land_Cover_L48", "nlcd"):
+        hh, ww = blocks.shape[0], blocks.shape[2]
+        for k, codes in GROUPS.items():
+            frac[k][r0:r0 + hh, c0:c0 + ww] = np.isin(blocks, codes).mean(axis=(1, 3))
     return frac
+
+
+def fetch_development(g: Grid, folder: Path) -> dict[str, np.ndarray]:
+    """Per 210 m cell from NLCD 2021 impervious surface (% per 30 m pixel) and its descriptor:
+    imp_nonroad = mean impervious % not counting interstates / highways (how built-up the
+    surroundings are), highway = share of the cell's pixels on a primary road (interstate,
+    freeway), corridor = 1 where a freeway runs through the cell (>= 7 pixels, one cell length)."""
+    imp = np.zeros((g.ny, g.nx), dtype=np.float32)
+    hwy = np.zeros((g.ny, g.nx), dtype=np.float32)
+    tiles = {}
+    for r0, c0, b in _mrlc_blocks(g, folder, "NLCD_2021_Impervious_L48", "imp"):
+        tiles[(r0, c0)] = b.astype(np.float32)
+    for r0, c0, d in _mrlc_blocks(g, folder, "NLCD_2021_Impervious_descriptor_L48", "impd"):
+        b = tiles.pop((r0, c0))
+        hh, ww = min(b.shape[0], d.shape[0]), min(b.shape[2], d.shape[2])
+        b, d = b[:hh, :, :ww, :], d[:hh, :, :ww, :]
+        b = np.where(b > 100, 0, b)  # nodata
+        imp[r0:r0 + hh, c0:c0 + ww] = np.where(np.isin(d, MAJOR_ROAD_CODES), 0, b).mean(axis=(1, 3))
+        hwy[r0:r0 + hh, c0:c0 + ww] = np.isin(d, HIGHWAY_CODES).mean(axis=(1, 3))
+    return {"imp_nonroad": imp, "highway": hwy, "corridor": (hwy * 49 >= 7).astype(np.float32)}
+
+
+def built_up(dev: dict, frac: dict, P: dict) -> np.ndarray:
+    """Share of each cell to price as built-up (urban viaduct): a ramp on non-road impervious %."""
+    lo, hi = P["land.developed.impervious_low"], P["land.developed.impervious_high"]
+    return np.maximum(frac["urban"], np.clip((dev["imp_nonroad"] - lo) / (hi - lo), 0.0, 1.0))
 
 
 def zone_of_lat(lat: float) -> str:
     return "north" if lat >= 46.0 else ("central" if lat >= 44.6 else "south")
 
 
-def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None) -> np.ndarray:
+def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None,
+                 dev: dict | None = None) -> np.ndarray:
     """MUSD per km of route through each cell (nominal parameters)."""
     gw = "costs.guideway."
     t = _to_4326()
@@ -167,14 +210,20 @@ def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | No
     acres_per_km = P["land.row_width.elevated"] * 1000 / 4046.86
     # bridge over open water and over the regulatory floodway (piers there are restricted)
     span = np.maximum(frac["water"], flood["floodway"]) if flood else frac["water"]
-    rural = np.clip(1.0 - span - frac["urban"], 0.0, 1.0)
+    # built-up (urban viaduct): dense NLCD classes, and suburbs by how much of them is paved or built
+    built = np.minimum(built_up(dev, frac, P) if dev else frac["urban"], 1.0 - span)
+    rural = np.clip(1.0 - span - built, 0.0, 1.0)
     # wetland stands in for peat / soft ground until SSURGO: deep piles, the peat adder
     soft = 1.0 + frac["wetland"] * P["costs.adders.peat_soft_ground"]
-    # floodplain: piers above the 500-year flood with freeboard, scour protection
-    fp = 1.0 + (flood["flood"] if flood else 0.0) * P["costs.adders.floodplain"]
+    # floodplain: piers above the 500-year flood with freeboard, scour protection;
+    # beside a freeway: pier crash protection, traffic control while building
+    corridor = dev["corridor"] if dev else 0.0
+    adders = (1.0 + (flood["flood"] if flood else 0.0) * P["costs.adders.floodplain"]
+              + corridor * P["costs.adders.highway_corridor"])
     structure = (span * P[gw + "bridge_per_m"] * 1000
-                 + (frac["urban"] * P[gw + "urban_viaduct"] + rural * P[gw + "elevated"] * soft) * fp)
-    land = acres_per_km * P["land.acquisition_multiplier"] * (
+                 + (built * P[gw + "urban_viaduct"] + rural * P[gw + "elevated"] * soft) * adders)
+    # in a freeway's right-of-way the land costs a share of what the land around it would
+    land = acres_per_km * P["land.acquisition_multiplier"] * (1.0 - corridor * (1.0 - P["land.corridor.price_factor"])) * (
         frac["suburban"] * P["land.price_per_acre.suburban"] + frac["urban"] * P["land.price_per_acre.urban_core"]
         + frac["forest"] * forest + frac["open"] * crop + frac["wetland"] * P["land.price_per_acre.wetland"])
     wetland = (frac["wetland"] * acres_per_km * P["land.wetlands.impact_fraction_elevated"]
@@ -251,7 +300,8 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     frac = fetch_landcover_fractions(g, folder)
     (folder / "nfhl").mkdir(exist_ok=True)
     flood = fetch_floodplain(g, folder / "nfhl")
-    cost = cost_surface(g, frac, dem, P, flood)
+    dev = fetch_development(g, folder)
+    cost = cost_surface(g, frac, dem, P, flood, dev)
     cell_km = CELL / 1000.0
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
@@ -267,8 +317,9 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
         legs.append((pa, pb, xy))
     full = np.vstack([legs[0][2]] + [l[2][1:] for l in legs[1:]])
     align, curve_info = smooth(full, st_xy, P)
-    meas = measure(align, st_xy, stops, g, {**frac, **{f"fl_{k}": v for k, v in flood.items()}}, dem,
-                   P["system.geometry.max_gradient"])
+    layers = {**frac, **{f"fl_{k}": v for k, v in flood.items()},
+              "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"]}
+    meas = measure(align, st_xy, stops, g, layers, dem, P["system.geometry.max_gradient"])
     return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops}
 
 
@@ -356,6 +407,12 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
     crow = haversine_km(lat[m.start], lon[m.start], lat[m.stop - 1], lon[m.stop - 1])
     urban = f["urban"][m] > 0.5
     half = n // 2
+    dev = {}
+    if "dev_built" in f:
+        rest = ~urban & ~span  # the km the model prices by structure mix (not dense urban, not bridge)
+        dev = {"built_up_share": round(float(f["dev_built"][m][rest].mean()), 3) if rest.any() else 0.0,
+               "highway_corridor_share": round(float(f["dev_corridor"][m].mean()), 3),
+               "highway_corridor_km": round(float(f["dev_corridor"][m].sum() * step / 1000), 1)}
     zones, counts = np.unique(zone[m], return_counts=True)
     return {
         "from": start, "to": end, "zone": str(zones[np.argmax(counts)]),
@@ -367,6 +424,7 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
             "floodplain_1pct_share": round(float(f["fl_sfha"][m].mean()), 3),
             "floodway_km": round(float((f["fl_floodway"][m] > 0.5).sum() * step / 1000), 2),
             "flood_map_coverage": round(float(f["fl_covered"][m].mean()), 3)} if "fl_flood" in f else {}),
+        **dev,
         "urban_km": round(float(urban.sum() * step / 1000), 1),
         "urban_start_km": round(float(urban[:half].sum() * step / 1000), 1),
         "urban_end_km": round(float(urban[half:].sum() * step / 1000), 1),
@@ -395,8 +453,10 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
     header = ("# Measured along the GIS alignment (network/alignments/%s.geojson) by `mnmaglev gis %s`:\n"
               "# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid, FEMA NFHL flood zones\n"
               "# (floodplain_share = 1%% + 0.2%% annual chance; floodway runs counted as bridge;\n"
-              "# flood_map_coverage = share of the piece where FEMA has digital maps). Not yet: peat,\n"
-              "# parcels, existing corridors. Land shares: NLCD groups (water, suburban = developed\n"
+              "# flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021\n"
+              "# impervious surface + descriptor (built_up_share = share of the piece's non-urban,\n"
+              "# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).\n"
+              "# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
               "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
               "# wetland).\n" % (line.id, line.id))
     mpath.write_text(header + yaml.safe_dump({"line": line.id, "curves": res["curves"], "pieces": res["measured"]},
