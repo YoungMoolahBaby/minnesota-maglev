@@ -51,8 +51,10 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         kin = line_summary(line, P0)
         cap0 = line_capital(line, P0, new, kin["end_to_end_s"])
         capS = line_capital(line, PS, new, kin["end_to_end_s"])
-        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"])
-        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"])
+        lease0 = cap0["reserve"]["lease_income"] if line.reserve else 0.0
+        leaseS = capS["reserve"]["lease_income"] if line.reserve else 0.0
+        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0)
+        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"], leaseS)
         net_total = net_total + capS["total"]
         results.append({
             "line": line, "new_stations": new, "kin": kin,
@@ -94,15 +96,32 @@ def write_markdown(net: dict, path: Path) -> None:
                "GIS phase measures them. See docs/RESEARCH.md for what to firm up first.\n")
 
     L.append("## Lines\n")
-    L.append("| Line | Phase | Route km | Stations (new) | End to end | Capital P10 / P50 / P90 | P50 per km | Opex P50 / yr |")
-    L.append("|---|---|---|---|---|---|---|---|")
+    L.append("| Line | Phase | Route km | Stations (new) | End to end | Capital P10 / P50 / P90 | P50 per km | Opex P50 / yr | Second-system reserve P50 |")
+    L.append("|---|---|---|---|---|---|---|---|---|")
     for r in R:
         line, cs, os_ = r["line"], _pct(r["capS"]["total"]), _pct(r["opsS"]["total"])
+        rs = _pct(r["capS"]["reserve"]["total"])["p50"]
+        held = "held, in total" if line.reserve else "not held"
         L.append(
             f"| {line.name} | {line.phase} | {line.length_km:,.0f} | {len(line.stations)} ({len(r['new_stations'])}) "
             f"| {_hm(r['kin']['end_to_end_s'])} | {_bn(cs['p10'])} / {_bn(cs['p50'])} / {_bn(cs['p90'])} "
-            f"| ${cs['p50'] / line.length_km:,.0f} M | ${os_['p50']:,.0f} M |"
+            f"| ${cs['p50'] / line.length_km:,.0f} M | ${os_['p50']:,.0f} M "
+            f"| {_bn(rs)} ({rs / _pct(r['capS']['total_without_reserve'])['p50']:.1%}), {held} |"
         )
+    L.append("")
+    L.append("**Second-system reserve**: land beside each line for a next-generation system, plus "
+             "build-for-two provisions at urban structures, long bridges and stations (params: "
+             "`land.reserve.*`, `costs.reserve.*`), so system B can be built while A keeps running. "
+             "Lines opt in with `reserve_second_system: true` in network/lines.yaml.")
+    held = [r for r in R if r["line"].reserve]
+    other = [r for r in R if not r["line"].reserve]
+    if held:
+        L.append(f"Held on {', '.join(r['line'].id for r in held)}: P50 "
+                 f"{_bn(_pct(sum(r['capS']['reserve']['total'] for r in held))['p50'])}, "
+                 f"lease income {sum(float(r['cap0']['reserve']['lease_income']) for r in held):,.1f} MUSD/yr (nominal).")
+    if other:
+        L.append(f"Holding it on the other lines too would add P50 "
+                 f"{_bn(_pct(sum(r['capS']['reserve']['total'] for r in other))['p50'])}.")
     L.append("")
     L.append("Stations shared between lines are costed once, on the earliest phase. Cumulative network capital:\n")
     for ph, t in net["phase_totals"].items():
@@ -137,9 +156,19 @@ def write_markdown(net: dict, path: Path) -> None:
         L.append("| Item | MUSD |")
         L.append("|---|---|")
         for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles",
-                  "soft", "land", "wetlands", "contingency", "total"):
+                  "soft", "land", "wetlands", "contingency"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
+        rv = c0["reserve"]
+        L.append(f"| second-system reserve ({'held' if line.reserve else 'not held'}) "
+                 f"| {float(rv['total']) if line.reserve else 0:,.0f} |")
+        L.append(f"| **total** | **{float(c0['total']):,.0f}** |")
         L.append("")
+        L.append(f"Second-system reserve on this line ({'held' if line.reserve else 'priced, not held'}), "
+                 f"most likely values: {float(rv['acres']):,.0f} acres, land {float(rv['land']):,.0f}, "
+                 f"urban provision {float(rv['urban_provision']):,.0f}, bridge provision {float(rv['bridge_provision']):,.0f}, "
+                 f"station provision {float(rv['station_provision']):,.0f}, review {float(rv['review']):,.0f}, "
+                 f"contingency {float(rv['contingency']):,.0f} = **{float(rv['total']):,.0f} MUSD**; "
+                 f"farm lease income {float(rv['lease_income']):,.2f} MUSD/yr.\n")
         L.append("| Segment | km | Elevated | At grade | Urban viaduct | Tunnel | Bridges m | Acres | Wetland acres filled |")
         L.append("|---|---|---|---|---|---|---|---|---|")
         for s, sc in zip(line.segments, c0["segments"]):
@@ -176,7 +205,9 @@ def write_json(net: dict, path: Path) -> None:
             "end_to_end_s": r["kin"]["end_to_end_s"],
             "kwh_per_train_km": r["kin"]["kwh_per_train_km"],
             "capital_musd": _pct(r["capS"]["total"]), "opex_musd_per_year": _pct(r["opsS"]["total"]),
-            "nominal_capital_musd": {k: float(v) for k, v in r["cap0"].items() if k != "segments"},
+            "reserve_held": line.reserve, "reserve_musd": _pct(r["capS"]["reserve"]["total"]),
+            "nominal_capital_musd": {k: float(v) for k, v in r["cap0"].items()
+                                     if k not in ("segments", "reserve", "reserve_included")},
             "materials": r["materials"],
         })
     path.write_text(json.dumps(out, indent=2), encoding="utf-8")

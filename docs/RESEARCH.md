@@ -39,6 +39,13 @@ When an item is done: update the parameter's value/range/conf/source, tick it he
     and taconite ratios; Minnesota annual pellet output, for scale.
 15. [ ] Minnesota industrial electricity rates and MISO interconnection costs.
 
+## Second-system reserve
+
+16. [ ] Second-system reserve: construction separation needed beside a live maglev
+    (`land.reserve.width_rural`), cost of building city structures for two (`costs.reserve.urban_provision`),
+    Minnesota law on acquiring land for a future system (Minn. Stat. ch. 117), corridor-preservation
+    precedents (official mapping, rail banking, utility corridors).
+
 ## Benchmarks to add (params/benchmarks.yaml, phase 1)
 
 - Shanghai maglev: 30.5 km, US$1.33 bn (2004), fully elevated, soft ground.

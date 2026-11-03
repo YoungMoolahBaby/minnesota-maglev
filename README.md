@@ -38,11 +38,16 @@ First run (2026-11-03, all numbers concept-stage, see the report for the caveats
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine: Duluth - Midway hub - MSP - Rochester | 389 | 1 h 10 | $69 bn ($59 - 80 bn) |
-| Network through phase 2 | 1,022 | | $168 bn ($143 - 196 bn) |
-| Everything incl. Chicago | 1,997 | | $328 bn ($280 - 383 bn) |
+| Spine: Duluth - Midway hub - MSP - Rochester, incl. second-system reserve | 389 | 1 h 10 | $77 bn ($65 - 89 bn) |
+| Network through phase 2 | 1,022 | | $175 bn ($150 - 204 bn) |
+| Everything incl. Chicago | 1,997 | | $335 bn ($287 - 392 bn) |
 
-The spine works out to ~$177 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
+The spine holds land for a **second system** beside it (build the next generation while this one
+runs, then alternate): P50 $7.5 bn of the $77 bn. The land strip itself is cheap (~$0.6 bn with
+contingency); most of it is building city structures and stations for two from day one. Every other
+line shows what its reserve would cost in the report.
+
+The spine works out to ~$197 M per route-km all-in. For scale: Shanghai's maglev cost US$43.6 M/km
 in 2004 (incl. trains and stations); US megaprojects cost several times Chinese ones. The biggest
 single driver of the range is the elevated guideway cost per km, so that's research item 1.
 
@@ -69,8 +74,8 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $73 bn P50,
-$4.4 bn more than the Midway hub, mostly downtown tunnel.
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $83 bn P50,
+$6.2 bn more than the Midway hub: downtown tunnel, and building it for two systems downtown.
 
 ## Honest caveats
 

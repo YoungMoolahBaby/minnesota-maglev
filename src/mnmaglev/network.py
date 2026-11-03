@@ -82,6 +82,7 @@ class Line:
     points: list[City]
     segments: list[Segment]
     note: str = ""
+    reserve: bool = False  # hold land and build-for-two provisions for a second system
 
     @property
     def length_km(self) -> float:
@@ -161,7 +162,8 @@ def load_lines(
             )
         lines.append(
             Line(id=raw["id"], name=raw["name"], phase=int(raw["phase"]),
-                 points=pts, segments=segs, note=str(raw.get("note", "")).strip())
+                 points=pts, segments=segs, note=str(raw.get("note", "")).strip(),
+                 reserve=bool(raw.get("reserve_second_system", False)))
         )
     return lines
 

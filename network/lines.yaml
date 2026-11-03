@@ -14,12 +14,18 @@
 #   peat              share on peat / soft ground (deep piles)
 #   bridges           long crossings: name + length_m (costed per metre, not as guideway)
 #
+# Line field:
+#   reserve_second_system  true = hold land beside the line and build-for-two provisions so a
+#                          next-generation system can be built while this one runs (priced for
+#                          every line in the report; counted in the total only when true)
+#
 # All shares and crossings are PLANNER ESTIMATES until the GIS phase (docs/PLAN.md, phase 2)
 # measures them from lidar, land cover, NWI wetlands, FEMA floodplains and parcels.
 
 lines:
   - id: spine
     name: Arrowhead - Twin Cities - Med City
+    reserve_second_system: true   # hold land + build-for-two provisions for a second system (docs/PLAN.md)
     phase: 1
     points: [duluth, hinckley, midway_hub, msp, rochester]
     note: >

@@ -21,12 +21,17 @@ from the one before with measurements.
   equally (no St. Paul-left-out problem), no downtown tunnels ($68.9 bn vs $73.3 bn P50 for the
   spine), and one hub works for two systems. MSP stays a stop for airport - Rochester trips.
   The St. Cloud line also starts at the hub. Kept as a variant: `downtown_minneapolis`.
-- **Two-system corridor (idea, to build into the model):** reserve land for two systems
-  side by side in the rural corridor (strips ~50-60 m apart) and room for both at the Midway hub and
-  the end stations; build one, run it while the next generation goes up beside it, then
-  alternate. Land is ~0.5% of the cost, so the reserve is cheap insurance. Open: Minnesota
-  eminent-domain limits on taking land for a future system (options, willing sellers, farm
-  leaseback), one environmental review for both strips or two.
+- **Two-system corridor (in the model since 2026-11-03, held on the spine):** reserve land for a
+  second system beside the first (45 m extra in the country, 12 m in cities) and build city
+  structures, long-bridge foundations and stations for two from day one; build system A, run it
+  while the next generation (B) goes up beside it, then alternate. Lines opt in with
+  `reserve_second_system: true`; the report prices it for every line. Spine: P50 $7.5 bn (~11% of
+  the line). The rural land strip is cheap (~$0.6 bn with contingency); the build-for-two
+  provisions in cities and stations are most of it, and `costs.reserve.urban_provision` (30%,
+  placeholder) is the number to research. Open: Minnesota eminent-domain limits on taking land for
+  a future system (options, willing sellers, farm leaseback), one environmental review for both
+  strips or two, and a cheaper "land only" option (no city provisions, B finds its own way into
+  the cities).
 
 ## Phase 1: research pass (next)
 

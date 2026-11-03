@@ -114,3 +114,36 @@ wetlands:
     unit: MUSD/acre-credit
     conf: placeholder
     source: Minnesota wetland bank credit prices vary a lot by bank service area; check BWSR registry
+
+# Land held for a SECOND system beside the first (docs/PLAN.md, two-system corridor): build
+# system A now, run it while the next generation (B) goes up beside it, then alternate.
+# Priced for every line; added to a line's total only where lines.yaml sets reserve_second_system.
+reserve:
+  width_rural:
+    value: 45
+    low: 30
+    high: 70
+    unit: m of extra width beside the first system's right-of-way
+    conf: placeholder
+    source: B's own ~20 m right-of-way plus a separation strip so B can be built (cranes, haul roads, pier works) while A runs at speed; to set from construction safety rules
+  width_urban:
+    value: 12
+    low: 8
+    high: 20
+    unit: m
+    conf: placeholder
+    source: a second viaduct alongside in urban sections (tunnels need no surface land)
+  acquisition_multiplier:
+    value: 1.4
+    low: 1.15
+    high: 2.0
+    unit: x land price
+    conf: placeholder
+    source: willing sellers and purchase options, widening a corridor already being bought (less new severance than a separate route); legal limits on taking land for a future system still open (RESEARCH.md)
+  lease_income:
+    value: 0.00025
+    low: 0.00015
+    high: 0.00035
+    unit: MUSD/acre/year
+    conf: low
+    source: cash rent for Minnesota cropland (~$150-350/acre/yr), reserved cropland leased back to farmers until system B is built; verify with NASS / U of MN cash rent data

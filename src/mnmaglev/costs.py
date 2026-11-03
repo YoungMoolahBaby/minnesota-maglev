@@ -75,6 +75,52 @@ def segment_capital(s: Segment, P) -> dict:
     }
 
 
+LEASABLE_CLASSES = ("cropland_south", "cropland_central")
+
+
+def segment_reserve(s: Segment, P) -> dict:
+    """Land and build-for-two provisions to hold room for a second system beside this segment."""
+    q = segment_quantities(s)
+    g = "costs.guideway."
+    rural_km = q["elevated_km"] + q["at_grade_km"]
+    rural_acres = rural_km * 1000.0 * P["land.reserve.width_rural"] / ACRE_M2
+    urban_acres = q["urban_viaduct_km"] * 1000.0 * P["land.reserve.width_urban"] / ACRE_M2
+    price = sum(share * P[f"land.price_per_acre.{cls}"] for cls, share in s.land.items())
+    land = (rural_acres + urban_acres) * price * P["land.reserve.acquisition_multiplier"]
+    urban_civil = q["urban_viaduct_km"] * P[g + "urban_viaduct"] + q["tunnel_km"] * P[g + "tunnel"]
+    bridge_civil = q["bridge_m"] * P[g + "bridge_per_m"]
+    leasable = sum(s.land.get(c, 0.0) for c in LEASABLE_CLASSES)
+    return {
+        "acres": rural_acres + urban_acres,
+        "land": land,
+        "urban_provision": urban_civil * P["costs.reserve.urban_provision"],
+        "bridge_provision": bridge_civil * P["costs.reserve.bridge_provision"],
+        "lease_income": rural_acres * leasable * P["land.reserve.lease_income"],
+    }
+
+
+def line_reserve(line: Line, P, new_stations: list, construction, soft_rate, contingency_rate) -> dict:
+    """What holding room for a second system costs on this line, contingency included."""
+    segs = [segment_reserve(s, P) for s in line.segments]
+    total = lambda k: sum(sr[k] for sr in segs)  # noqa: E731
+    stations = sum(P[f"costs.stations.{c.type}"] for c in new_stations) * P["costs.reserve.station_provision"]
+    provisions = total("urban_provision") + total("bridge_provision") + stations
+    review = construction * P["costs.reserve.review_extra"]
+    base = total("land") + provisions * (1 + soft_rate) + review
+    return {
+        "segments": segs,
+        "acres": total("acres"),
+        "land": total("land"),
+        "urban_provision": total("urban_provision"),
+        "bridge_provision": total("bridge_provision"),
+        "station_provision": stations,
+        "review": review,
+        "contingency": base * contingency_rate,
+        "total": base * (1 + contingency_rate),
+        "lease_income": total("lease_income"),
+    }
+
+
 def fleet_size(round_trip_s: float, P) -> np.ndarray | float:
     headway_s = 3600.0 / P["system.service.trains_per_hour"]
     in_service = np.ceil(round_trip_s / headway_s)
@@ -97,6 +143,10 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float) -> dict
     land = total("land") + total("wetlands")
     base = construction + soft + land
     contingency = base * P["costs.soft.contingency"]
+    # the reserve is priced for every line; it counts in the total only where the line opts in
+    reserve = line_reserve(line, P, new_stations, construction,
+                           P["costs.soft.engineering_admin"], P["costs.soft.contingency"])
+    without = base + contingency
     return {
         "segments": segs,
         "guideway": total("guideway"),
@@ -112,12 +162,15 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float) -> dict
         "land": total("land"),
         "wetlands": total("wetlands"),
         "contingency": contingency,
-        "total": base + contingency,
+        "reserve": reserve,
+        "reserve_included": line.reserve,
+        "total_without_reserve": without,
+        "total": without + reserve["total"] if line.reserve else without,
     }
 
 
-def line_operating(line: Line, P, trains, kwh_per_train_km: float) -> dict:
-    """Annual operating cost, MUSD/year."""
+def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease=0.0) -> dict:
+    """Annual operating cost, MUSD/year. reserve_lease: farm lease income from a held reserve."""
     train_km = 2 * P["system.service.trains_per_hour"] * P["system.service.service_hours"] * 365 * line.length_km
     energy = train_km * kwh_per_train_km * P["costs.operations.energy_price"] / 1e6
     om = line.length_km * P["costs.operations.om_per_km_year"]
@@ -132,7 +185,8 @@ def line_operating(line: Line, P, trains, kwh_per_train_km: float) -> dict:
         "om": om,
         "winter": winter,
         "staff": staff,
-        "total": energy + om + winter + staff,
+        "reserve_lease_income": reserve_lease,
+        "total": energy + om + winter + staff - reserve_lease,
     }
 
 

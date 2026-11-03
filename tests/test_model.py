@@ -43,6 +43,34 @@ def test_spine_runs_through_midway_hub(world):
     assert "minneapolis" in [p.id for p in downtown.points]
 
 
+def test_reserve_adds_only_where_held(world):
+    from dataclasses import replace
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    assert spine.reserve
+    t = line_summary(spine, P0)["end_to_end_s"]
+    held = line_capital(spine, P0, spine.stations, t)
+    off = line_capital(replace(spine, reserve=False), P0, spine.stations, t)
+    assert held["total"] == pytest.approx(off["total"] + held["reserve"]["total"])
+    assert off["total"] == pytest.approx(off["total_without_reserve"])
+    assert held["reserve"]["total"] > 0 and held["reserve"]["lease_income"] >= 0
+
+
+def test_reserve_land_scales_with_width(world):
+    from mnmaglev.costs import segment_reserve
+
+    params, _, lines = world
+    P0 = nominal(params)
+    s = next(l for l in lines if l.id == "spine").segments[0]
+    a = segment_reserve(s, P0)
+    b = segment_reserve(s, {**P0, "land.reserve.width_rural": 2 * P0["land.reserve.width_rural"],
+                            "land.reserve.width_urban": 2 * P0["land.reserve.width_urban"]})
+    assert b["land"] == pytest.approx(2 * a["land"])
+    assert b["acres"] == pytest.approx(2 * a["acres"])
+
+
 def test_haversine_one_degree_latitude():
     assert haversine_km(45, -93, 46, -93) == pytest.approx(111.2, abs=0.1)
 

@@ -204,3 +204,34 @@ operations:
     unit: MUSD/train/year
     conf: placeholder
     source: crews, cleaning, station staff share
+
+# Build-for-two provisions when a line reserves room for a second system (see land.yaml reserve).
+reserve:
+  urban_provision:
+    value: 0.30
+    low: 0.15
+    high: 0.60
+    unit: fraction of urban viaduct + tunnel cost
+    conf: placeholder
+    source: footings and foundations for a second viaduct, or tunnel boxes and portals sized for two, built now because they can't be added beside a live line in a city
+  bridge_provision:
+    value: 0.15
+    low: 0.05
+    high: 0.40
+    unit: fraction of long-bridge cost
+    conf: placeholder
+    source: second-span foundations in the river, or at least permits and land for them
+  station_provision:
+    value: 0.25
+    low: 0.10
+    high: 0.50
+    unit: fraction of station cost
+    conf: placeholder
+    source: platforms, land and structure for system B at each station (the Midway hub above all)
+  review_extra:
+    value: 0.005
+    low: 0.002
+    high: 0.015
+    unit: fraction of construction
+    conf: placeholder
+    source: environmental review, design and agreements covering the reserved strip now, so it is protected
