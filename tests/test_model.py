@@ -143,3 +143,33 @@ def test_most_likely_values_are_optimistic(world):
     p10, p50, p90 = np.percentile(cs, [10, 50, 90])
     assert p10 < p50 < p90
     assert c0 < p50
+
+
+def test_local_supply_lowers_cost_by_its_savings(world):
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    t = line_summary(spine, P0)["end_to_end_s"]
+    off = line_capital(spine, P0, spine.stations, t, local_supply=False)
+    on = line_capital(spine, P0, spine.stations, t, local_supply=True)
+    ls = on["local_supply"]
+    assert on["construction"] == pytest.approx(off["construction"] - ls["construction"])
+    assert on["total"] < off["total"]
+    # tailings only on north-zone segments
+    assert ls["tailings_t"] > 0
+    southern = next(l for l in lines if l.id == "southern_link")
+    t2 = line_summary(southern, P0)["end_to_end_s"]
+    assert line_capital(southern, P0, southern.stations, t2, True)["local_supply"]["tailings_t"] == 0
+
+
+def test_materials_bill_is_a_small_share(world):
+    from mnmaglev.costs import line_materials
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    t = line_summary(spine, P0)["end_to_end_s"]
+    bill = line_materials(spine, P0)["bill_musd"]
+    assert bill["total"] == pytest.approx(sum(v for k, v in bill.items() if k != "total"))
+    construction = line_capital(spine, P0, spine.stations, t)["construction"]
+    assert 0 < bill["total"] / construction < 0.15

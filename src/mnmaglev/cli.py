@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 from . import ROOT
-from .network import check_network, list_variants, load_cities, load_lines
+from .network import check_network, list_variants, load_cities, load_lines, load_settings
 from .params import check_params, load_params
 
 
@@ -48,7 +48,8 @@ def cmd_report(args) -> int:
         return 1
     out = Path(args.out) if args.out else ROOT / "out" / (args.variant or "")
     out.mkdir(parents=True, exist_ok=True)
-    net = run_network(lines, params, n=args.n, seed=args.seed)
+    local = load_settings()["local_supply"] if args.local_supply is None else args.local_supply == "on"
+    net = run_network(lines, params, n=args.n, seed=args.seed, local_supply=local)
     net["variant"] = args.variant
     write_markdown(net, out / "report.md")
     write_json(net, out / "results.json")
@@ -74,6 +75,8 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--phase", type=int, default=None, help="include lines up to this phase")
     rp.add_argument("--lines", default=None, help="comma-separated line ids")
     rp.add_argument("--variant", default=None, help=f"network variant from network/variants/ ({', '.join(list_variants())})")
+    rp.add_argument("--local-supply", choices=["on", "off"], default=None,
+                    help="override settings.local_supply in network/lines.yaml")
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")
     rp.add_argument("--seed", type=int, default=1)
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")

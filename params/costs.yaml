@@ -235,3 +235,43 @@ reserve:
     unit: fraction of construction
     conf: placeholder
     source: environmental review, design and agreements covering the reserved strip now, so it is protected
+
+# Local supply policy (network/lines.yaml settings.local_supply): Minnesota-made beams and stator
+# packs, taconite tailings as aggregate near the Range, long-term supply contracts with Minnesota
+# mines and mills. Savings are relative to the benchmark costs; the report shows them either way.
+local_supply:
+  beam_plant_saving:
+    value: 0.015
+    low: 0.0
+    high: 0.04
+    unit: fraction of elevated + at-grade guideway civil cost
+    conf: placeholder
+    source: "one guideway-beam plant in Minnesota for the whole network (Shanghai built a dedicated girder factory, per Shanghai Maglev patents US7182023/US7357084); saving = shorter hauls of ~25 m beams and one plant amortised over every phase and the sibling system. Benchmarks likely already assume a plant near the line, hence small"
+  stator_plant_saving:
+    value: 0.01
+    low: 0.0
+    high: 0.03
+    unit: fraction of propulsion/power/control cost
+    conf: placeholder
+    source: stator-pack assembly in Minnesota (Iron Range or Duluth) near the electrical-steel supply chain; logistics and quality control
+  tailings_share:
+    value: 0.5
+    low: 0.2
+    high: 0.8
+    unit: share of concrete aggregate replaced by taconite aggregate/tailings on north-zone segments
+    conf: placeholder
+    source: "MnDOT/NRRI: taconite aggregates performed as well or better in MnROAD test sections incl. concrete (Cell 54, 2004), used for decades near the mines; MnDOT notes limited information for design specifications"
+  tailings_saving_per_t:
+    value: 2
+    low: -4
+    high: 8
+    unit: "USD/t of aggregate replaced (can be negative: hauling from the Range can cost more than local gravel)"
+    conf: placeholder
+    source: tailings are a mine by-product near the Range; saving depends on haul distance vs local gravel pits
+  contingency_points:
+    value: 0.01
+    low: 0.0
+    high: 0.02
+    unit: contingency fraction removed
+    conf: placeholder
+    source: "long-term fixed-price contracts for steel, concrete and stator materials hedge price spikes like 2021-22; materials are only a few % of cost, so the hedge is worth ~1 point"

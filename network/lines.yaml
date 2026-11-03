@@ -22,6 +22,12 @@
 # All shares and crossings are PLANNER ESTIMATES until the GIS phase (docs/PLAN.md, phase 2)
 # measures them from lidar, land cover, NWI wetlands, FEMA floodplains and parcels.
 
+settings:
+  # Minnesota-made guideway beams and stator packs, taconite aggregate near the Range, long-term
+  # supply contracts with Minnesota mines and mills (params costs.local_supply.*). The report shows
+  # the saving either way; this decides whether it counts in the totals.
+  local_supply: true
+
 lines:
   - id: spine
     name: Arrowhead - Twin Cities - Med City

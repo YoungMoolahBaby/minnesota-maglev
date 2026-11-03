@@ -33,6 +33,13 @@ works), date, details. One section per tool.
   little; elevated-by-default costs less extra than the placeholders implied.
 - 2026-11-03: research agents could not fetch railroads.dot.gov (403) or the SCMaglev DEIS cost
   appendices; the FRA 2005 Report to Congress tables are the best missing US source.
+- 2026-11-03: local supply policy (Jon's question: does using Minnesota's own mines bring costs
+  down?). Materials bill = ~4.0% of construction across the network ($8.4 bn of materials,
+  nominal); the raw ore is far less. Local supply saves the spine ~$1.66 bn P50 (1.7%), the network
+  ~$8.1 bn: about half from the supply-contract hedge (1 contingency point), most of the rest from
+  one beam plant; taconite aggregate ~$1 M per northern line (hauls eat the saving). Production tax
+  on Minnesota pellets in the spine's steel ~$2.3 M. Answer: a supply-security and Range-economy
+  case, not a cost cut.
 
 ## OSRD
 

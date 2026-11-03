@@ -40,7 +40,8 @@ def sensitivity(params: dict[str, Param], samples: dict[str, np.ndarray], total:
     return out[:top]
 
 
-def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1) -> dict:
+def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1,
+                local_supply: bool = False) -> dict:
     P0 = nominal(params)
     PS = sample(params, n, seed)
     seen: set[str] = set()
@@ -50,8 +51,10 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         new = [c for c in line.stations if c.id not in seen]
         seen |= {c.id for c in new}
         kin = line_summary(line, P0)
-        cap0 = line_capital(line, P0, new, kin["end_to_end_s"])
-        capS = line_capital(line, PS, new, kin["end_to_end_s"])
+        cap0 = line_capital(line, P0, new, kin["end_to_end_s"], local_supply)
+        capS = line_capital(line, PS, new, kin["end_to_end_s"], local_supply)
+        alt = line_capital(line, PS, new, kin["end_to_end_s"], not local_supply)["total"]
+        local_saving = (alt - capS["total"]) if local_supply else (capS["total"] - alt)
         lease0 = cap0["reserve"]["lease_income"] if line.reserve else 0.0
         leaseS = capS["reserve"]["lease_income"] if line.reserve else 0.0
         ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0)
@@ -60,7 +63,8 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         results.append({
             "line": line, "new_stations": new, "kin": kin,
             "cap0": cap0, "capS": capS, "ops0": ops0, "opsS": opsS,
-            "materials": line_materials(line, P0),
+            "materials": line_materials(line, P0, local_supply),
+            "local_saving": local_saving,
         })
     return {
         "P0": P0, "results": results, "n": n, "seed": seed,
@@ -72,6 +76,7 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         "min_radius_m": curve_radius_note(P0),
         "benchmarks": benchmark_table(params),
         "conf_counts": Counter(p.conf for p in params.values()),
+        "local_supply": local_supply,
     }
 
 
@@ -91,6 +96,8 @@ def write_markdown(net: dict, path: Path) -> None:
     L.append("# Minnesota maglev: network estimate" + (f" (variant: {variant})" if variant else "") + "\n")
     L.append(f"Generated {date.today().isoformat()} by `mnmaglev report` "
              f"({net['n']:,} Monte Carlo samples, seed {net['seed']}). USD 2026.\n")
+    L.append(f"Local supply policy: **{'on' if net.get('local_supply') else 'off'}** "
+             "(network/lines.yaml settings.local_supply; `--local-supply on|off` overrides).\n")
     cc = net["conf_counts"]
     L.append("> Concept-stage numbers. Parameters by confidence: "
              + ", ".join(f"{k} {cc.get(k, 0)}" for k in ("high", "medium", "low", "placeholder"))
@@ -189,15 +196,54 @@ def write_markdown(net: dict, path: Path) -> None:
     L.append("## Materials and the ore behind them (nominal)\n")
     L.append("Steel = rebar + prestressing strand + stator electrical steel + guidance rails. "
              "Ore assumes Mesabi taconite pellets and Duluth Complex copper grades (params/materials.yaml).\n")
-    keys = list(R[0]["materials"])
+    keys = [k for k in R[0]["materials"] if k.endswith(("_t", "_m3")) and not k.startswith("mn_")]
     L.append("| Line | " + " | ".join(keys) + " |")
     L.append("|---|" + "---|" * len(keys))
     tot = Counter()
     for r in R:
-        tot.update(r["materials"])
+        tot.update({k: r["materials"][k] for k in keys})
         L.append(f"| {r['line'].id} | " + " | ".join(f"{r['materials'][k]:,.0f}" for k in keys) + " |")
     L.append("| **all** | " + " | ".join(f"**{tot[k]:,.0f}**" for k in keys) + " |")
     L.append("")
+
+    L.append("### Materials bill (nominal, MUSD)\n")
+    L.append("What the materials themselves cost at delivered 2026 prices (`materials.prices.*`). They are "
+             "already inside the guideway and systems costs; this shows how small a slice they are.\n")
+    bkeys = list(R[0]["materials"]["bill_musd"])
+    L.append("| Line | " + " | ".join(bkeys) + " | share of construction |")
+    L.append("|---|" + "---|" * (len(bkeys) + 1))
+    btot = Counter()
+    ctot = 0.0
+    for r in R:
+        b = r["materials"]["bill_musd"]
+        btot.update(b)
+        ctot += float(r["cap0"]["construction"])
+        L.append(f"| {r['line'].id} | " + " | ".join(f"{b[k]:,.0f}" for k in bkeys)
+                 + f" | {b['total'] / float(r['cap0']['construction']):.1%} |")
+    L.append("| **all** | " + " | ".join(f"**{btot[k]:,.0f}**" for k in bkeys) + f" | **{btot['total'] / ctot:.1%}** |")
+    L.append("")
+
+    L.append("## Local supply: Minnesota mines, plants and contracts\n")
+    on = net.get("local_supply")
+    L.append(f"Policy **{'on' if on else 'off'}**. Minnesota-made guideway beams and stator packs, taconite "
+             "aggregate on north-zone segments, and long-term supply contracts (`costs.local_supply.*`). "
+             "Savings are P50 differences in total capital, then the nominal breakdown before soft costs "
+             "and contingency. The production tax is state revenue on Minnesota pellets in the project's steel.\n")
+    L.append("| Line | Saving P50 (MUSD) | Beam plant | Stator plant | Tailings aggregate | Contingency points | "
+             "Tailings used (t) | MN pellets (t) | MN production tax (MUSD) |")
+    L.append("|---|---|---|---|---|---|---|---|---|")
+    sav_tot = 0.0
+    tax_tot = 0.0
+    for r in R:
+        ls, mat = r["cap0"]["local_supply"], r["materials"]
+        sav = float(np.percentile(r["local_saving"], 50))
+        sav_tot += sav
+        tax_tot += float(mat["mn_production_tax_musd"])
+        L.append(f"| {r['line'].id} | {sav:,.0f} | {float(ls['beam_plant']):,.0f} | {float(ls['stator_plant']):,.0f} "
+                 f"| {float(ls['tailings']):,.1f} | {float(ls['contingency_points']):.3f} | {float(ls['tailings_t']):,.0f} "
+                 f"| {float(mat['mn_pellets_t']):,.0f} | {float(mat['mn_production_tax_musd']):,.1f} |")
+    L.append(f"\nNetwork: local supply saves ~**${sav_tot / 1000:,.1f} bn** P50 (sum of line medians) and pays "
+             f"~${tax_tot:,.1f} M in taconite production tax to the Range.\n")
     path.write_text("\n".join(L), encoding="utf-8")
 
 
@@ -215,8 +261,9 @@ def write_json(net: dict, path: Path) -> None:
             "capital_musd": _pct(r["capS"]["total"]), "opex_musd_per_year": _pct(r["opsS"]["total"]),
             "reserve_held": line.reserve, "reserve_musd": _pct(r["capS"]["reserve"]["total"]),
             "nominal_capital_musd": {k: float(v) for k, v in r["cap0"].items()
-                                     if k not in ("segments", "reserve", "reserve_included")},
+                                     if k not in ("segments", "reserve", "reserve_included", "local_supply", "local_supply_included")},
             "materials": r["materials"],
+            "local_supply_saving_musd": _pct(r["local_saving"]),
         })
     path.write_text(json.dumps(out, indent=2), encoding="utf-8")
 

@@ -70,3 +70,14 @@ trains per hour (needs the demand model) and the second-system urban provision.
 - Zip Rail (Twin Cities - Rochester, studied ~2014-2016): what alignments and costs it found.
 - California HSR, Brightline West: US high-speed rail per-km costs.
 - Chuo Shinkansen (SCMaglev): maglev, mostly tunnel.
+
+## Local supply and materials
+
+17. [ ] Local-supply savings (`costs.local_supply.*`, placeholders): what a dedicated guideway-beam
+    plant saves vs shipped beams (Shanghai girder factory, Emsland), stator-pack assembly economics,
+    and how far taconite aggregate can travel before local gravel is cheaper (haul cost per t-km).
+    Whether MnDOT specifications allow taconite aggregate in structural/precast concrete.
+18. [ ] Material prices (`materials.prices.*`): NOES electrical steel base price (Cleveland-Cliffs
+    quote or CRU/Fastmarkets), PC strand, fabricated guidance rails, aggregate (USGS MCS).
+19. [ ] Where the steel really comes from: which mills make rebar, strand, plate and electrical
+    steel from Minnesota pellets (Cleveland-Cliffs, U.S. Steel), Buy America rules for FRA money.

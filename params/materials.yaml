@@ -119,3 +119,87 @@ ore:
     unit: t aggregate / m^3 concrete
     conf: medium
     source: sand + coarse aggregate in normal-weight concrete; taconite tailings are a candidate aggregate (verify MnDOT use)
+
+# Material prices, delivered, 2026 USD. Used for the materials bill in the report (the guideway
+# per-km costs already include materials; the bill shows how big a slice they are).
+prices:
+  concrete:
+    value: 300
+    low: 220
+    high: 420
+    unit: USD/m^3
+    conf: low
+    source: "US ready-mix averaged ~$180/yd3 in 2024 (NRMCA figure via a secondary site) = ~$235/m3; high-strength precast/structural mixes and placement cost more"
+  rebar:
+    value: 1000
+    low: 900
+    high: 1300
+    unit: USD/t
+    conf: low
+    source: "US rebar ~$940-1,010/t in Q1 2026 (Chemanalyst; Expert Market Research, CFR Illinois), mills raising prices through 2026 (SMM, GMK)"
+  strand:
+    value: 1800
+    low: 1400
+    high: 2500
+    unit: USD/t
+    conf: placeholder
+    source: prestressing strand (PC strand), premium over rebar; to source
+  electrical_steel:
+    value: 2800
+    low: 2000
+    high: 4000
+    unit: USD/t
+    conf: placeholder
+    source: "non-oriented electrical steel; Cleveland-Cliffs' 2026 NOES raw-material surcharge alone is ~$315-435 per net ton (on top of the base price, which is not published)"
+  structural_steel:
+    value: 1600
+    low: 1150
+    high: 2500
+    unit: USD/t
+    conf: placeholder
+    source: "guidance rails and fixings, fabricated; hot-rolled coil ~$950/short ton mid-2025 (Cliffs spot, secondary sites) before fabrication"
+  copper:
+    value: 14500
+    low: 10000
+    high: 16000
+    unit: USD/t
+    conf: medium
+    source: "LME copper ~$14,200-14,800/t in Oct 2026, record ~$14,875 intraday Sep 2026 (Fastmarkets); long-run lower"
+  aluminium:
+    value: 3700
+    low: 3000
+    high: 4500
+    unit: USD/t
+    conf: low
+    source: "LME aluminium ~$3,100/t early Oct 2026 plus a delivery premium (Rotterdam P1020A $550-585/t, Fastmarkets; US premium differs)"
+  aggregate:
+    value: 18
+    low: 12
+    high: 28
+    unit: USD/t
+    conf: placeholder
+    source: crushed stone and sand delivered to site; check USGS Mineral Commodity Summaries (crushed stone unit value)
+
+# Minnesota's take from the ore (state revenue, not a cost reduction).
+mn_ore:
+  production_tax:
+    value: 3.427
+    low: 3.427
+    high: 3.427
+    unit: USD per taxable ton of taconite pellets
+    conf: high
+    source: "MN Department of Revenue production tax table, 2025 rate $3.427 (2024 $3.345), adjusted yearly by the GDP deflator; paid to Range counties, cities, schools and IRRR"
+  pellet_share_local:
+    value: 0.8
+    low: 0.5
+    high: 1.0
+    unit: share of the project's steel made from Minnesota pellets, with local supply
+    conf: placeholder
+    source: supply contracts specifying Mesabi pellets (Cleveland-Cliffs and U.S. Steel mills run on Minnesota/Michigan pellets)
+  pellet_share_market:
+    value: 0.4
+    low: 0.2
+    high: 0.6
+    unit: share without a local-supply policy
+    conf: placeholder
+    source: "US steel from blast furnaces is largely Lake Superior pellets, but EAF mills (most rebar) run on scrap"

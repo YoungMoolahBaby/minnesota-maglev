@@ -133,7 +133,7 @@ def fleet_size(round_trip_s: float, P) -> np.ndarray | float:
     return np.ceil(in_service * (1 + P["costs.vehicles.spare_ratio"]))
 
 
-def line_capital(line: Line, P, new_stations: list, end_to_end_s: float) -> dict:
+def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_supply: bool = False) -> dict:
     segs = [segment_capital(s, P) for s in line.segments]
     total = lambda k: sum(sc[k] for sc in segs)  # noqa: E731
 
@@ -145,13 +145,19 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float) -> dict
     vehicles = trains * P["costs.vehicles.sections_per_train"] * P["costs.vehicles.per_section"]
 
     construction = total("guideway") + total("adders") + total("systems") + stations + switches + depot + vehicles
+    # local supply (Minnesota beam and stator plants, tailings aggregate, supply contracts)
+    local = local_supply_savings(line, P, total("systems"))
+    contingency_rate = P["costs.soft.contingency"]
+    if local_supply:
+        construction = construction - local["construction"]
+        contingency_rate = contingency_rate - local["contingency_points"]
     soft = construction * P["costs.soft.engineering_admin"]
     land = total("land") + total("wetlands")
     base = construction + soft + land
-    contingency = base * P["costs.soft.contingency"]
+    contingency = base * contingency_rate
     # the reserve is priced for every line; it counts in the total only where the line opts in
     reserve = line_reserve(line, P, new_stations, construction,
-                           P["costs.soft.engineering_admin"], P["costs.soft.contingency"])
+                           P["costs.soft.engineering_admin"], contingency_rate)
     without = base + contingency
     return {
         "segments": segs,
@@ -170,6 +176,8 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float) -> dict
         "contingency": contingency,
         "reserve": reserve,
         "reserve_included": line.reserve,
+        "local_supply": local,
+        "local_supply_included": local_supply,
         "total_without_reserve": without,
         "total": without + reserve["total"] if line.reserve else without,
     }
@@ -196,33 +204,51 @@ def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease
     }
 
 
-def line_materials(line: Line, P: dict[str, float]) -> dict[str, float]:
-    """Material takeoff (nominal) and the ore behind it. Tonnes and m^3."""
+def segment_concrete(s: Segment, P) -> float:
+    """Concrete in one segment, m^3 (works with scalar or array parameters)."""
     m = "materials.guideway."
-    concrete = steel_struct = 0.0
-    stator = alu = guide = cu = 0.0
-    for s in line.segments:
-        q = segment_quantities(s)
-        c = (
-            q["elevated_km"] * P[m + "concrete_elevated"]
-            + q["at_grade_km"] * P[m + "concrete_at_grade"]
-            + (q["urban_viaduct_km"] + q["bridge_m"] / 1000.0) * P[m + "concrete_urban"]
-            + q["tunnel_km"] * P["materials.tunnel.concrete"]
-        )
-        concrete += c
-        steel_struct += c * (P[m + "rebar_per_m3"] + P[m + "strand_per_m3"])
-        stator += q["route_km"] * P[m + "stator_steel"]
-        alu += q["route_km"] * P[m + "stator_aluminium"]
-        guide += q["route_km"] * P[m + "guidance_steel"]
-        cu += q["route_km"] * P[m + "copper"]
+    q = segment_quantities(s)
+    return (
+        q["elevated_km"] * P[m + "concrete_elevated"]
+        + q["at_grade_km"] * P[m + "concrete_at_grade"]
+        + (q["urban_viaduct_km"] + q["bridge_m"] / 1000.0) * P[m + "concrete_urban"]
+        + q["tunnel_km"] * P["materials.tunnel.concrete"]
+    )
+
+
+def line_materials(line: Line, P: dict[str, float], local_supply: bool = False) -> dict:
+    """Material takeoff (nominal), the ore behind it, the materials bill and Minnesota's ore tax."""
+    m = "materials.guideway."
+    concrete = sum(segment_concrete(s, P) for s in line.segments)
+    route_km = line.length_km
+    rebar = concrete * P[m + "rebar_per_m3"]
+    strand = concrete * P[m + "strand_per_m3"]
+    stator = route_km * P[m + "stator_steel"]
+    alu = route_km * P[m + "stator_aluminium"]
+    guide = route_km * P[m + "guidance_steel"]
+    cu = route_km * P[m + "copper"]
     o = "materials.ore."
-    steel = steel_struct + stator + guide
+    steel = rebar + strand + stator + guide
     pellets = steel * P[o + "pellets_per_t_steel"]
+    aggregate = concrete * P[o + "aggregate_per_m3"]
+    pr = "materials.prices."
+    bill = {  # MUSD
+        "concrete": concrete * P[pr + "concrete"] / 1e6,
+        "rebar": rebar * P[pr + "rebar"] / 1e6,
+        "strand": strand * P[pr + "strand"] / 1e6,
+        "electrical_steel": stator * P[pr + "electrical_steel"] / 1e6,
+        "guidance_steel": guide * P[pr + "structural_steel"] / 1e6,
+        "copper": cu * P[pr + "copper"] / 1e6,
+        "aluminium": alu * P[pr + "aluminium"] / 1e6,
+    }
+    bill["total"] = sum(bill.values())
+    share = P["materials.mn_ore.pellet_share_local" if local_supply else "materials.mn_ore.pellet_share_market"]
+    mn_pellets = pellets * share
     return {
         "concrete_m3": concrete,
         "cement_t": concrete * P[o + "cement_per_m3"],
-        "aggregate_t": concrete * P[o + "aggregate_per_m3"],
-        "rebar_strand_t": steel_struct,
+        "aggregate_t": aggregate,
+        "rebar_strand_t": rebar + strand,
         "electrical_steel_t": stator,
         "guidance_steel_t": guide,
         "steel_total_t": steel,
@@ -231,6 +257,33 @@ def line_materials(line: Line, P: dict[str, float]) -> dict[str, float]:
         "aluminium_t": alu,
         "copper_t": cu,
         "cu_ore_t": cu / (P[o + "cu_ore_grade"] * P[o + "cu_recovery"]),
+        "bill_musd": bill,
+        "mn_pellets_t": mn_pellets,
+        "mn_production_tax_musd": mn_pellets * P["materials.mn_ore.production_tax"] / 1e6,
+    }
+
+
+def local_supply_savings(line: Line, P, systems) -> dict:
+    """What the local-supply policy saves on this line (MUSD, before soft costs and contingency)."""
+    g, ls = "costs.guideway.", "costs.local_supply."
+    beam_civil = sum(
+        segment_quantities(s)["elevated_km"] * P[g + "elevated"]
+        + segment_quantities(s)["at_grade_km"] * P[g + "at_grade"]
+        for s in line.segments
+    )
+    north_aggregate_t = sum(
+        segment_concrete(s, P) * P["materials.ore.aggregate_per_m3"] for s in line.segments if s.zone == "north"
+    )
+    beams = beam_civil * P[ls + "beam_plant_saving"]
+    stators = systems * P[ls + "stator_plant_saving"]
+    tailings = north_aggregate_t * P[ls + "tailings_share"] * P[ls + "tailings_saving_per_t"] / 1e6
+    return {
+        "beam_plant": beams,
+        "stator_plant": stators,
+        "tailings": tailings,
+        "construction": beams + stators + tailings,
+        "contingency_points": P[ls + "contingency_points"],
+        "tailings_t": north_aggregate_t * P[ls + "tailings_share"],
     }
 
 

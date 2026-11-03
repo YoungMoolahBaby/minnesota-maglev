@@ -42,6 +42,13 @@ from the one before with measurements.
   a future system (options, willing sellers, farm leaseback), one environmental review for both
   strips or two, and a cheaper "land only" option (no city provisions, B finds its own way into
   the cities).
+- **2026-11-03, local supply policy on** (Jon): use Minnesota's own mines and build the guideway
+  beams and stator packs in Minnesota. Modelled as `settings.local_supply` in network/lines.yaml with
+  `costs.local_supply.*`: one beam plant for the whole network (1.5% of beam civil), stator-pack
+  assembly (1% of systems), taconite aggregate on north-zone segments, supply contracts (-1
+  contingency point). Spine saving ~$1.7 bn P50 (~1.7%). Materials are ~4% of construction, so the
+  ore itself barely moves cost; the case for it is supply security, price stability, jobs and Range
+  revenue (production tax ~$2.3 M on the spine), which belong in the economics phase.
 
 ## Phase 1: research pass (in progress; pass 1 done 2026-11-03)
 

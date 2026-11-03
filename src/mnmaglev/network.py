@@ -105,6 +105,17 @@ SEGMENT_KEYS = (
 
 
 VARIANTS_DIR = NETWORK_DIR / "variants"
+SETTINGS_DEFAULTS = {"local_supply": False}
+
+
+def load_settings(path: Path = NETWORK_DIR / "lines.yaml") -> dict:
+    """Network-wide policy settings (top-level `settings:` in lines.yaml)."""
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    out = {**SETTINGS_DEFAULTS, **(data.get("settings") or {})}
+    unknown = set(out) - set(SETTINGS_DEFAULTS)
+    if unknown:
+        raise ValueError(f"unknown settings {unknown}; known: {sorted(SETTINGS_DEFAULTS)}")
+    return out
 
 
 def list_variants() -> list[str]:
