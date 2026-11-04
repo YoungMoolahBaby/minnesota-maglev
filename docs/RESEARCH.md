@@ -142,3 +142,9 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     (not in the model, the main reason Brightline West uses I-15). Freight-rail separation rules from
     BNSF / CPKC / UP for a guideway beside their main lines.
 
+28. [ ] Tall piers: cost per metre of pier height for double-track maglev or HSR viaducts
+    (`costs.guideway.tall_pier_per_m`, 0.6 MUSD per km per m, placeholder engineering estimate) and
+    the height the elevated benchmarks already cover (`pier_height_ref`, 20 m: Transrapid's standard
+    elevated class). Candidates: Martinez-Martin et al. 2013 (tall RC piers, 40-100 m), Chinese HSR
+    viaduct cost by pier height, MnDOT/WSDOT bridge cost data for tall substructure. Small at today's
+    routes (~$70 M a line on the Duluth hillside).

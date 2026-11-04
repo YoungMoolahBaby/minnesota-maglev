@@ -143,6 +143,18 @@ works), date, details. One section per tool.
   still priced as ordinary elevated guideway. The MRLC server answered one of three parallel
   downloads with a firewall captcha page, which the cache saved as a tile; downloads now keep only
   files that start like a TIFF and retry otherwise.
+- 2026-11-03, tall piers priced: the GIS measures the lowest guideway profile within the 10% grade
+  limit, and it stands more than 3.5 m above the ground on under 3% of any measured line; above
+  20 m only on the Duluth hillside (spine 35 m x km, Iron Range 45 m x km, piers up to 73 and 80 m
+  over the ravines). At a placeholder $0.6 M per km per metre above 20 m that is +$67 M P50 on the
+  spine and +$73 M on the Iron Range line: tall piers don't move the network cost. The first
+  before/after run showed +$0.6 bn on the spine and +$2 bn overall, almost all of it Monte Carlo
+  resampling: all parameters drew from one random stream, so two new parameters reshuffled every
+  draw after them (lines without tall piers moved $0.1-0.3 bn). Each parameter now has its own
+  stream (seeded by the run seed and its name); that shifted every P50 once, within the seed-to-
+  seed noise (spine seeds 1-5: $97.3-97.7 bn; before $97.0). Spine with fusion $97.7 bn, phase 2
+  $236 bn, all $459 bn. A source for the cost per metre of tall piers wasn't found (a 2013 tall-pier
+  optimisation paper is closed access), so the rate is an engineering estimate.
 
 ## OSRD
 

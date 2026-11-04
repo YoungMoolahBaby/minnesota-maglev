@@ -42,6 +42,14 @@ def segment_quantities(s: Segment) -> dict[str, float]:
     }
 
 
+def tall_pier_excess(s: Segment, P):
+    """m x km of guideway above costs.guideway.pier_height_ref (measured lines; 0 elsewhere)."""
+    if not s.pier_excess:
+        return 0.0
+    refs = sorted(s.pier_excess)
+    return np.interp(P["costs.guideway.pier_height_ref"], refs, [s.pier_excess[r] for r in refs])
+
+
 def segment_capital(s: Segment, P) -> dict:
     q = segment_quantities(s)
     g = "costs.guideway."
@@ -52,6 +60,9 @@ def segment_capital(s: Segment, P) -> dict:
         + q["tunnel_km"] * P[g + "tunnel"]
         + q["bridge_m"] * P[g + "bridge_per_m"]
     )
+    # piers taller than the elevated price covers (ravine and valley crossings for the grade limit)
+    tall_piers = tall_pier_excess(s, P) * P[g + "tall_pier_per_m"]
+    civil = civil + tall_piers
     # the frost zone is a fixed flag (low == high), so its mean is the flag in both modes
     frost_key = "frost_north" if float(np.mean(P[f"climate.{s.zone}.frost"])) >= 0.5 else "frost_south"
     adders = civil * (
@@ -83,6 +94,7 @@ def segment_capital(s: Segment, P) -> dict:
     return {
         "quantities": q,
         "guideway": civil,
+        "tall_piers": tall_piers,
         "adders": adders,
         "systems": systems,
         "land": land,

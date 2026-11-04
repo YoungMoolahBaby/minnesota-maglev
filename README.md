@@ -45,14 +45,14 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 357 | 1 h 02 | $97.0 bn ($84 - 112 bn) |
-| Network through phase 2, all GIS-measured (6 fusion units) | 962 | | $234 bn ($202 - 272 bn) |
-| Everything incl. Chicago (10 fusion units; phase 3 lines still estimated) | 1,937 | | $456 bn ($393 - 530 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 357 | 1 h 02 | $97.7 bn ($85 - 113 bn) |
+| Network through phase 2, all GIS-measured (6 fusion units) | 962 | | $236 bn ($204 - 272 bn) |
+| Everything incl. Chicago (10 fusion units; phase 3 lines still estimated) | 1,937 | | $459 bn ($396 - 531 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
 construction separation), far enough that work on one needs no slow orders on the other; the
-shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.1 bn of the spine. The
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.2 bn of the spine. The
 land is cheap (~$1.3 bn with contingency); most of it is building city structures and stations
 for two from day one. Every other line shows what its reserve would cost in the report.
 
@@ -108,15 +108,18 @@ cells, each priced with the model's own parameters), fits curves of at least the
 measures it. The spine is 357 km (my estimates said 389), Duluth to the Midway hub in 34 minutes,
 1 h 02 end to end; mostly forest and wetland north of Hinckley, cropland south of Cannon Falls.
 Climbing out of Duluth the guideway crosses the hillside's ravines on piers up to ~70-80 m (about
-1 km of each line over 25 m) to stay within 10%; tall piers are still priced as ordinary elevated
-guideway.
+1 km of each line over 25 m) to stay within 10%. Piers above 20 m (the top of Transrapid's standard
+elevated guideway) pay ~$0.6 M per km for every metre above it (a placeholder engineering
+estimate): +$67 M P50 on the spine and +$73 M on the Iron Range line, nothing elsewhere. Almost
+everywhere else the 10% grade limit needs no lift at all: the alignments are under 3.5 m of grade
+lift for >97% of their length.
 
 | Line (GIS-measured) | Route km (estimate) | End to end | Line P50 (estimate) |
 |---|---|---|---|
-| Spine | 357 (389) | 1 h 02 | $89.9 bn ($101.9 bn) |
-| Duluth - Virginia - Hibbing | 126 (136) | 24 min | $28.7 bn ($30.7 bn) |
-| Midway hub - St. Cloud - Alexandria - Moorhead | 375 (386) | 1 h 05 | $81.0 bn ($79.0 bn) |
-| MSP - Mankato | 105 (111) | 17 min | $24.4 bn ($24.9 bn) |
+| Spine | 357 (389) | 1 h 02 | $90.6 bn ($102.5 bn) |
+| Duluth - Virginia - Hibbing | 126 (136) | 24 min | $29.0 bn ($30.9 bn) |
+| Midway hub - St. Cloud - Alexandria - Moorhead | 375 (386) | 1 h 05 | $81.5 bn ($79.4 bn) |
+| MSP - Mankato | 105 (111) | 17 min | $24.5 bn ($25.0 bn) |
 
 Every measured line is shorter than my straight-line-plus-detour estimate. The west line costs
 more anyway: it starts with ~15 km of north-metro suburbs priced as built-up viaduct, and lake
@@ -141,11 +144,12 @@ path itself.
   already disturbed, public acceptance) isn't priced yet. Rail corridors are left out: freight
   railroads set the separation case by case.
 
-Spine P50 $97.0 bn vs $109.1 bn on my estimates (`--no-measured`); through phase 2 $234 bn vs
-$247 bn. Still not seen: buildings and parcels one by one, real peat soils,
+Spine P50 $97.7 bn vs $109.5 bn on my estimates (`--no-measured`); through phase 2 $236 bn vs
+$248 bn. Monte Carlo noise at 5,000 samples is about +-$0.3 bn on the spine (seeds 1-5:
+$97.3-97.7 bn); each parameter has its own random stream, so adding one doesn't reshuffle the rest. Still not seen: buildings and parcels one by one, real peat soils,
 public and tribal land.
 
-The spine works out to ~$252 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
+The spine works out to ~$254 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
 second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
 incl. trains and stations); the 2001 Baltimore-Washington Transrapid estimate ~$187 M/km (incl. 40%
 contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Early estimates of rail projects have
@@ -157,7 +161,7 @@ still the elevated guideway cost per km.
 | Piece | Role | Status |
 |---|---|---|
 | `src/mnmaglev` (Python) | parameters, network, costs, land, materials, Monte Carlo, report | working |
-| `gis.py` (`mnmaglev gis <line>`) | route a line on USGS elevation + NLCD land cover and impervious surface + FEMA flood zones: least-cost path priced with the model's own parameters, floodways bridged, suburbs as built-up, interstate right-of-way, curves >= the minimum radius, pier heights for <=10% grades; measured shares feed the model (`use_measured: true`). Next: phase 3 lines, tall piers, peat soils, parcels | slices 1-3 (spine + phase 2) |
+| `gis.py` (`mnmaglev gis <line>`) | route a line on USGS elevation + NLCD land cover and impervious surface + FEMA flood zones: least-cost path priced with the model's own parameters, floodways bridged, suburbs as built-up, interstate right-of-way, curves >= the minimum radius, pier heights for <=10% grades (tall piers priced by height); measured shares feed the model (`use_measured: true`). Next: phase 3 lines, peat soils, parcels | slices 1-3 (spine + phase 2) |
 | [OSRD](https://github.com/OpenRailAssociation/osrd) | running time, timetables and capacity on the real alignments (`integrations/osrd`) | planned |
 | `power.py`, `fusion.py` | second-by-second traction demand from the timetable; the fusion fleet sized from its peak, surplus and costs | working |
 | [Calliope](https://calliope.readthedocs.io/) | optimise the power mix (fusion units, grid, surplus users) hour by hour (`integrations/calliope`) | planned |
@@ -176,9 +180,9 @@ peat shares, and long bridges. `mnmaglev check` tells you if anything doesn't ad
 
 Alternatives live in `network/variants/` (lines there replace the same ids):
 `uv run mnmaglev report --variant downtown_minneapolis` writes `out/downtown_minneapolis/`.
-That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $116.2 bn P50 with fusion,
-$7.1 bn more than the Midway hub on the same planner estimates (`--no-measured`: $109.1 bn); the
-GIS-measured Midway spine is $97.0 bn. The difference is downtown tunnel, and building it for two
+That variant (spine through downtown Minneapolis, St. Paul by Green Line) comes to $116.7 bn P50 with fusion,
+$7.2 bn more than the Midway hub on the same planner estimates (`--no-measured`: $109.5 bn); the
+GIS-measured Midway spine is $97.7 bn. The difference is downtown tunnel, and building it for two
 systems downtown.
 
 ## Honest caveats

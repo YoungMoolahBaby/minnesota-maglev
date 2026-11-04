@@ -91,3 +91,17 @@ All are cached in data/raw/gis (gitignored); the alignment and measurements are 
   ENR https://enr.com/articles/49684-vegas-la-high-speed-rail-line-can-use-interstate-15-right-of-way
 - Shared rail corridors (track centres 25-200 ft, set case by case): FRA catalog of common-use rail
   corridors https://rosap.ntl.bts.gov/view/dot/40227
+
+## Tall piers (costs.guideway.pier_height_ref, tall_pier_per_m)
+
+- Transrapid guideway gradient-height classes (at grade 1.25-3.5 m, elevated 3.5-20 m), Shanghai line
+  paper in Promet - Traffic & Transportation: https://traffic.fpz.hr/index.php/PROMTT/article/download/877/728
+- Same classes and the Berlin-Hamburg girder type for 2.2-20 m, Transrapid system document excerpt:
+  https://1library.net/document/zxokdxvz-girder-guideway-hybrid-munich-optimization-shanghai-transrapid.html
+- FRA (1992), influence of guideway flexibility on maglev vehicle dynamics, costs Transrapid guideway
+  on 7.6 m piers (search-result summary; the PDF refused download):
+  https://railroads.dot.gov/sites/fra.dot.gov/files/fra_net/16355/1992_INFLUENCE%20OF%20GUIDEWAY%20FLEXIBILITY%20ON%20MAGLEV%20VEHICL.PDF
+- Martinez-Martin, Gonzalez-Vidosa, Hospitaler, Yepes (2013), A parametric study of optimum tall piers
+  for railway bridge viaducts, Structural Engineering and Mechanics 45(6), doi:10.12989/sem.2013.45.6.723
+  (40-100 m hollow RC piers; full text closed, no cost figures taken from it). The cost per metre
+  itself is an engineering estimate (params/costs.yaml), not a benchmark.

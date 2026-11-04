@@ -4,6 +4,9 @@
 # flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021
 # impervious surface + descriptor (built_up_share = share of the piece's non-urban,
 # non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
+# Guideway height = lowest profile at or above the ground within the grade limit;
+# pier_excess_m_km = metres above each reference height x km (tall piers are priced
+# above costs.guideway.pier_height_ref).
 # Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
@@ -56,6 +59,13 @@ pieces:
   - 317
   guideway_max_height_m: 2.9
   km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 0.0
+    10: 0.0
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0
 - from: st_cloud
   to: alexandria
   zone: central
@@ -86,6 +96,13 @@ pieces:
   - 437
   guideway_max_height_m: 4.9
   km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 0.0
+    10: 0.0
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0
 - from: alexandria
   to:
     id: wp_2_1
@@ -121,6 +138,13 @@ pieces:
   - 449
   guideway_max_height_m: 1.3
   km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 0.0
+    10: 0.0
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0
 - from:
     id: wp_2_1
     lat: 46.00055
@@ -155,3 +179,10 @@ pieces:
   - 410
   guideway_max_height_m: 7.3
   km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 0.47
+    10: 0.0
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0

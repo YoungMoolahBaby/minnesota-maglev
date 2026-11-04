@@ -52,6 +52,8 @@ class Segment:
     peat: float
     bridges: list[Bridge] = field(default_factory=list)
     note: str = ""
+    # measured (GIS): reference pier height (m) -> m x km of guideway standing above it
+    pier_excess: dict[float, float] = field(default_factory=dict)
 
     @property
     def crow_km(self) -> float:
@@ -188,6 +190,7 @@ def load_lines(
                     floodplain=float(spec["floodplain"]), peat=float(spec["peat"]),
                     bridges=[Bridge(**b_) for b_ in spec["bridges"]],
                     note=str(spec.get("note", "")),
+                    pier_excess={float(k): float(v) for k, v in spec.get("pier_excess", {}).items()},
                 )
             )
         lines.append(
@@ -253,7 +256,8 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
     """Points and segment specs from network/measured/<line>.yaml (the GIS alignment), or None.
 
     Measured: detour, zone, land shares (incl. freeway right-of-way), urban km at each end, built-up
-    share (priced as urban viaduct), bridges, floodplain where FEMA has maps; peat = wetland share
+    share (priced as urban viaduct), bridges, floodplain where FEMA has maps, guideway height above
+    reference pier heights (tall piers); peat = wetland share
     (proxy until SSURGO). Inherited from the planner segment that starts or ends at the same
     station (else the line defaults): elevated / at-grade split, urban tunnel share.
     """
@@ -310,6 +314,7 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
                            + (1 - piece["flood_map_coverage"]) * float(base["floodplain"]))
             if "floodplain_share" in piece else base["floodplain"],
             "bridges": [{"name": f"water crossing {i + 1}", "length_m": m} for i, m in enumerate(piece["bridges_m"])],
+            "pier_excess": piece.get("pier_excess_m_km", {}),
             "note": (f"measured (GIS); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades"
                      + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")),
             "_a": a, "_b": b,

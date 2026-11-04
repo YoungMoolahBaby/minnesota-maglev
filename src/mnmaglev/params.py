@@ -8,6 +8,7 @@ prefixed by the file stem, e.g. ``costs.guideway.elevated`` or ``climate.north.s
 from __future__ import annotations
 
 from dataclasses import dataclass
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -91,5 +92,7 @@ def nominal(params: dict[str, Param]) -> dict[str, float]:
 
 
 def sample(params: dict[str, Param], n: int, seed: int) -> dict[str, np.ndarray]:
-    rng = np.random.default_rng(seed)
-    return {k: p.sample(rng, n) for k, p in params.items()}
+    """n triangular draws per parameter. Each parameter has its own random stream (seeded by the run
+    seed and its name), so adding or removing a parameter doesn't reshuffle the others' draws and
+    before / after comparisons show only the change itself."""
+    return {k: p.sample(np.random.default_rng([seed, zlib.crc32(k.encode())]), n) for k, p in params.items()}

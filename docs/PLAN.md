@@ -137,10 +137,18 @@ single global tolerance grew to 1.45 km on the west line and cut across lakes (9
 $234 bn, all $456 bn (phase 3 lines still estimated). The MRLC server answered one of three
 parallel downloads with a firewall captcha page; downloads now keep only real TIFFs and retry.
 
-Next slices, in order of how much they move the result: tall piers priced by height (the Duluth
-hillside ravines need ~70-80 m), the phase 3 lines, SSURGO organic soils (real peat), parcels and
-buildings, public and tribal lands, and a price for what following a highway saves in permits
-and review.
+**Tall piers priced 2026-11-03.** Each measured piece records metres x km of guideway above 5, 10,
+..., 30 m (`pier_excess_m_km`); the model interpolates at `costs.guideway.pier_height_ref` (20 m,
+Transrapid's standard elevated class tops out there) and charges `costs.guideway.tall_pier_per_m`
+(0.6 MUSD per km per metre, placeholder engineering estimate). Spine +$67 M P50, Iron Range
++$73 M, others 0: the grade limit needs tall piers only on the Duluth hillside. The route search
+doesn't see pier height yet (only a slope term), which matters little at these amounts. Monte
+Carlo draws now come from one random stream per parameter; that moved every P50 once by about
+the seed-to-seed noise (spine $97.0 -> $97.7 bn; seeds 1-5 give $97.3-97.7 bn).
+
+Next slices, in order of how much they move the result: the phase 3 lines, SSURGO organic soils
+(real peat), parcels and buildings, public and tribal lands, and a price for what following a
+highway saves in permits and review.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

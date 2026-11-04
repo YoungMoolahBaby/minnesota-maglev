@@ -358,3 +358,29 @@ def test_smoothing_fits_curves_locally_and_keeps_the_detour(world):
     # the mid station stays on the line (its vertex is filleted like any other: within a platform)
     assert np.min(np.linalg.norm(out - leg[6], axis=1)) < 150.0
     assert info["cost_smoothed_musd"] <= 1.02 * info["cost_least_cost_path_musd"]
+
+
+def test_tall_piers_pay_for_every_metre_above_the_reference(world):
+    import dataclasses
+
+    from mnmaglev.costs import segment_capital, tall_pier_excess
+
+    params, _, lines = world
+    P = nominal(params)
+    s = lines[0].segments[0]
+    flat = dataclasses.replace(s, pier_excess={})
+    tall = dataclasses.replace(s, pier_excess={10.0: 80.0, 20.0: 40.0, 30.0: 10.0})
+    P2 = {**P, "costs.guideway.pier_height_ref": 15.0}
+    assert tall_pier_excess(tall, P2) == pytest.approx(60.0)  # interpolated between 10 and 20 m
+    extra = segment_capital(tall, P2)["guideway"] - segment_capital(flat, P2)["guideway"]
+    assert extra == pytest.approx(60.0 * P["costs.guideway.tall_pier_per_m"])
+    assert segment_capital(flat, P2)["tall_piers"] == 0.0
+
+
+def test_adding_a_parameter_leaves_the_other_draws_alone(world):
+    from mnmaglev.params import Param
+
+    params, _, _ = world
+    extra = {**params, "costs.zz_new": Param("costs.zz_new", 1.0, 0.5, 2.0, "x", "low", "", "")}
+    a, b = sample(params, 500, seed=1), sample(extra, 500, seed=1)
+    assert all(np.array_equal(a[k], b[k]) for k in params)

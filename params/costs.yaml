@@ -49,6 +49,22 @@ guideway:
     unit: MUSD/m
     conf: low
     source: "Minnesota river bridges in 2026 USD: St. Croix Crossing ~0.47, Hastings ~0.42 (4-lane highway decks, ~$19-24k per m2); a dual maglev deck is narrower (~12-13 m) but heavier-spec. I-35W (~1.28, 10 lanes, emergency) is context only"
+  pier_height_ref:
+    value: 20
+    low: 12
+    high: 25
+    unit: m
+    conf: "low"
+    source: "Transrapid Shanghai design classes: at-grade guideway 1.25-3.5 m and elevated 3.5-20 m gradient height (standard beams and piers; Berlin-Hamburg planned one girder type for 2.2-20 m); a 1992 FRA study costed Transrapid guideway on 7.6 m piers. The elevated benchmarks are lines of such standard piers, so the elevated price is taken to cover piers up to about this height"
+    note: guideway standing higher above the ground (GIS-measured ravine and valley crossings within the 10% grade limit) pays tall_pier_per_m for every metre above it
+  tall_pier_per_m:
+    value: 0.6
+    low: 0.3
+    high: 1.2
+    unit: MUSD/km/m
+    conf: "placeholder"
+    source: "engineering estimate, not a benchmark: 32-40 double-track piers per km (24.8-31 m Transrapid beams); a tall hollow pier for a double-track maglev deck takes ~8-12 m3 of concrete per metre of height at ~$1,500-2,500/m3 in place (slipform, rebar), ~$12-30k per pier-metre, plus deeper foundations; over deep ravines longer spans trade fewer piers for dearer beams"
+    note: at 70 m (50 m above the reference) elevated guideway costs ~1.5x (1.2-1.9x across the range)
   switch_each:
     value: 7
     low: 4

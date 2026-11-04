@@ -42,6 +42,7 @@ from .network import Line
 
 CELL = 210.0  # m, 7 x 30 m NLCD pixels
 NLCD_PX = 30.0
+PIER_REFS_M = (5, 10, 15, 20, 25, 30)  # reference pier heights the measured excess is recorded for
 RAW = ROOT / "data" / "raw" / "gis"
 DEM_URL = ("https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage"
            "?bbox={x0},{y0},{x1},{y1}&bboxSR=5070&imageSR=5070&size={w},{h}&format=tiff&pixelType=F32"
@@ -497,6 +498,10 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
         "elev_range_m": [round(float(np.nanmin(zz))), round(float(np.nanmax(zz)))],
         "guideway_max_height_m": round(float(np.nanmax(height)), 1),
         "km_over_25m_high": round(float((height > 25).sum() * step / 1000), 2),
+        # m x km of guideway above each reference height (the model interpolates for
+        # costs.guideway.pier_height_ref and prices every metre above it)
+        "pier_excess_m_km": {t: round(float(np.clip(height - t, 0, None).sum() * step / 1000), 2)
+                             for t in PIER_REFS_M},
     }
 
 
@@ -520,6 +525,9 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
               "# flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021\n"
               "# impervious surface + descriptor (built_up_share = share of the piece's non-urban,\n"
               "# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).\n"
+              "# Guideway height = lowest profile at or above the ground within the grade limit;\n"
+              "# pier_excess_m_km = metres above each reference height x km (tall piers are priced\n"
+              "# above costs.guideway.pier_height_ref).\n"
               "# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
               "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
               "# wetland).\n" % (line.id, line.id))
