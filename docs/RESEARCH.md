@@ -194,9 +194,10 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     Grand Island and Kearney is designated whooping crane critical habitat and the sandhill crane
     staging area, so expect a hard environmental review there), the Missouri at Omaha / Council
     Bluffs, and station sites (Des Moines, the Omaha riverfront, DEN, Denver Union Station with RTD).
-    GIS-routed 2026-11-04 (1,434 km, 4 h 12): the DEN - Denver approach crosses 5.9 km of Rocky
-    Mountain Arsenal NWR (former Superfund site) and should follow RTD's A Line rail corridor
-    instead; Omaha, Lincoln and Denver urban land sits at Minnesota's downtown price. Demand: MSP -
+    GIS-routed 2026-11-04 (1,437 km, 4 h 12): a via point keeps the DEN - Denver approach out of
+    Rocky Mountain Arsenal NWR (former Superfund site; the first route crossed 5.9 km), but it should
+    follow RTD's A Line rail corridor into Union Station (it now cuts through Park Hill); Omaha,
+    Lincoln and Denver urban land sits at Minnesota's downtown price. Demand: MSP -
     Denver at 4 h 12 against ~2 h flights plus airport time, and what the Iowa and Nebraska stops
     add (phase 7).
 

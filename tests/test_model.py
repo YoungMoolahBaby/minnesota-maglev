@@ -604,3 +604,12 @@ def test_long_lines_route_in_sections_that_share_stations(world):
     assert all(a.points[-1] is b.points[0] for a, b in zip(secs, secs[1:]))
     assert sum(len(s.segments) for s in secs) == len(line.segments)
     assert sum(s.length_km for s in secs) == pytest.approx(line.length_km)
+
+
+def test_a_measured_piece_across_a_via_point_inherits_the_segment_into_its_end(world):
+    """DEN -> Denver is one measured piece; the planner splits it at a via point. The piece takes
+    the urban tunnel share of the planner segment arriving at Denver."""
+    _, _, lines = world
+    line = next(l for l in lines if l.id == "heartland")
+    seg = next(s for s in line.segments if s.a.id == "den" and s.b.id == "denver")
+    assert seg.urban_tunnel == pytest.approx(0.3)

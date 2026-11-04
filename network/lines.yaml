@@ -261,7 +261,7 @@ lines:
     name: Twin Cities - Des Moines - Omaha - Denver
     use_measured: true   # network/measured/heartland.yaml
     phase: 4
-    points: [msp, owatonna, albert_lea, mason_city, ames, des_moines, omaha, lincoln, grand_island, kearney, north_platte, den, denver]
+    points: [msp, owatonna, albert_lea, mason_city, ames, des_moines, omaha, lincoln, grand_island, kearney, north_platte, den, den_a_line, denver]
     gis_split_at: [des_moines, lincoln, north_platte]   # GIS routes it in four section grids (the L-shaped bounding box is mostly empty plains)
     note: >
       Jon (2026-11-04): Minneapolis - Des Moines - Omaha - Denver, not via Chicago, with Albert Lea as a stop (MSP - Chicago -
@@ -340,9 +340,15 @@ lines:
           dryland wheat and range, priced as central Minnesota cropland
         bridges: [{name: South Platte River, length_m: 400}]
       - from: den
+        to: den_a_line
+        urban_start_km: 4
+        land: {suburban: 0.3, existing_corridor: 0.4, cropland_central: 0.3}
+        note: >
+          via point (GIS): south-east of Rocky Mountain Arsenal NWR, which the first GIS route crossed
+          for 5.9 km; toward RTD's A Line corridor (DEN - Union Station)
+      - from: den_a_line
         to: denver
         detour: 1.15
-        urban_start_km: 4
         urban_end_km: 12
         urban_tunnel: 0.3
-        land: {suburban: 0.4, urban_core: 0.1, existing_corridor: 0.45, cropland_central: 0.05}
+        land: {suburban: 0.4, urban_core: 0.1, existing_corridor: 0.5}

@@ -593,8 +593,11 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
     st_xy = np.array([to5070.transform(p.lon, p.lat) for p in stops])
+    # legs run between stations and via points (points the route must pass, e.g. to follow a corridor)
+    route_pts = [p for p in line.points if p.is_station or p.type == "via"]
+    rp_xy = np.array([to5070.transform(p.lon, p.lat) for p in route_pts])
     legs = []
-    for (a, b), (pa, pb) in zip(zip(st_xy, st_xy[1:]), zip(stops, stops[1:])):
+    for (a, b), (pa, pb) in zip(zip(rp_xy, rp_xy[1:]), zip(route_pts, route_pts[1:])):
         mcp = MCP_Geometric(cost * cell_km, fully_connected=True)
         start, end = g.rc(*a), g.rc(*b)
         mcp.find_costs([start], [end])

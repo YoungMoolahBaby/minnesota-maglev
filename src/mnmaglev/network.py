@@ -11,7 +11,8 @@ from . import NETWORK_DIR
 from .geo import haversine_km
 
 STATION_TYPES = ("terminal_major", "airport", "city")
-POINT_TYPES = STATION_TYPES + ("waypoint",)
+# waypoint: shapes the planner route only; via: the GIS route must also pass through it
+POINT_TYPES = STATION_TYPES + ("waypoint", "via")
 CORRIDOR = "existing_corridor"  # land class priced as a share of the land around it
 STRUCTURES = ("elevated", "at_grade", "urban_viaduct")  # urban_viaduct here = built-up km outside the urban ends
 
@@ -307,6 +308,17 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             if fa == a.id and fb == b.id:
                 inherit = spec
                 break
+        if inherit is None:
+            # a piece spanning planner segments (a waypoint or via point between two stations):
+            # merge them in order, so the segment arriving at b wins (its urban end, tunnel share)
+            nxt = {fa: (fb, s) for (fa, fb), s in planner.items()}
+            chain, cur = [], a.id
+            while cur in nxt and len(chain) < len(nxt):
+                cur, s = nxt[cur]
+                chain.append(s)
+                if cur == b.id:
+                    inherit = {k: v for s in chain for k, v in s.items()}
+                    break
         if inherit is None:
             inherit = next((s for (fa, fb), s in planner.items() if fa == a.id or fb == b.id), {})
         base = {**defaults, **inherit}

@@ -270,6 +270,16 @@ Wildlife Refuge between DEN and Denver: going around through Commerce City and M
 as urban viaduct than the 4(f) penalty, but a refuge crossing needs a compatibility finding under
 16 U.S.C. 668dd and the refuge is a former chemical-weapons Superfund site. RTD's A Line runs from
 DEN to Union Station in a rail corridor along its south edge; rail corridors aren't modelled yet.
+Quick fix the same day: a new point type `via` (cities.yaml), a point the GIS route must pass
+through (legs run between stations and via points; pieces are still measured station to station),
+and `den_a_line` south-east of the refuge near I-70 and Pena Blvd. Section 3 re-routed (7 min on
+cached data): the refuge is out, DEN - Denver 31.1 -> 34.2 km, 4(f) land on it 2.3 km (City Park
+golf course). A measured piece spanning planner segments now inherits along the chain, the segment
+arriving at its end winning (DEN - Denver keeps its 30% urban tunnel; before, it took the via
+segment's 0%). Line: 1,437 km, 4 h 12, $289.6 bn P50 (P10 247.4, P90 337.2); through phase 4
+$744.8 bn (P10 641.9, P90 864.3); other lines unchanged. Still open: from the via point the route
+heads straight for downtown through Park Hill (362 homes on that piece) instead of the A Line's
+40th Avenue rail corridor; the rail-corridor slice or a second via point would fix it.
 
 Next slices, in order of how much they move the result: how hard to avoid 4(f) land (the
 placeholder avoidance moved ~$4.8 bn; RESEARCH 33), out-of-state land prices and parcels
@@ -278,8 +288,9 @@ permits and review, travel time in the route search (detours cost minutes it doe
 fusion fleet's sensitivity to the 1-second peak (it swings a unit, ~$1.7 bn, when the timetable
 offsets aren't re-optimised after a re-route; `gis` should re-run the timetable, or warn).
 Out-of-state land prices and parcels for the Denver and Chicago lines (RESEARCH 29, 32, 34), and
-rail corridors (the DEN - Denver approach should follow RTD's A Line, not cross Rocky Mountain
-Arsenal NWR). Also: small water crossings (<100 m, or cells under half water) aren't counted as
+rail corridors (the DEN - Denver approach should follow RTD's A Line into Union Station; a via point
+keeps it out of Rocky Mountain Arsenal NWR for now), and a higher avoidance weight (or a no-go) for
+national wildlife refuges. Also: small water crossings (<100 m, or cells under half water) aren't counted as
 bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.

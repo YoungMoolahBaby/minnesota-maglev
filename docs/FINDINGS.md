@@ -247,6 +247,12 @@ works), date, details. One section per tool.
   the alternative is urban viaduct at ~2.3x the rural price, so a refuge looks cheap to the router.
   National wildlife refuges probably need their own, much higher, weight (or a no-go), and the
   rail corridor beside it a lower one.
+  Quick fix: a `via` point type the GIS route must pass through (waypoints only shaped planner
+  routes; the GIS ignored them). It exposed a quiet inheritance bug: a measured piece with no
+  matching planner segment took the first planner segment touching either end, so DEN - Denver
+  inherited the via segment's 0% tunnel instead of the 30% into downtown (+$1.4 bn once fixed).
+  Pieces spanning planner segments now merge the chain, the one arriving at the end winning; the
+  other seven lines came out identical, to the cent.
 
 ## OSRD
 
