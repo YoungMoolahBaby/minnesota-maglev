@@ -488,3 +488,73 @@ def test_buildings_are_taken_only_where_the_right_of_way_can_take_them(world):
     assert building_cost(n, m2, P0) == pytest.approx(
         n["residential"] * home + m2["residential"] * P0["land.buildings.demolition_per_m2"] / 1e6)
     assert segment_capital(s, P0)["buildings"] > segment_capital(replace(s, buildings={}), P0)["buildings"] == 0
+
+
+def test_public_land_kinds_follow_section_4f():
+    """Public parks, refuges and conservation areas are 4(f); forests are multiple-use; private land isn't public."""
+    from mnmaglev.gis import public_kind
+
+    assert public_kind({"Own_Type": "LOC", "Des_Tp": "LP"}) == "section_4f"
+    assert public_kind({"Own_Type": "FED", "Des_Tp": "NWR"}) == "section_4f"
+    assert public_kind({"Own_Type": "STAT", "Des_Tp": "SCA"}) == "section_4f"  # WMAs, SNAs
+    assert public_kind({"Own_Type": "FED", "Des_Tp": "RMA", "Mang_Name": "FWS"}) == "section_4f"  # WPAs
+    assert public_kind({"Own_Type": "FED", "Des_Tp": "NF", "Mang_Name": "USFS"}) == "public_other"
+    assert public_kind({"Own_Type": "STAT", "Des_Tp": "SRMA"}) == "public_other"  # state forests
+    # Wisconsin county forests are 'LCA' in PAD-US but multiple-use; Illinois forest preserves are parks
+    assert public_kind({"Own_Type": "LOC", "Des_Tp": "LCA", "Unit_Nm": "Polk County Forest"}) == "public_other"
+    assert public_kind({"Own_Type": "DIST", "Des_Tp": "LCA", "Unit_Nm": "Old School Forest Preserve"}) == "section_4f"
+    assert public_kind({"Own_Type": "NGO", "Des_Tp": "PCON"}) is None
+    assert public_kind({"Own_Type": "PVT", "Des_Tp": "LP"}) is None
+
+
+def test_public_land_shares_and_crossings_match_the_geometry():
+    """Rasterised shares add up to the polygon's area; km crossed = the chord through it, once even
+    when the unit is listed twice."""
+    from shapely.geometry import Point
+
+    from mnmaglev.gis import CELL, Grid, _rasterize_share, public_land_crossed
+
+    g = Grid(x0=0.0, y0=0.0, nx=100, ny=60)
+    park = Point(10000.0, 6000.0).buffer(3000.0, 256)
+    share = _rasterize_share(g, [park])
+    assert share.sum() * CELL ** 2 == pytest.approx(park.area, rel=0.01)
+    assert share.max() == 1.0 and share.min() == 0.0
+    # a straight line 1 km off the centre: chord 2 sqrt(3^2 - 1^2) km
+    align = np.array([[0.0, 7000.0], [20000.0, 7000.0]])
+    feats = [("section_4f", "Park", park), ("section_4f", "Park", park.buffer(-1.0)),
+             ("public_other", "Forest", Point(18000.0, 7000.0).buffer(500.0, 256))]
+    rows = public_land_crossed(align, feats)
+    assert [r["name"] for r in rows] == ["Park", "Forest"]
+    assert rows[0]["km"] == pytest.approx(2 * math.sqrt(8), abs=0.01)
+    assert rows[1]["km"] == pytest.approx(1.0, abs=0.01)
+
+
+def test_public_and_tribal_land_cost_replacement_and_premium(world):
+    """Capital: 4(f) land buys replacement land, tribal land a premium; route search: avoidance too."""
+    from dataclasses import replace
+
+    from mnmaglev.costs import segment_capital
+    from mnmaglev.gis import Grid, cost_surface
+
+    params, _, lines = world
+    P0 = nominal(params)
+    seg = replace(next(l for l in lines if l.id == "spine").segments[0], section_4f=0.0, tribal=0.0)
+    base = segment_capital(seg, P0)
+    r, m =P0["land.public.section_4f_replacement"], P0["land.tribal.consent_multiplier"]
+    assert base["public_land"] == 0
+    assert segment_capital(replace(seg, section_4f=0.4), P0)["public_land"] == pytest.approx(0.4 * r * base["land"])
+    assert segment_capital(replace(seg, tribal=0.5), P0)["public_land"] == pytest.approx(0.5 * (m - 1) * base["land"])
+
+    g = Grid(x0=0.0, y0=0.0, nx=4, ny=3)
+    z = np.zeros((g.ny, g.nx))
+    frac = {k: z.copy() for k in ("water", "urban", "suburban", "forest", "wetland")}
+    frac["open"] = z + 1.0
+    dem = z.copy()
+    one = z + 1.0
+    plain = cost_surface(g, frac, dem, P0)
+    park = cost_surface(g, frac, dem, P0, public={"section_4f": one, "tribal": z, "public_other": z})
+    land = (P0["land.row_width.elevated"] * 1000 / 4046.86 * P0["land.acquisition_multiplier"]
+            * P0["land.price_per_acre.cropland_south"])
+    avoid = P0["land.public.section_4f_avoidance_km"] * P0["costs.guideway.elevated"]
+    # this toy grid sits near lat 23 (south zone prices); every cell is fully in the park
+    assert park - plain == pytest.approx(np.full_like(plain, land * r + avoid))

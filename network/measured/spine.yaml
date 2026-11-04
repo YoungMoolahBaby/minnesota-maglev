@@ -11,8 +11,13 @@
 # for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
 # the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
 # County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
-# acre where parcel_coverage says the parcels cover the route.
-# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
+# acre where parcel_coverage says the parcels cover the route. Public land (USGS PAD-US 4.1
+# fee) and tribal land (Census TIGER reservations, off-reservation trust land):
+# public_land_shares = section_4f (public parks, recreation areas, refuges, conservation
+# and historic areas; outside freeway right-of-way), public_other (forests, other public
+# land), tribal; the named units
+# crossed are listed in public_land_crossed.
+# Not yet: rail corridors. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: spine
@@ -20,130 +25,141 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 84
-  vertices_removed_for_curves: 35
-  refinement_moves: 124
+  vertices: 93
+  vertices_removed_for_curves: 27
+  refinement_moves: 134
   all_curves_fit: true
-  cost_least_cost_path_musd: 29671
-  cost_smoothed_musd: 29222
+  cost_least_cost_path_musd: 30325
+  cost_smoothed_musd: 29554
 pieces:
 - from: duluth
   to:
     id: wp_0_1
-    lat: 45.99957
-    lon: -92.66935
+    lat: 45.99965
+    lon: -92.78768
   zone: north
-  length_km: 100.9
-  crow_km: 97.7
-  detour: 1.033
+  length_km: 107.9
+  crow_km: 102.1
+  detour: 1.058
   land_shares:
-    suburban: 0.056
-    urban: 0.02
-    forest: 0.576
-    open: 0.121
-    wetland: 0.226
+    suburban: 0.05
+    urban: 0.012
+    forest: 0.483
+    open: 0.175
+    wetland: 0.279
     water: 0.001
-  floodplain_share: 0.013
-  floodplain_1pct_share: 0.013
+  floodplain_share: 0.011
+  floodplain_1pct_share: 0.011
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.015
-  highway_corridor_share: 0.01
-  highway_corridor_km: 1.1
+  built_up_share: 0.007
+  highway_corridor_share: 0.007
+  highway_corridor_km: 0.7
   buildings_per_km2:
     residential:
-      n: 14.8
-      side: 160.2
-      area: 1912.9
-      aside: 26598.9
+      n: 16.9
+      side: 199.9
+      area: 2631.4
+      aside: 39955.3
     nonresidential:
-      n: 0.6
-      side: 10.2
-      area: 238.4
-      aside: 7179.8
-    agriculture:
       n: 0.4
-      side: 5.4
-      area: 78.1
-      aside: 1170.2
-  parcel_coverage: 0.204
-  parcel_land_usd_per_acre: 40747
-  peat_share: 0.07
-  soil_survey_coverage: 0.933
-  urban_km: 1.4
-  urban_start_km: 1.4
+      side: 4.9
+      area: 90.0
+      aside: 2139.8
+    agriculture:
+      n: 0.9
+      side: 12.6
+      area: 191.8
+      aside: 3115.7
+  parcel_coverage: 0.184
+  parcel_land_usd_per_acre: 38321
+  public_land_shares:
+    section_4f: 0.009
+    public_other: 0.014
+    tribal: 0.0
+  section_4f_km: 0.98
+  tribal_km: 0.0
+  peat_share: 0.088
+  soil_survey_coverage: 0.983
+  urban_km: 0.7
+  urban_start_km: 0.7
   urban_end_km: 0.0
   bridges_m: []
   max_ground_grade_1km: 0.1676
   elev_range_m:
-  - 189
-  - 396
+  - 201
+  - 415
   guideway_max_height_m: 72.8
-  km_over_25m_high: 1.05
+  km_over_25m_high: 0.94
   pier_excess_m_km:
-    5: 66.38
-    10: 53.11
-    15: 42.81
-    20: 35.11
-    25: 29.28
+    5: 49.97
+    10: 43.73
+    15: 38.66
+    20: 33.93
+    25: 29.21
     30: 24.85
 - from:
     id: wp_0_1
-    lat: 45.99957
-    lon: -92.66935
+    lat: 45.99965
+    lon: -92.78768
   to: midway_hub
   zone: central
-  length_km: 125.0
-  crow_km: 122.3
-  detour: 1.022
+  length_km: 122.8
+  crow_km: 119.7
+  detour: 1.027
   land_shares:
-    suburban: 0.161
-    urban: 0.049
-    forest: 0.413
-    open: 0.23
-    wetland: 0.143
-    water: 0.005
-  floodplain_share: 0.066
-  floodplain_1pct_share: 0.066
+    suburban: 0.15
+    urban: 0.071
+    forest: 0.196
+    open: 0.361
+    wetland: 0.219
+    water: 0.002
+  floodplain_share: 0.081
+  floodplain_1pct_share: 0.081
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.039
-  highway_corridor_share: 0.016
-  highway_corridor_km: 2.0
+  built_up_share: 0.041
+  highway_corridor_share: 0.023
+  highway_corridor_km: 2.8
   buildings_per_km2:
     residential:
-      n: 51.6
-      side: 648.9
-      area: 8950.6
-      aside: 138003.0
+      n: 54.1
+      side: 705.4
+      area: 9974.0
+      aside: 156978.5
     nonresidential:
-      n: 0.9
-      side: 17.3
-      area: 555.5
-      aside: 25900.0
-    agriculture:
       n: 0.8
-      side: 11.5
-      area: 250.2
-      aside: 8027.2
-  parcel_coverage: 0.593
-  parcel_land_usd_per_acre: 66465
-  peat_share: 0.061
-  soil_survey_coverage: 0.906
-  urban_km: 4.4
+      side: 15.1
+      area: 451.9
+      aside: 18947.1
+    agriculture:
+      n: 0.5
+      side: 11.3
+      area: 287.1
+      aside: 8323.3
+  parcel_coverage: 0.746
+  parcel_land_usd_per_acre: 67867
+  public_land_shares:
+    section_4f: 0.004
+    public_other: 0.026
+    tribal: 0.0
+  section_4f_km: 0.46
+  tribal_km: 0.0
+  peat_share: 0.094
+  soil_survey_coverage: 0.896
+  urban_km: 6.5
   urban_start_km: 0.0
-  urban_end_km: 4.4
-  bridges_m:
-  - 210
-  max_ground_grade_1km: 0.025
+  urban_end_km: 6.5
+  bridges_m: []
+  max_ground_grade_1km: 0.0328
   elev_range_m:
-  - 235
-  - 298
-  guideway_max_height_m: 5.3
+  - 246
+  - 310
+  guideway_max_height_m: 11.7
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 0.05
-    10: 0.0
+    5: 0.98
+    10: 0.18
     15: 0.0
     20: 0.0
     25: 0.0
@@ -151,57 +167,63 @@ pieces:
 - from: midway_hub
   to: msp
   zone: central
-  length_km: 9.1
-  crow_km: 8.8
-  detour: 1.034
+  length_km: 9.2
+  crow_km: 8.9
+  detour: 1.036
   land_shares:
-    suburban: 0.393
-    urban: 0.535
-    forest: 0.036
-    open: 0.007
-    wetland: 0.018
-    water: 0.012
-  floodplain_share: 0.053
-  floodplain_1pct_share: 0.053
+    suburban: 0.383
+    urban: 0.55
+    forest: 0.034
+    open: 0.005
+    wetland: 0.011
+    water: 0.017
+  floodplain_share: 0.045
+  floodplain_1pct_share: 0.045
   floodway_km: 0.32
   flood_map_coverage: 1.0
-  built_up_share: 0.767
+  built_up_share: 0.776
   highway_corridor_share: 0.023
   highway_corridor_km: 0.2
   buildings_per_km2:
     residential:
-      n: 755.5
-      side: 7682.0
-      area: 84168.8
-      aside: 1007653.6
+      n: 739.1
+      side: 7528.3
+      area: 82277.5
+      aside: 974831.4
     nonresidential:
-      n: 11.9
-      side: 223.9
-      area: 6759.3
-      aside: 274848.0
+      n: 13.0
+      side: 237.5
+      area: 7074.8
+      aside: 287295.4
     agriculture:
       n: 0.0
       side: 0.0
       area: 0.0
       aside: 0.0
-  parcel_coverage: 0.897
-  parcel_land_usd_per_acre: 678697
+  parcel_coverage: 0.875
+  parcel_land_usd_per_acre: 673211
+  public_land_shares:
+    section_4f: 0.068
+    public_other: 0.0
+    tribal: 0.0
+  section_4f_km: 0.63
+  tribal_km: 0.0
   peat_share: 0.001
   soil_survey_coverage: 1.0
-  urban_km: 4.2
-  urban_start_km: 2.2
-  urban_end_km: 2.0
+  urban_km: 4.5
+  urban_start_km: 2.4
+  urban_end_km: 2.1
   bridges_m:
   - 315
-  max_ground_grade_1km: 0.046
+  max_ground_grade_1km: 0.0441
   elev_range_m:
   - 219
   - 287
   guideway_max_height_m: 14.9
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 1.53
-    10: 0.52
+    5: 1.91
+    10: 0.86
     15: 0.0
     20: 0.0
     25: 0.0
@@ -209,123 +231,172 @@ pieces:
 - from: msp
   to:
     id: wp_2_1
-    lat: 44.59982
-    lon: -92.96074
+    lat: 44.59924
+    lon: -92.94841
   zone: central
-  length_km: 38.9
-  crow_km: 37.6
-  detour: 1.033
+  length_km: 39.8
+  crow_km: 38.3
+  detour: 1.04
   land_shares:
-    suburban: 0.229
-    urban: 0.135
-    forest: 0.114
-    open: 0.46
-    wetland: 0.036
-    water: 0.025
-  floodplain_share: 0.054
-  floodplain_1pct_share: 0.048
-  floodway_km: 1.68
+    suburban: 0.195
+    urban: 0.121
+    forest: 0.12
+    open: 0.514
+    wetland: 0.038
+    water: 0.012
+  floodplain_share: 0.055
+  floodplain_1pct_share: 0.049
+  floodway_km: 2.1
   flood_map_coverage: 1.0
-  built_up_share: 0.125
-  highway_corridor_share: 0.038
-  highway_corridor_km: 1.5
+  built_up_share: 0.109
+  highway_corridor_share: 0.082
+  highway_corridor_km: 3.3
   buildings_per_km2:
     residential:
-      n: 88.7
-      side: 1255.1
-      area: 18766.1
-      aside: 298727.4
+      n: 63.1
+      side: 890.8
+      area: 13643.5
+      aside: 242756.6
     nonresidential:
-      n: 2.6
-      side: 47.0
-      area: 1404.7
-      aside: 59382.6
+      n: 2.5
+      side: 53.2
+      area: 1468.9
+      aside: 50464.7
     agriculture:
-      n: 0.4
-      side: 14.5
-      area: 585.0
-      aside: 26501.2
-  parcel_coverage: 0.938
-  parcel_land_usd_per_acre: 108882
-  peat_share: 0.013
+      n: 0.0
+      side: 0.0
+      area: 0.0
+      aside: 0.0
+  parcel_coverage: 0.926
+  parcel_land_usd_per_acre: 80584
+  public_land_shares:
+    section_4f: 0.015
+    public_other: 0.0
+    tribal: 0.0
+  section_4f_km: 0.59
+  tribal_km: 0.0
+  peat_share: 0.009
   soil_survey_coverage: 1.0
-  urban_km: 3.6
-  urban_start_km: 3.6
+  urban_km: 2.8
+  urban_start_km: 2.8
   urban_end_km: 0.0
   bridges_m:
-  - 1470
+  - 1890
+  - 105
   - 210
-  max_ground_grade_1km: 0.0424
+  max_ground_grade_1km: 0.0552
   elev_range_m:
   - 213
-  - 312
-  guideway_max_height_m: 9.9
+  - 313
+  guideway_max_height_m: 14.5
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 0.91
-    10: 0.0
+    5: 3.46
+    10: 0.96
     15: 0.0
     20: 0.0
     25: 0.0
     30: 0.0
 - from:
     id: wp_2_1
-    lat: 44.59982
-    lon: -92.96074
+    lat: 44.59924
+    lon: -92.94841
   to: rochester
   zone: south
-  length_km: 78.5
-  crow_km: 75.6
-  detour: 1.039
+  length_km: 78.3
+  crow_km: 75.1
+  detour: 1.044
   land_shares:
-    suburban: 0.103
+    suburban: 0.093
     urban: 0.018
-    forest: 0.144
-    open: 0.724
-    wetland: 0.01
+    forest: 0.101
+    open: 0.75
+    wetland: 0.037
     water: 0.001
-  floodplain_share: 0.044
-  floodplain_1pct_share: 0.041
-  floodway_km: 0.32
+  floodplain_share: 0.056
+  floodplain_1pct_share: 0.055
+  floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.02
+  built_up_share: 0.019
   highway_corridor_share: 0.017
   highway_corridor_km: 1.4
   buildings_per_km2:
     residential:
-      n: 26.5
-      side: 367.1
-      area: 5555.2
-      aside: 91444.9
+      n: 25.4
+      side: 355.1
+      area: 5417.8
+      aside: 89614.3
     nonresidential:
-      n: 0.5
-      side: 7.2
-      area: 148.4
-      aside: 3883.3
+      n: 0.3
+      side: 5.7
+      area: 133.6
+      aside: 3728.2
     agriculture:
-      n: 4.4
-      side: 69.8
-      area: 1311.6
-      aside: 28224.4
-  parcel_coverage: 0.127
-  parcel_land_usd_per_acre: 11968
-  peat_share: 0.001
+      n: 2.7
+      side: 39.3
+      area: 713.3
+      aside: 16502.2
+  parcel_coverage: 0.099
+  parcel_land_usd_per_acre: 10947
+  public_land_shares:
+    section_4f: 0.001
+    public_other: 0.0
+    tribal: 0.0
+  section_4f_km: 0.06
+  tribal_km: 0.0
+  peat_share: 0.0
   soil_survey_coverage: 1.0
   urban_km: 0.3
   urban_start_km: 0.0
   urban_end_km: 0.3
-  bridges_m:
-  - 315
-  max_ground_grade_1km: 0.0732
+  bridges_m: []
+  max_ground_grade_1km: 0.0613
   elev_range_m:
-  - 243
-  - 381
-  guideway_max_height_m: 20.2
+  - 236
+  - 377
+  guideway_max_height_m: 22.1
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 18.31
-    10: 7.28
-    15: 1.7
-    20: 0.03
+    5: 13.3
+    10: 5.55
+    15: 2.01
+    20: 0.33
     25: 0.0
     30: 0.0
+public_land_crossed:
+- kind: section_4f
+  name: Jay Cooke State Park
+  km: 0.92
+- kind: section_4f
+  name: Fort Snelling State Park
+  km: 0.86
+- kind: section_4f
+  name: Captain Dodd Park
+  km: 0.29
+- kind: section_4f
+  name: Hidden Falls Reg Park
+  km: 0.29
+- kind: section_4f
+  name: Rosebrook Park
+  km: 0.21
+- kind: section_4f
+  name: Janet Johnson Memorial State Wildlife Management Area
+  km: 0.18
+- kind: section_4f
+  name: Minnehaha Park
+  km: 0.16
+- kind: section_4f
+  name: Highview Park
+  km: 0.14
+- kind: section_4f
+  name: Bridle Ridge Park
+  km: 0.13
+- kind: section_4f
+  name: Wazuweeta Park
+  km: 0.1
+- kind: public_other
+  name: Chengwatana State Forest
+  km: 2.94
+- kind: public_other
+  name: Miscellaneous
+  km: 1.63

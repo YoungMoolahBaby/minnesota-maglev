@@ -11,8 +11,13 @@
 # for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
 # the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
 # County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
-# acre where parcel_coverage says the parcels cover the route.
-# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
+# acre where parcel_coverage says the parcels cover the route. Public land (USGS PAD-US 4.1
+# fee) and tribal land (Census TIGER reservations, off-reservation trust land):
+# public_land_shares = section_4f (public parks, recreation areas, refuges, conservation
+# and historic areas; outside freeway right-of-way), public_other (forests, other public
+# land), tribal; the named units
+# crossed are listed in public_land_crossed.
+# Not yet: rail corridors. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: southern_link
@@ -20,56 +25,62 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 27
-  vertices_removed_for_curves: 6
-  refinement_moves: 35
+  vertices: 32
+  vertices_removed_for_curves: 4
+  refinement_moves: 48
   all_curves_fit: true
-  cost_least_cost_path_musd: 9624
-  cost_smoothed_musd: 9426
+  cost_least_cost_path_musd: 9654
+  cost_smoothed_musd: 9447
 pieces:
 - from: rochester
   to: owatonna
   zone: south
-  length_km: 61.4
-  crow_km: 60.1
+  length_km: 61.3
+  crow_km: 60.0
   detour: 1.022
   land_shares:
-    suburban: 0.09
-    urban: 0.027
-    forest: 0.08
-    open: 0.776
-    wetland: 0.027
+    suburban: 0.094
+    urban: 0.026
+    forest: 0.081
+    open: 0.771
+    wetland: 0.028
     water: 0.0
   floodplain_share: 0.016
   floodplain_1pct_share: 0.016
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.03
+  built_up_share: 0.034
   highway_corridor_share: 0.017
   highway_corridor_km: 1.1
   buildings_per_km2:
     residential:
-      n: 30.5
-      side: 413.2
-      area: 6192.2
-      aside: 102165.3
+      n: 33.4
+      side: 446.4
+      area: 6597.2
+      aside: 107389.8
     nonresidential:
-      n: 1.4
-      side: 27.1
-      area: 663.5
-      aside: 18826.8
+      n: 1.2
+      side: 26.9
+      area: 711.9
+      aside: 20771.0
     agriculture:
       n: 0.2
       side: 3.1
       area: 44.0
       aside: 684.7
-  parcel_coverage: 0.239
-  parcel_land_usd_per_acre: 32029
-  peat_share: 0.005
+  parcel_coverage: 0.238
+  parcel_land_usd_per_acre: 31033
+  public_land_shares:
+    section_4f: 0.0
+    public_other: 0.0
+    tribal: 0.0
+  section_4f_km: 0.03
+  tribal_km: 0.0
+  peat_share: 0.008
   soil_survey_coverage: 1.0
-  urban_km: 0.6
+  urban_km: 0.5
   urban_start_km: 0.2
-  urban_end_km: 0.4
+  urban_end_km: 0.3
   bridges_m: []
   max_ground_grade_1km: 0.0344
   elev_range_m:
@@ -87,57 +98,64 @@ pieces:
 - from: owatonna
   to: mankato
   zone: south
-  length_km: 63.5
+  length_km: 63.3
   crow_km: 62.2
-  detour: 1.022
+  detour: 1.017
   land_shares:
-    suburban: 0.066
-    urban: 0.041
-    forest: 0.044
-    open: 0.763
-    wetland: 0.086
-    water: 0.0
-  floodplain_share: 0.042
-  floodplain_1pct_share: 0.042
+    suburban: 0.1
+    urban: 0.044
+    forest: 0.02
+    open: 0.788
+    wetland: 0.047
+    water: 0.001
+  floodplain_share: 0.033
+  floodplain_1pct_share: 0.033
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.034
-  highway_corridor_share: 0.007
-  highway_corridor_km: 0.4
+  built_up_share: 0.028
+  highway_corridor_share: 0.005
+  highway_corridor_km: 0.3
   buildings_per_km2:
     residential:
-      n: 26.5
-      side: 344.6
-      area: 4996.6
-      aside: 80765.9
+      n: 27.1
+      side: 347.3
+      area: 5108.4
+      aside: 88547.1
     nonresidential:
       n: 0.5
-      side: 10.2
-      area: 232.1
-      aside: 6355.7
+      side: 9.5
+      area: 210.8
+      aside: 5061.3
     agriculture:
-      n: 0.3
-      side: 8.3
-      area: 331.0
-      aside: 14383.9
-  parcel_coverage: 0.255
-  parcel_land_usd_per_acre: 35437
-  peat_share: 0.085
-  soil_survey_coverage: 0.981
-  urban_km: 1.7
-  urban_start_km: 1.7
-  urban_end_km: 0.0
+      n: 0.4
+      side: 10.1
+      area: 358.8
+      aside: 14924.8
+  parcel_coverage: 0.242
+  parcel_land_usd_per_acre: 36331
+  public_land_shares:
+    section_4f: 0.002
+    public_other: 0.0
+    tribal: 0.0
+  section_4f_km: 0.11
+  tribal_km: 0.0
+  peat_share: 0.06
+  soil_survey_coverage: 0.983
+  urban_km: 2.2
+  urban_start_km: 1.8
+  urban_end_km: 0.4
   bridges_m: []
-  max_ground_grade_1km: 0.0192
+  max_ground_grade_1km: 0.0261
   elev_range_m:
   - 274
-  - 367
+  - 363
   guideway_max_height_m: 7.6
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 0.28
+    5: 0.33
     10: 0.0
     15: 0.0
     20: 0.0
     25: 0.0
     30: 0.0
+public_land_crossed: []

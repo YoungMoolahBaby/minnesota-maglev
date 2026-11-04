@@ -60,6 +60,9 @@ class Segment:
     # measured (GIS): share of the route with county parcel data, and its land EMV (USD/acre) there
     parcel_coverage: float = 0.0
     parcel_price: float = 0.0
+    # measured (GIS): share of the route in Section 4(f) land (public parks, refuges, ...) and tribal land
+    section_4f: float = 0.0
+    tribal: float = 0.0
 
     @property
     def crow_km(self) -> float:
@@ -201,6 +204,8 @@ def load_lines(
                                for g, d in spec.get("buildings", {}).items()},
                     parcel_coverage=float(spec.get("parcel_coverage", 0.0)),
                     parcel_price=float(spec.get("parcel_price", 0.0)),
+                    section_4f=float(spec.get("section_4f", 0.0)),
+                    tribal=float(spec.get("tribal", 0.0)),
                 )
             )
         lines.append(
@@ -248,7 +253,8 @@ def check_network(lines: list[Line], cities: dict[str, City], param_names: set[s
                     problems.append(f"{tag}: land class {cls!r} has no price in params/land.yaml")
             if f"climate.{s.zone}.snowfall" not in param_names:
                 problems.append(f"{tag}: climate zone {s.zone!r} not in params/climate.yaml")
-            for name, v in (("floodplain", s.floodplain), ("peat", s.peat), ("urban_tunnel", s.urban_tunnel)):
+            for name, v in (("floodplain", s.floodplain), ("peat", s.peat), ("urban_tunnel", s.urban_tunnel),
+                            ("section_4f", s.section_4f), ("tribal", s.tribal), ("parcel_coverage", s.parcel_coverage)):
                 if not 0 <= v <= 1:
                     problems.append(f"{tag}: {name} {v} outside 0..1")
             if s.detour < 1:
@@ -269,7 +275,7 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
     share (priced as urban viaduct), bridges, floodplain where FEMA has maps, guideway height above
     reference pier heights (tall piers), peat (SSURGO Histosols where the soil survey is complete,
     the wetland share where it isn't), buildings beside the route (FEMA USA Structures), county
-    parcel land value where counties publish it. Inherited from the planner segment that starts or ends at the same
+    parcel land value where counties publish it, Section 4(f) and tribal land shares. Inherited from the planner segment that starts or ends at the same
     station (else the line defaults): elevated / at-grade split, urban tunnel share.
     """
     path = MEASURED_DIR / f"{line_id}.yaml"
@@ -332,6 +338,8 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             "buildings": piece.get("buildings_per_km2", {}),
             "parcel_coverage": piece.get("parcel_coverage", 0.0),
             "parcel_price": piece.get("parcel_land_usd_per_acre", 0.0),
+            "section_4f": piece.get("public_land_shares", {}).get("section_4f", 0.0),
+            "tribal": piece.get("public_land_shares", {}).get("tribal", 0.0),
             "note": (f"measured (GIS); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades"
                      + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")
                      + (f"; soil survey covers {piece['soil_survey_coverage']:.0%}" if "soil_survey_coverage" in piece else "")),

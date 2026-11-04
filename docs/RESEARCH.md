@@ -174,3 +174,14 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     request to the counties or the internal MnGeo compilation (state agencies only), and Wisconsin
     (statewide parcel layer V10 from the Wisconsin State Cartographer's Office, with assessed
     values) and Illinois (county by county) for the Chicago line.
+
+33. [ ] Public and tribal land (GIS slice 6): how much more a route may cost to stay out of
+    Section 4(f) land (`land.public.section_4f_avoidance_km`, placeholder; 23 CFR 774.17 'cost of
+    an extraordinary magnitude' is judged case by case: FHWA's Section 4(f) Policy Paper and
+    rejected-avoidance cases would bound it), which parks carry Land and Water Conservation Fund
+    (6(f)) money (replacement land of equal value), and what crossing tribal land takes: consent
+    and compensation under 25 CFR 169 (`land.tribal.*`, placeholders; precedents: Enbridge Line 3
+    and Line 5 easements with Fond du Lac, Leech Lake and Bad River, transmission lines across
+    reservations), trust vs fee land inside reservation boundaries (BIA land records). Also county
+    tax-forfeit land (2.8 M acres, DNR land portfolio; not in PAD-US's fee layer) and the PAD-US
+    easement layer (RIM and other conservation easements bind private land the route may take).

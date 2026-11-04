@@ -165,6 +165,43 @@ buildings:
     conf: placeholder
     source: "demolition, abatement (asbestos, lead), utility disconnects and site restoration; residential demolition ~$4-15 per sq ft of footprint"
 
+# Public land (GIS slice 6): USGS PAD-US 4.1 fee lands. Section 4(f) land = publicly owned parks,
+# recreation areas, wildlife and waterfowl refuges (incl. waterfowl production areas, WMAs, SNAs),
+# conservation and historic areas. National, state and county forests are multiple-use land: priced
+# like the land around them (4(f) reaches only the parts set aside for recreation or refuge).
+public:
+  section_4f_avoidance_km:
+    value: 1.0
+    low: 0.3
+    high: 3.0
+    unit: km of elevated guideway (by cost) the route search spends to keep 1 km out of 4(f) land
+    conf: placeholder
+    source: "route search only. 49 U.S.C. 303 (all DOT agencies, FRA included): a project may use a public park, recreation area, wildlife or waterfowl refuge or historic site only if there is no feasible and prudent avoidance alternative and harm is minimised; 23 CFR 774.17: an avoidance alternative may be rejected as imprudent if, among other things, it costs 'an extraordinary magnitude' more. How much more is case law and agency judgment, not a number"
+  section_4f_replacement:
+    value: 1.0
+    low: 1.0
+    high: 2.0
+    unit: acres of replacement land bought per acre of 4(f) land used
+    conf: "low"
+    source: "54 U.S.C. 200305(f)(3): land bought or developed with Land and Water Conservation Fund money may be converted only with replacement land of at least equal fair market value and reasonably equivalent usefulness and location; 23 CFR 774.17 lists replacement land and facilities of comparable value and function among 4(f) mitigation. High: replacement plus enhancements"
+
+# Tribal land (GIS slice 6): federal reservations and off-reservation trust land (Census TIGER).
+tribal:
+  avoidance_km:
+    value: 2.0
+    low: 0.5
+    high: 5.0
+    unit: km of elevated guideway (by cost) the route search spends to keep 1 km out of tribal land
+    conf: placeholder
+    source: "route search only. 25 U.S.C. 324 and 25 CFR 169.107: a right-of-way across tribal trust land needs the tribe's consent, which it may withhold; tribal trust land can't be condemned. A route through a reservation is a negotiation between governments, not a land purchase"
+  consent_multiplier:
+    value: 3.0
+    low: 1.0
+    high: 10.0
+    unit: x land price (tribal land)
+    conf: placeholder
+    source: "25 CFR 169.110: for tribal land the tribe negotiates the compensation and BIA defers to it; no published benchmark for a rail right-of-way found. Reservation boundaries also hold fee land owned by non-members; all of it is priced as if it needed consent"
+
 wetlands:
   impact_fraction_elevated:
     value: 0.15

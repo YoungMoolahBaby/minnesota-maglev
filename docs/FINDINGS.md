@@ -202,6 +202,28 @@ works), date, details. One section per tool.
   surfaced at runtime deep in `route()`; `ruff --select F` catches it, worth running before slow
   GIS runs. (3) Fetch times on ArcGIS feature services, 4 workers: buildings 27 s (Iron Range, 0.27 M)
   to 657 s (Chicago, 7.9 M points in the band); parcels 28-329 s.
+- 2026-11-04, public and tribal land (GIS slice 6): the slice-5 routes ran through 84 km of
+  Section 4(f) land (public parks, refuges, wildlife areas): every line but the Iron Range one,
+  3-31 km each, plus 1.8 km of Ho-Chunk off-reservation trust land on the Chicago line. Pricing
+  avoidance at 1 km of guideway per km of 4(f) land cut it to 15 km and tribal land to 0, for
+  +$4.8 bn P50 over the network, nearly all of it detours (spine +6 km around Duluth's hillside parks,
+  west +8 km around Elm Creek Park Reserve) and suburbs: the Chicago line's built-up viaduct went
+  19.7 -> 28.0 km because the parks and forest preserves were the open gaps between houses. The
+  4(f) replacement land itself is $33 M. So how hard to avoid parks is now a ~$5 bn question that a
+  placeholder answers (RESEARCH 33).
+  PAD-US quirks: Wisconsin's county forests (multiple-use timber land; most of PAD-US's 2.3 M acres
+  of Wisconsin local 'LCA') are coded as conservation areas, like Illinois forest preserves (which
+  are parks), so the first run treated Polk County Forest as a park; names ending 'County Forest' / 'State Forest' are now
+  multiple-use. The fee layer has only 6,195 acres of state-owned, county-managed land, so
+  Minnesota's 2.8 M acres of tax-forfeit land is missing (priced as forest anyway). A unit can be
+  listed twice (Douglas County WPA under two GAP codes), so crossings merge polygons by name. The
+  first run also charged 4(f) avoidance on freeway cells (I-35 through Carlos Avery WMA), where the
+  model already puts the guideway in highway right-of-way; 4(f) now counts outside it.
+  Friction: the National Map server answers Python's default user agent with 403 (curl works);
+  `_get_json` sends its own. Re-routing is slow: the Chicago line took 36-61 min, the west line
+  33 min, the spine 18-23 min (the route search and refinement; the PAD-US fetch is 1-8 MB per
+  line). Text replacements containing a literal backslash-n, piped to Python through a bash
+  heredoc, arrived as real newlines and broke a string twice; the Edit tool doesn't.
 
 ## OSRD
 

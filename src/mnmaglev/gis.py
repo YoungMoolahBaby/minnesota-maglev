@@ -1,5 +1,5 @@
-"""GIS phase, slices 1-5: a real alignment for a line from elevation, land cover, flood zones,
-built-up land, freeways, peat soils, buildings and county parcels.
+"""GIS phase, slices 1-6: a real alignment for a line from elevation, land cover, flood zones,
+built-up land, freeways, peat soils, buildings, county parcels, and public and tribal land.
 
 1. Data (cached in data/raw/gis, gitignored): USGS 3DEP elevation (ImageServer exportImage) and
    NLCD 2021 land cover (MRLC WCS, 30 m class codes), both in EPSG:5070 (CONUS Albers, metres),
@@ -29,8 +29,13 @@ built-up land, freeways, peat soils, buildings and county parcels.
    feature service, 10 km tiles within 15 km of the line's last alignment; land cover stands in
    further out) give the buildings a right-of-way takes per km through each cell; MnGeo's open
    county parcels give assessed land value per acre where counties publish them.
+6. Public and tribal land (slice 6): USGS PAD-US 4.1 fee lands, split into Section 4(f) land
+   (public parks, recreation areas, refuges, conservation and historic areas) and other public
+   land (forests); Census TIGER reservations and off-reservation trust land. The route search pays
+   to stay out of 4(f) and tribal land; where it crosses them it buys replacement land (4(f)) or
+   pays a negotiated premium (tribal). The named units crossed are listed per line.
 
-Not yet (later slices): rail corridors, public and tribal land, and the at-grade / elevated
+Not yet (later slices): rail corridors, and the at-grade / elevated
 choice per cell.
 Requires the optional extra: uv sync --extra gis
 """
@@ -320,7 +325,7 @@ def zone_of_lat(lat: float) -> str:
 
 def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None,
                  dev: dict | None = None, soil: dict | None = None, bldg: dict | None = None,
-                 parcels: dict | None = None) -> np.ndarray:
+                 parcels: dict | None = None, public: dict | None = None) -> np.ndarray:
     """MUSD per km of route through each cell (nominal parameters)."""
     gw = "costs.guideway."
     t = _to_4326()
@@ -368,7 +373,17 @@ def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | No
     gy, gx = np.gradient(np.nan_to_num(dem, nan=np.nanmean(dem)), CELL)
     slope = np.hypot(gx, gy)
     terrain = P[gw + "elevated"] * 0.5 * np.minimum(slope / P["system.geometry.max_gradient"], 1.0)
-    cost = structure + land + takes + wetland + terrain
+    # public and tribal land: Section 4(f) land is bought plus replacement land; tribal land at a
+    # negotiated premium. The route search also pays to stay out of both (avoidance, below)
+    avoid = 0.0
+    if public:
+        # beside a freeway the guideway sits in highway right-of-way, not in the park next to it
+        s4f = public["section_4f"] * (1.0 - corridor)
+        land = land * (1.0 + s4f * P["land.public.section_4f_replacement"]
+                       + public["tribal"] * (P["land.tribal.consent_multiplier"] - 1.0))
+        avoid = (s4f * P["land.public.section_4f_avoidance_km"]
+                 + public["tribal"] * P["land.tribal.avoidance_km"]) * P[gw + "elevated"]
+    cost = structure + land + takes + wetland + terrain + avoid
     return np.where(np.isnan(dem), np.nanmax(cost) * 10, cost).astype(np.float64)
 
 
@@ -572,7 +587,8 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     soil = fetch_soils(g, folder)
     bldg = fetch_buildings(g, line, folder / "buildings", frac)
     parcels = fetch_parcels(g, line, folder / "parcels")
-    cost = cost_surface(g, frac, dem, P, flood, dev, soil, bldg, parcels)
+    public = fetch_public_land(g, folder / "public")
+    cost = cost_surface(g, frac, dem, P, flood, dev, soil, bldg, parcels, public)
     cell_km = CELL / 1000.0
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
@@ -591,10 +607,12 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
               "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"],
               "soil_peat": soil["peat"], "soil_coverage": soil["coverage"],
               "pc_price": parcels["price"], "pc_coverage": parcels["coverage"],
+              **{f"pl_{k}": public[k] for k in PUBLIC_KINDS},
               **{f"bl_{grp}_{k}": bldg[f"{grp}_{k}"] / (CELL ** 2 / 1e6)  # per km2
                  for grp in BUILDING_GROUPS for k in BUILDING_SUMS}}
     meas = measure(align, st_xy, stops, g, layers, dem, P["system.geometry.max_gradient"])
-    return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops}
+    return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops,
+            "public_land_crossed": public_land_crossed(align, public["features"])}
 
 
 def _sample(align: np.ndarray, step: float = CELL / 2):
@@ -698,6 +716,13 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
         cov = f["pc_coverage"][m]
         dev["parcel_coverage"] = round(float(cov.mean()), 3)
         dev["parcel_land_usd_per_acre"] = round(float((f["pc_price"][m] * cov).sum() / cov.sum())) if cov.sum() else 0
+    if "pl_section_4f" in f:
+        # 4(f) land outside freeway right-of-way (beside a freeway the guideway uses highway land)
+        s4f = f["pl_section_4f"][m] * (1.0 - f["dev_corridor"][m]) if "dev_corridor" in f else f["pl_section_4f"][m]
+        dev["public_land_shares"] = {"section_4f": round(float(s4f.mean()), 3),
+                                     **{k: round(float(f[f"pl_{k}"][m].mean()), 3) for k in PUBLIC_KINDS[1:]}}
+        dev["section_4f_km"] = round(float(s4f.sum() * step / 1000), 2)
+        dev["tribal_km"] = round(float(f["pl_tribal"][m].sum() * step / 1000), 2)
     zones, counts = np.unique(zone[m], return_counts=True)
     return {
         "from": start, "to": end, "zone": str(zones[np.argmax(counts)]),
@@ -756,12 +781,19 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
               "# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside\n"
               "# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).\n"
               "# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per\n"
-              "# acre where parcel_coverage says the parcels cover the route.\n"
-              "# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed\n"
+              "# acre where parcel_coverage says the parcels cover the route. Public land (USGS PAD-US 4.1\n"
+              "# fee) and tribal land (Census TIGER reservations, off-reservation trust land):\n"
+              "# public_land_shares = section_4f (public parks, recreation areas, refuges, conservation\n"
+              "# and historic areas; outside freeway right-of-way), public_other (forests, other public\n"
+              "# land), tribal; the named units\n"
+              "# crossed are listed in public_land_crossed.\n"
+              "# Not yet: rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
               "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
               "# wetland).\n" % (line.id, line.id))
-    mpath.write_text(header + yaml.safe_dump({"line": line.id, "curves": res["curves"], "pieces": res["measured"]},
-                                             sort_keys=False), encoding="utf-8")
+    data = {"line": line.id, "curves": res["curves"], "pieces": res["measured"]}
+    if res.get("public_land_crossed") is not None:
+        data["public_land_crossed"] = res["public_land_crossed"]
+    mpath.write_text(header + yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
     return gpath, mpath
 
 
@@ -1058,3 +1090,119 @@ def fetch_parcels(g: Grid, line: Line, folder: Path) -> dict[str, np.ndarray]:
     cover = open_c & _tile_mask(g, tiles) & (acres > 0.5)
     price = np.where(cover, emv / np.maximum(acres, 1e-9), 0.0)
     return {"price": price, "coverage": cover.astype(np.float32)}
+
+
+# --- Public and tribal land (USGS PAD-US 4.1, Census TIGER), slice 6 -----------------------------
+
+PADUS_QUERY = "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer/0/query"
+TRIBAL_QUERY = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/AIANNHA/MapServer/{}/query"
+TRIBAL_LAYERS = (2, 3)  # federal American Indian reservations, off-reservation trust land
+PUBLIC_OWNERS = ("FED", "STAT", "LOC", "DIST", "JNT")  # Section 4(f) covers publicly owned land only
+# PAD-US designation types that are parks, recreation areas, refuges and conservation or historic areas
+# (Section 4(f)); the rest of public land (national, state and county forests, other) is multiple-use
+SECTION_4F_TYPES = ("NP", "NM", "NWR", "NRA", "NCA", "NLS", "NT", "WSR", "WA", "WSA", "RNA",
+                    "SP", "SW", "SCA", "SREC", "SHCA", "LP", "LCA", "LREC", "LHCA", "REC")
+SECTION_4F_MANAGERS = ("FWS",)  # waterfowl production areas are refuge land (FWS 'RMA' in PAD-US)
+# county and state forests are multiple-use (timber) even where PAD-US calls them conservation areas
+# (Wisconsin's county forests are 'LCA'); Illinois forest preserves are parks and stay 4(f)
+MULTIPLE_USE_NAMES = ("County Forest", "State Forest")
+PUBLIC_KINDS = ("section_4f", "public_other", "tribal")
+
+
+def public_kind(a: dict) -> str | None:
+    """PAD-US fee record -> 'section_4f', 'public_other' or None (private, NGO, unknown owner)."""
+    if a.get("Own_Type") not in PUBLIC_OWNERS:
+        return None
+    if any(n in (a.get("Unit_Nm") or "") for n in MULTIPLE_USE_NAMES):
+        return "public_other"
+    if a.get("Des_Tp") in SECTION_4F_TYPES or a.get("Mang_Name") in SECTION_4F_MANAGERS:
+        return "section_4f"
+    return "public_other"
+
+
+def _rasterize_share(g: Grid, polys: list, sub: int = 7, band_rows: int = 100) -> np.ndarray:
+    """Share of each cell covered by any of the polygons (rasterised at CELL / sub)."""
+    from rasterio.features import rasterize
+    from rasterio.transform import from_origin
+
+    out = np.zeros((g.ny, g.nx), dtype=np.float32)
+    if not polys:
+        return out
+    b = np.array([p.bounds for p in polys])
+    for r0 in range(0, g.ny, band_rows):
+        h = min(band_rows, g.ny - r0)
+        top, bottom = g.y1 - r0 * CELL, g.y1 - (r0 + h) * CELL
+        pick = [p for p, (_, y0, _, y1) in zip(polys, b) if y1 >= bottom and y0 <= top]
+        if not pick:
+            continue
+        fine = rasterize(((p, 1) for p in pick), out_shape=(h * sub, g.nx * sub),
+                         transform=from_origin(g.x0, top, CELL / sub, CELL / sub), fill=0, dtype="uint8")
+        out[r0:r0 + h] = fine.reshape(h, sub, g.nx, sub).mean(axis=(1, 3))
+    return out
+
+
+def fetch_public_land(g: Grid, folder: Path, tile_km: float = 50.0, batch: int = 100) -> dict:
+    """Per 210 m cell: share in Section 4(f) land (public parks, recreation areas, refuges,
+    conservation and historic areas; PAD-US 4.1 fee), other public land (forests, multiple-use), and
+    tribal land (reservations and off-reservation trust land, TIGER). Also the polygons with their
+    names ('features': (kind, name, polygon)) to list what a route crosses."""
+    folder.mkdir(parents=True, exist_ok=True)
+    tcells = int(tile_km * 1000 / CELL)
+    ids = set()
+    for r0 in range(0, g.ny, tcells):
+        for c0 in range(0, g.nx, tcells):
+            h, w = min(tcells, g.ny - r0), min(tcells, g.nx - c0)
+            x0, y1 = g.x0 + c0 * CELL, g.y1 - r0 * CELL
+            d = _get_json({"geometry": f"{x0},{y1 - h * CELL},{x0 + w * CELL},{y1}",
+                           "geometryType": "esriGeometryEnvelope", "inSR": 5070,
+                           "spatialRel": "esriSpatialRelIntersects", "where": "1=1",
+                           "returnIdsOnly": "true", "f": "json"},
+                          folder / f"padus_ids_{r0}_{c0}.json", url=PADUS_QUERY, pause=0.2)
+            ids.update(d.get("objectIds") or [])
+    ids = sorted(ids)
+    feats = []
+    for i in range(0, len(ids), batch):
+        chunk = ids[i:i + batch]
+        d = _get_json({"objectIds": ",".join(map(str, chunk)), "outFields": "Own_Type,Des_Tp,Mang_Name,Unit_Nm",
+                       "returnGeometry": "true", "outSR": 5070, "maxAllowableOffset": 15,
+                       "geometryPrecision": 0, "f": "json"},
+                      folder / f"padus_{chunk[0]}_{chunk[-1]}.json", url=PADUS_QUERY, pause=0.2)
+        for f in d.get("features", []):
+            kind = public_kind(f["attributes"])
+            if kind:
+                feats += [(kind, f["attributes"].get("Unit_Nm") or "", p.buffer(0))
+                          for p in _esri_polygons(f.get("geometry") or {})]
+    env = f"{g.x0},{g.y1 - g.ny * CELL},{g.x0 + g.nx * CELL},{g.y1}"
+    for layer in TRIBAL_LAYERS:
+        d = _get_json({"geometry": env, "geometryType": "esriGeometryEnvelope", "inSR": 5070,
+                       "spatialRel": "esriSpatialRelIntersects", "where": "1=1", "outFields": "NAME",
+                       "returnGeometry": "true", "outSR": 5070, "maxAllowableOffset": 15,
+                       "geometryPrecision": 0, "f": "json"},
+                      folder / f"tribal_{layer}.json", url=TRIBAL_QUERY.format(layer), pause=0.2)
+        feats += [("tribal", f["attributes"].get("NAME") or "", p.buffer(0))
+                  for f in d.get("features", []) for p in _esri_polygons(f.get("geometry") or {})]
+    out = {k: _rasterize_share(g, [p for kind, _, p in feats if kind == k]) for k in PUBLIC_KINDS}
+    # one kind per cell share: tribal first, then 4(f), then the rest of public land
+    out["section_4f"] = np.minimum(out["section_4f"], 1.0 - out["tribal"])
+    out["public_other"] = np.clip(out["public_other"] - out["section_4f"] - out["tribal"], 0.0, None)
+    out["features"] = feats
+    return out
+
+
+def public_land_crossed(align: np.ndarray, feats: list, min_km: float = 0.1) -> list[dict]:
+    """Named public and tribal land units the alignment runs through: km inside each (polygons with
+    the same kind and name are merged, so a unit PAD-US lists twice, e.g. by two managers, counts once)."""
+    from shapely.geometry import LineString
+    from shapely.ops import unary_union
+    from shapely.strtree import STRtree
+
+    if not feats:
+        return []
+    line = LineString(align)
+    groups: dict[tuple[str, str], list] = {}
+    for i in STRtree([p for _, _, p in feats]).query(line):
+        kind, name, poly = feats[int(i)]
+        groups.setdefault((kind, name), []).append(poly)
+    rows = [{"kind": k, "name": n, "km": round(line.intersection(unary_union(ps)).length / 1000.0, 2)}
+            for (k, n), ps in groups.items()]
+    return sorted((r for r in rows if r["km"] >= min_km), key=lambda r: (PUBLIC_KINDS.index(r["kind"]), -r["km"]))

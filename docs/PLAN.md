@@ -191,11 +191,35 @@ on the same building layers, homes taken went spine 480 -> 460, west 486 -> 417,
 946 -> 757 (old alignments vs new; other buildings about the same). The report's counts differ
 because it averages building density over each measured piece.
 
-Next slices, in order of how much they move the result: public and tribal lands, out-of-state land
-prices and parcels (Wisconsin's statewide parcel layer; RESEARCH 32), a price for what following a
-highway saves in permits and review, and the fusion fleet's sensitivity to the 1-second peak
-(it swings a unit, ~$1.7 bn, on small route changes). Also: small water crossings (<100 m, or cells
-under half water) aren't counted as bridges.
+**Slice 6, public and tribal land, 2026-11-04.** USGS PAD-US 4.1 fee lands (National Map service;
+owner, manager, designation, unit name; public domain) and Census TIGER federal reservations and
+off-reservation trust land. Section 4(f) land = publicly owned parks, recreation areas, refuges
+(incl. FWS waterfowl production areas, state WMAs and SNAs), conservation and historic areas;
+national, state and county forests are multiple-use and priced like the land around them. Where a
+route uses 4(f) land outside freeway right-of-way it buys replacement land
+(`land.public.section_4f_replacement`); tribal land costs `land.tribal.consent_multiplier` x the land
+price. The route search also pays `section_4f_avoidance_km` (1 km of elevated guideway per km of
+4(f) land) and `tribal.avoidance_km` (2) to stay out: placeholders, since 49 U.S.C. 303 allows a
+use only without a feasible and prudent alternative and 25 CFR 169 needs the tribe's consent. Each
+measured line lists the named units it crosses. All seven lines re-routed (all curves fit): 4(f)
+land crossed 84 -> 15 km over the network, tribal land 1.8 -> 0 km (the Chicago line left Ho-Chunk
+trust land; the spine now stays on the Minnesota side of the St. Croix, through Chengwatana State
+Forest, instead of crossing the riverway into Wisconsin and back). The avoidance isn't free: spine
+353 -> 359 km (around Duluth's hillside parks, +1.1 min),
+west 371 -> 379 km (around Elm Creek Park Reserve), and on the Chicago line built-up viaduct
+19.7 -> 28.0 km, because in the suburbs the parks and forest preserves were the open gaps. Line P50
+spine $88.8 bn (was $87.5), west 80.9 (80.3), southwest 24.1 (23.5), Chicago 139.5 (137.3); 4(f)
+replacement land and tribal premiums $33 M nominal in all. Spine with fusion $95.8 bn, phase 2
+$231.1 bn, all $447.8 bn (was $443.0; P10 387.3, P90 518.1). Fusion fleet 4 / 6 / 9 units; the
+spine's 1-second peak fell back to 74.8 MW, still 4 units (with storm heating and the 10% margin
+it needs 100.6 MW of the 100 two working units give). Timetable offsets unchanged.
+
+Next slices, in order of how much they move the result: how hard to avoid 4(f) land (the
+placeholder avoidance moved ~$4.8 bn; RESEARCH 33), out-of-state land prices and parcels
+(Wisconsin's statewide parcel layer; RESEARCH 32), a price for what following a highway saves in
+permits and review, travel time in the route search (detours cost minutes it doesn't see), and the
+fusion fleet's sensitivity to the 1-second peak (it swings a unit, ~$1.7 bn, on small route
+changes). Also: small water crossings (<100 m, or cells under half water) aren't counted as bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

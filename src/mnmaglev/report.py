@@ -100,6 +100,19 @@ def _taken(sc: dict, groups) -> str:
     return f"{sum(float(t.get(g, 0.0)) for g in groups):,.0f}" if t else "-"
 
 
+KIND_LABEL = {"section_4f": "4(f)", "public_other": "public", "tribal": "tribal"}
+
+
+def _public_land_crossed(line_id: str) -> list[dict]:
+    """Named public and tribal land units on the line's measured route (network/measured), if any."""
+    import yaml
+
+    path = ROOT / "network" / "measured" / f"{line_id}.yaml"
+    if not path.exists():
+        return []
+    return yaml.safe_load(path.read_text(encoding="utf-8")).get("public_land_crossed") or []
+
+
 def _hm(seconds: float) -> str:
     m = int(round(seconds / 60))
     return f"{m // 60}h{m % 60:02d}" if m >= 60 else f"{m} min"
@@ -195,7 +208,7 @@ def write_markdown(net: dict, path: Path) -> None:
         L.append("| Item | MUSD |")
         L.append("|---|---|")
         for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters",
-                  "soft", "land", "wetlands", "buildings", "contingency"):
+                  "soft", "land", "wetlands", "buildings", "public_land", "contingency"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
         rv = c0["reserve"]
         L.append(f"| second-system reserve ({'held' if line.reserve else 'not held'}) "
@@ -209,15 +222,22 @@ def write_markdown(net: dict, path: Path) -> None:
                  f"contingency {float(rv['contingency']):,.0f} = **{float(rv['total']):,.0f} MUSD**; "
                  f"farm lease income {float(rv['lease_income']):,.2f} MUSD/yr.\n")
         L.append("| Segment | km | Elevated | At grade | Urban viaduct | Tunnel | Bridges m | Acres | Wetland acres filled "
-                 "| Homes taken | Other buildings taken |")
-        L.append("|---|---|---|---|---|---|---|---|---|---|---|")
+                 "| Homes taken | Other buildings taken | 4(f) km | Tribal km |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
         for s, sc in zip(line.segments, c0["segments"]):
             q = sc["quantities"]
             L.append(f"| {s.a.id} -> {s.b.id} | {q['route_km']:,.0f} | {q['elevated_km']:,.0f} | {q['at_grade_km']:,.0f} "
                      f"| {q['urban_viaduct_km']:,.1f} | {q['tunnel_km']:,.1f} | {q['bridge_m']:,.0f} "
                      f"| {sc['acres']:,.0f} | {sc['wetland_acres_filled']:,.1f} "
-                     f"| {_taken(sc, ('residential',))} | {_taken(sc, ('nonresidential', 'agriculture'))} |")
+                     f"| {_taken(sc, ('residential',))} | {_taken(sc, ('nonresidential', 'agriculture'))} "
+                     f"| {s.section_4f * s.length_km:,.1f} | {s.tribal * s.length_km:,.1f} |")
         L.append("")
+        crossed = _public_land_crossed(line.id)
+        if crossed:
+            L.append("Public and tribal land the measured route runs through (km; Section 4(f) = public parks, "
+                     "recreation areas, refuges, conservation and historic areas): "
+                     + "; ".join(f"{c['name'] or 'unnamed'} ({KIND_LABEL[c['kind']]}) {c['km']:.1f}" for c in crossed)
+                     + ".\n")
 
     L.append("## Materials and the ore behind them (nominal)\n")
     L.append("Steel = rebar + prestressing strand + stator electrical steel + guidance rails. "

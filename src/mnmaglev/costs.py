@@ -33,6 +33,13 @@ def land_price_per_acre(s: Segment, P):
     return base + corr * P["land.corridor.price_factor"] * around
 
 
+def public_land_factor(s: Segment, P):
+    """Extra land cost on public and tribal land, as a share of the segment's land cost: replacement
+    land for Section 4(f) land used (public parks, refuges, ...), the negotiated premium on tribal land."""
+    return (s.section_4f * P["land.public.section_4f_replacement"]
+            + s.tribal * (P["land.tribal.consent_multiplier"] - 1))
+
+
 TAKE_WIDTHS = (("elevated", "elevated"), ("at_grade", "at_grade"), ("urban_viaduct", "urban"))
 
 
@@ -121,6 +128,7 @@ def segment_capital(s: Segment, P) -> dict:
     acres = width_km_m * 1000.0 / ACRE_M2
     price = land_price_per_acre(s, P)
     land = acres * price * P["land.acquisition_multiplier"]
+    public_land = land * public_land_factor(s, P)
 
     wet_share = s.land.get("wetland", 0.0)
     filled_acres = wet_share * 1000.0 / ACRE_M2 * (
@@ -141,6 +149,7 @@ def segment_capital(s: Segment, P) -> dict:
         "land": land,
         "wetlands": wetlands,
         "buildings": buildings,
+        "public_land": public_land,
         "buildings_taken": taken,
         "acres": acres,
         "wetland_acres_filled": filled_acres,
@@ -165,6 +174,7 @@ def segment_reserve(s: Segment, P) -> dict:
     urban_acres = q["urban_viaduct_km"] * 1000.0 * P["land.reserve.width_urban"] / ACRE_M2
     price = land_price_per_acre(s, P)
     land = (rural_acres + urban_acres) * price * P["land.reserve.acquisition_multiplier"]
+    land = land * (1 + public_land_factor(s, P))
     # buildings in the strip beside A: B's right-of-way + the separation (country), width_urban (suburbs)
     sep = P["land.reserve.construction_separation"]
     taken, taken_m2 = building_takes(s, {"elevated": P["land.row_width.elevated"] + sep,
@@ -234,7 +244,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         construction = construction - local["construction"]
         contingency_rate = contingency_rate - local["contingency_points"]
     soft = construction * P["costs.soft.engineering_admin"]
-    land = total("land") + total("wetlands") + total("buildings")
+    land = total("land") + total("wetlands") + total("buildings") + total("public_land")
     base = construction + soft + land
     contingency = base * contingency_rate
     # the reserve is priced for every line; it counts in the total only where the line opts in
@@ -257,6 +267,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         "land": total("land"),
         "wetlands": total("wetlands"),
         "buildings": total("buildings"),
+        "public_land": total("public_land"),
         "contingency": contingency,
         "reserve": reserve,
         "reserve_included": line.reserve,
