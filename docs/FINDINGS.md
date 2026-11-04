@@ -155,6 +155,17 @@ works), date, details. One section per tool.
   seed noise (spine seeds 1-5: $97.3-97.7 bn; before $97.0). Spine with fusion $97.7 bn, phase 2
   $236 bn, all $459 bn. A source for the cost per metre of tall piers wasn't found (a 2013 tall-pier
   optimisation paper is closed access), so the rate is an engineering estimate.
+- 2026-11-04, phase 3 lines routed: every line now has a measured route. St. Cloud - Bemidji 233
+  vs 250 km, Rochester - Mankato 125 vs 132 (detour 1.02, the straightest line yet), Rochester -
+  Chicago 556 vs 593. The Chicago line is shorter but no cheaper (P50 $139.3 vs $138.5 bn): ~69 km
+  of built-up viaduct through the Madison, Milwaukee and Chicago suburbs (I had 49), 5.3 km of
+  bridges (2.5; the Mississippi at La Crosse measured 2.1 km of water and floodway against my 2.5,
+  plus Wisconsin rivers I hadn't listed), and land $1.7 bn (0.7), all at Minnesota prices. Tall
+  piers matter more there than at Duluth: dropping off the bluffs to Winona and La Crosse and over
+  the Driftless ridges needs piers up to 96 m, ~390 m x km above 20 m, +$0.6 bn P50 (Duluth lines
+  ~$0.07 bn each). Network 1,877 km, all phases $453.7 bn (P10 392, P90 525) vs $471.2 bn on my
+  estimates; fleet 10 -> 9 units (overnight warming, ~60 fewer km). great_lakes downloaded 755 MB
+  and took 39 minutes, mostly FEMA flood tiles.
 
 ## OSRD
 

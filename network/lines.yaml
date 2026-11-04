@@ -183,6 +183,7 @@ lines:
 
   - id: north_woods
     name: St. Cloud - Brainerd - Bemidji
+    use_measured: true   # network/measured/north_woods.yaml
     phase: 3
     points: [st_cloud, brainerd, bemidji]
     defaults:
@@ -199,6 +200,7 @@ lines:
 
   - id: southern_link
     name: Rochester - Owatonna - Mankato
+    use_measured: true   # network/measured/southern_link.yaml
     phase: 3
     points: [rochester, owatonna, mankato]
     defaults:
@@ -215,6 +217,7 @@ lines:
 
   - id: great_lakes
     name: Rochester - La Crosse - Madison - Milwaukee - Chicago
+    use_measured: true   # network/measured/great_lakes.yaml
     phase: 3
     points: [rochester, winona, la_crosse, madison, milwaukee, chicago]
     note: Out of state past Winona; needs Wisconsin and Illinois partners. Climate zones are a stretch here.

@@ -47,7 +47,7 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 |---|---|---|---|
 | Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 4 fusion units | 357 | 1 h 02 | $97.7 bn ($85 - 113 bn) |
 | Network through phase 2, all GIS-measured (6 fusion units) | 962 | | $236 bn ($204 - 272 bn) |
-| Everything incl. Chicago (10 fusion units; phase 3 lines still estimated) | 1,937 | | $459 bn ($396 - 531 bn) |
+| Everything incl. Chicago, all GIS-measured (9 fusion units) | 1,877 | | $454 bn ($392 - 525 bn) |
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
@@ -70,7 +70,7 @@ fleet to cover the 1-second peak plus 10% and one spare unit: the spine averages
 at 75 MW with staggered departures (104 MW if every train left on the hour), plus 16 MW of ice
 heating during storms, so it gets 4 units (200 MW) for ~$6.2 bn P50, and ~85% of their output (~1.3 TWh/yr) is
 surplus for neighbouring users (hydrogen steelmaking on the Range needs ~1 GW, data centres, the
-Midway hub district) or the grid. The full network gets 10 units (500 MW). At wholesale prices the
+Midway hub district) or the grid. The full network gets 9 units (450 MW). At wholesale prices the
 surplus and the grid power the trains no longer buy only just beat the plant's O&M, so the case is
 strategic (carbon-free, energy security, Range industry), not cost. Every fusion number is a target
 or projection: no fusion plant has made net electricity yet, a first Minnesota unit is ~2035 at the
@@ -93,8 +93,8 @@ surface, heater cost and overnight warming time are still placeholders (docs/RES
 **Staggered timetable** (`network/timetable.yaml`): every line still runs every 30 minutes each way,
 but `mnmaglev timetable --write` shifts each direction's departures by whole minutes so trains
 don't accelerate at the same moment. It cuts the network's 1-second power peak about in half
-(on the measured spine 104 -> 75 MW, everything 601 -> 236 MW), and with it the fusion fleet
-(to 4 / 6 / 10 units by phase), while keeping Midway hub connections of 5-12 minutes: trains from
+(on the measured spine 104 -> 75 MW, everything 680 -> 233 MW), and with it the fusion fleet
+(to 4 / 6 / 9 units by phase), while keeping Midway hub connections of 5-12 minutes: trains from
 Rochester reach the hub at :25/:55 and the St. Cloud line leaves 8 minutes later (:33/:03); trains from
 Moorhead arrive at :27/:57, 6 minutes before the spine leaves for Rochester. Duluth -> St. Cloud riders
 wait ~32 minutes and Moorhead -> Duluth ~30 (the rule asks for one good connection per direction,
@@ -102,7 +102,7 @@ not every pair, and which pairs get it changes whenever the timetable is re-opti
 sits on a step: 3 units would do if its peak were under ~73 MW (the slice-2 route managed 65). With
 the fleet that lean, overnight ice warming sets the fleet from phase 2 on, not the daytime peak.
 
-**Measured routes (GIS slices 1-3; spine and the phase 2 lines)**: `mnmaglev gis <line>` routes a
+**Measured routes (GIS slices 1-3; every line)**: `mnmaglev gis <line>` routes a
 line on USGS 3DEP elevation, NLCD 2021 land cover and impervious surface, and FEMA flood maps (210 m
 cells, each priced with the model's own parameters), fits curves of at least the minimum radius and
 measures it. The spine is 357 km (my estimates said 389), Duluth to the Midway hub in 34 minutes,
@@ -110,9 +110,10 @@ measures it. The spine is 357 km (my estimates said 389), Duluth to the Midway h
 Climbing out of Duluth the guideway crosses the hillside's ravines on piers up to ~70-80 m (about
 1 km of each line over 25 m) to stay within 10%. Piers above 20 m (the top of Transrapid's standard
 elevated guideway) pay ~$0.6 M per km for every metre above it (a placeholder engineering
-estimate): +$67 M P50 on the spine and +$73 M on the Iron Range line, nothing elsewhere. Almost
-everywhere else the 10% grade limit needs no lift at all: the alignments are under 3.5 m of grade
-lift for >97% of their length.
+estimate): +$67 M P50 on the spine and +$73 M on the Iron Range line. The Chicago line needs
+them more: it drops off the bluffs to the Mississippi at Winona and La Crosse and crosses the
+Driftless Area's ridges, on piers up to ~96 m (~390 m x km above 20 m, +$0.6 bn P50). Almost
+everywhere else the 10% grade limit needs no lift at all.
 
 | Line (GIS-measured) | Route km (estimate) | End to end | Line P50 (estimate) |
 |---|---|---|---|
@@ -120,10 +121,16 @@ lift for >97% of their length.
 | Duluth - Virginia - Hibbing | 126 (136) | 24 min | $29.0 bn ($30.9 bn) |
 | Midway hub - St. Cloud - Alexandria - Moorhead | 375 (386) | 1 h 05 | $81.5 bn ($79.4 bn) |
 | MSP - Mankato | 105 (111) | 17 min | $24.5 bn ($25.0 bn) |
+| St. Cloud - Brainerd - Bemidji | 233 (250) | 39 min | $48.3 bn ($51.4 bn) |
+| Rochester - Owatonna - Mankato | 125 (132) | 24 min | $25.9 bn ($28.0 bn) |
+| Rochester - La Crosse - Madison - Milwaukee - Chicago | 556 (593) | 1 h 42 | $139.3 bn ($138.5 bn) |
 
 Every measured line is shorter than my straight-line-plus-detour estimate. The west line costs
 more anyway: it starts with ~15 km of north-metro suburbs priced as built-up viaduct, and lake
-country around Alexandria and Fergus Falls still takes ~2.5 km of bridges (I had 0.6 km).
+country around Alexandria and Fergus Falls still takes ~2.5 km of bridges (I had 0.6 km). The
+Chicago line is 37 km shorter but costs the same: ~69 km of Milwaukee and Chicago suburbs priced
+as built-up viaduct (I had 49), 5.3 km of bridges (2.5) and land at $1.7 bn (0.7), with
+Wisconsin and Illinois land still priced at Minnesota rates.
 Curves are fitted locally: each station-to-station leg of the least-cost path is simplified to
 300 m, and where a curve doesn't fit, the vertex whose removal adds the least cost goes. The first
 version straightened the whole line by one tolerance (up to 1.45 km on the west line) and cut
@@ -161,7 +168,7 @@ still the elevated guideway cost per km.
 | Piece | Role | Status |
 |---|---|---|
 | `src/mnmaglev` (Python) | parameters, network, costs, land, materials, Monte Carlo, report | working |
-| `gis.py` (`mnmaglev gis <line>`) | route a line on USGS elevation + NLCD land cover and impervious surface + FEMA flood zones: least-cost path priced with the model's own parameters, floodways bridged, suburbs as built-up, interstate right-of-way, curves >= the minimum radius, pier heights for <=10% grades (tall piers priced by height); measured shares feed the model (`use_measured: true`). Next: phase 3 lines, peat soils, parcels | slices 1-3 (spine + phase 2) |
+| `gis.py` (`mnmaglev gis <line>`) | route a line on USGS elevation + NLCD land cover and impervious surface + FEMA flood zones: least-cost path priced with the model's own parameters, floodways bridged, suburbs as built-up, interstate right-of-way, curves >= the minimum radius, pier heights for <=10% grades (tall piers priced by height); measured shares feed the model (`use_measured: true`). Next: peat soils, parcels | slices 1-3 (all lines) |
 | [OSRD](https://github.com/OpenRailAssociation/osrd) | running time, timetables and capacity on the real alignments (`integrations/osrd`) | planned |
 | `power.py`, `fusion.py` | second-by-second traction demand from the timetable; the fusion fleet sized from its peak, surplus and costs | working |
 | [Calliope](https://calliope.readthedocs.io/) | optimise the power mix (fusion units, grid, surplus users) hour by hour (`integrations/calliope`) | planned |

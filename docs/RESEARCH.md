@@ -147,4 +147,10 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     the height the elevated benchmarks already cover (`pier_height_ref`, 20 m: Transrapid's standard
     elevated class). Candidates: Martinez-Martin et al. 2013 (tall RC piers, 40-100 m), Chinese HSR
     viaduct cost by pier height, MnDOT/WSDOT bridge cost data for tall substructure. Small at today's
-    routes (~$70 M a line on the Duluth hillside).
+    routes (~$70 M a line on the Duluth hillside, $0.6 bn on the Chicago line's bluffs and Driftless ridges).
+
+29. [ ] Out of state (great_lakes past Winona): Wisconsin and Illinois cropland and suburban land
+    prices (USDA NASS land values, county assessors; the model uses Minnesota's), the Chicago and
+    Milwaukee approaches' urban tunnel shares (planner 40% on the Chicago urban km), and climate
+    zones (the line takes `south`, Minnesota's warmest). The line costs $139 bn P50, so a 2x error
+    on its land is ~$1-2 bn.

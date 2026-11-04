@@ -1,0 +1,223 @@
+# Measured along the GIS alignment (network/alignments/great_lakes.geojson) by `mnmaglev gis great_lakes`:
+# USGS 3DEP elevation + NLCD 2021 land cover on a 210 m grid, FEMA NFHL flood zones
+# (floodplain_share = 1% + 0.2% annual chance; floodway runs counted as bridge;
+# flood_map_coverage = share of the piece where FEMA has digital maps), NLCD 2021
+# impervious surface + descriptor (built_up_share = share of the piece's non-urban,
+# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
+# Guideway height = lowest profile at or above the ground within the grade limit;
+# pier_excess_m_km = metres above each reference height x km (tall piers are priced
+# above costs.guideway.pier_height_ref).
+# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
+# wetland).
+line: great_lakes
+curves:
+  r_cruise_m: 3980.2213558022463
+  r_urban_m: 861.0538357603562
+  simplify_tol_m: 300.0
+  vertices: 101
+  vertices_removed_for_curves: 56
+  all_curves_fit: true
+  cost_least_cost_path_musd: 51403
+  cost_smoothed_musd: 52408
+pieces:
+- from: rochester
+  to: winona
+  zone: south
+  length_km: 68.0
+  crow_km: 67.1
+  detour: 1.014
+  land_shares:
+    suburban: 0.111
+    urban: 0.052
+    forest: 0.152
+    open: 0.676
+    wetland: 0.008
+    water: 0.0
+  floodplain_share: 0.007
+  floodplain_1pct_share: 0.006
+  floodway_km: 0.0
+  flood_map_coverage: 1.0
+  built_up_share: 0.042
+  highway_corridor_share: 0.0
+  highway_corridor_km: 0.0
+  urban_km: 2.9
+  urban_start_km: 1.1
+  urban_end_km: 1.9
+  bridges_m: []
+  max_ground_grade_1km: 0.1597
+  elev_range_m:
+  - 198
+  - 404
+  guideway_max_height_m: 96.0
+  km_over_25m_high: 4.2
+  pier_excess_m_km:
+    5: 220.23
+    10: 185.55
+    15: 155.14
+    20: 128.26
+    25: 104.08
+    30: 84.13
+- from: winona
+  to: la_crosse
+  zone: south
+  length_km: 43.5
+  crow_km: 42.2
+  detour: 1.031
+  land_shares:
+    suburban: 0.122
+    urban: 0.086
+    forest: 0.309
+    open: 0.386
+    wetland: 0.064
+    water: 0.034
+  floodplain_share: 0.096
+  floodplain_1pct_share: 0.095
+  floodway_km: 1.47
+  flood_map_coverage: 1.0
+  built_up_share: 0.022
+  highway_corridor_share: 0.027
+  highway_corridor_km: 1.2
+  urban_km: 3.4
+  urban_start_km: 1.2
+  urban_end_km: 2.2
+  bridges_m:
+  - 105
+  - 420
+  - 105
+  - 735
+  - 735
+  max_ground_grade_1km: 0.1484
+  elev_range_m:
+  - 193
+  - 394
+  guideway_max_height_m: 82.4
+  km_over_25m_high: 5.78
+  pier_excess_m_km:
+    5: 270.25
+    10: 219.06
+    15: 174.82
+    20: 138.37
+    25: 107.06
+    30: 82.0
+- from: la_crosse
+  to: madison
+  zone: south
+  length_km: 175.7
+  crow_km: 168.9
+  detour: 1.04
+  land_shares:
+    suburban: 0.094
+    urban: 0.033
+    forest: 0.249
+    open: 0.605
+    wetland: 0.016
+    water: 0.003
+  floodplain_share: 0.03
+  floodplain_1pct_share: 0.022
+  floodway_km: 0.94
+  flood_map_coverage: 1.0
+  built_up_share: 0.018
+  highway_corridor_share: 0.01
+  highway_corridor_km: 1.8
+  urban_km: 4.7
+  urban_start_km: 1.7
+  urban_end_km: 3.0
+  bridges_m:
+  - 525
+  - 420
+  - 105
+  max_ground_grade_1km: 0.1543
+  elev_range_m:
+  - 200
+  - 415
+  guideway_max_height_m: 80.9
+  km_over_25m_high: 5.88
+  pier_excess_m_km:
+    5: 347.08
+    10: 249.26
+    15: 177.32
+    20: 127.69
+    25: 93.9
+    30: 67.74
+- from: madison
+  to: milwaukee
+  zone: south
+  length_km: 127.3
+  crow_km: 121.4
+  detour: 1.049
+  land_shares:
+    suburban: 0.181
+    urban: 0.119
+    forest: 0.114
+    open: 0.465
+    wetland: 0.114
+    water: 0.006
+  floodplain_share: 0.098
+  floodplain_1pct_share: 0.086
+  floodway_km: 0.63
+  flood_map_coverage: 1.0
+  built_up_share: 0.074
+  highway_corridor_share: 0.036
+  highway_corridor_km: 4.6
+  urban_km: 12.4
+  urban_start_km: 2.9
+  urban_end_km: 9.4
+  bridges_m:
+  - 210
+  - 210
+  - 420
+  max_ground_grade_1km: 0.0345
+  elev_range_m:
+  - 180
+  - 326
+  guideway_max_height_m: 12.3
+  km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 2.78
+    10: 0.32
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0
+- from: milwaukee
+  to: chicago
+  zone: south
+  length_km: 140.4
+  crow_km: 130.6
+  detour: 1.075
+  land_shares:
+    suburban: 0.278
+    urban: 0.212
+    forest: 0.099
+    open: 0.345
+    wetland: 0.061
+    water: 0.004
+  floodplain_share: 0.068
+  floodplain_1pct_share: 0.067
+  floodway_km: 1.05
+  flood_map_coverage: 1.0
+  built_up_share: 0.125
+  highway_corridor_share: 0.042
+  highway_corridor_km: 5.9
+  urban_km: 27.0
+  urban_start_km: 7.2
+  urban_end_km: 19.7
+  bridges_m:
+  - 210
+  - 630
+  - 210
+  - 210
+  max_ground_grade_1km: 0.0195
+  elev_range_m:
+  - 177
+  - 246
+  guideway_max_height_m: 0.0
+  km_over_25m_high: 0.0
+  pier_excess_m_km:
+    5: 0.0
+    10: 0.0
+    15: 0.0
+    20: 0.0
+    25: 0.0
+    30: 0.0

@@ -146,8 +146,17 @@ doesn't see pier height yet (only a slope term), which matters little at these a
 Carlo draws now come from one random stream per parameter; that moved every P50 once by about
 the seed-to-seed noise (spine $97.0 -> $97.7 bn; seeds 1-5 give $97.3-97.7 bn).
 
-Next slices, in order of how much they move the result: the phase 3 lines, SSURGO organic soils
-(real peat), parcels and buildings, public and tribal lands, and a price for what following a
+**Phase 3 lines routed 2026-11-04** (north_woods, southern_link, great_lakes; `use_measured: true`),
+so every line now runs on a measured route. St. Cloud - Bemidji 233 km (est. 250), Rochester -
+Mankato 125 (132), Rochester - Chicago 556 (593); all curves fit, smoothed routes within 2% of the
+least-cost path. Chicago line P50 $139.3 bn (est. $138.5): shorter, but more suburbs, bridges and
+land, and piers up to 96 m off the Mississippi bluffs and across the Driftless Area (+$0.6 bn).
+Network 1,877 km, all phases $453.7 bn (estimates $471.2), fleet 4 / 6 / 9 units. Phase 1-2
+timetable offsets unchanged. Wisconsin and Illinois are priced with Minnesota land prices and
+climate zones (RESEARCH 29).
+
+Next slices, in order of how much they move the result: SSURGO organic soils (real peat), parcels
+and buildings, public and tribal lands, out-of-state land prices, and a price for what following a
 highway saves in permits and review.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
