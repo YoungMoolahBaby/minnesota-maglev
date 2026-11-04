@@ -1,5 +1,5 @@
-"""GIS phase, slices 1-3: a real alignment for a line from elevation, land cover, flood zones,
-built-up land and freeways.
+"""GIS phase, slices 1-4: a real alignment for a line from elevation, land cover, flood zones,
+built-up land, freeways and peat soils.
 
 1. Data (cached in data/raw/gis, gitignored): USGS 3DEP elevation (ImageServer exportImage) and
    NLCD 2021 land cover (MRLC WCS, 30 m class codes), both in EPSG:5070 (CONUS Albers, metres),
@@ -8,9 +8,12 @@ built-up land and freeways.
    zones and regulatory floodways, rasterised at 30 m and averaged per cell, plus whether FEMA has
    digital maps for the tile at all. NLCD 2021 impervious surface and its descriptor (roads by
    class, buildings): how built-up each cell is with roads left out, and where interstates run.
+   gSSURGO soils (30 m map unit keys from SoilWeb's WCS, components from USDA Soil Data Access):
+   the share of each cell in Histosols (peat and muck) and how much of it the survey covers.
 2. Cost surface: what a km of guideway through each cell costs, priced with the model's own
    nominal parameters: structure (rural elevated / urban viaduct / bridge over water), right-of-way
-   land by cover class and zone, wetland mitigation, and a terrain penalty for steep ground;
+   land by cover class and zone, wetland mitigation, the peat adder on Histosols (wetland where the
+   soil survey is incomplete), and a terrain penalty for steep ground;
    floodways are priced as bridge, other flood zones get the floodplain adder; built-up cells
    (ramp on non-road impervious %) as urban viaduct; in interstate right-of-way the land costs
    land.corridor.price_factor x the land around it and building beside traffic gets an adder.
@@ -18,9 +21,11 @@ built-up land and freeways.
    circular curves no tighter than the minimum radius (cruise speed in the country, urban speed near
    stations); vertices too sharp for a curve are dropped and the line re-simplified.
 4. Measure along the final alignment: length, detour, land shares, wetland, water crossings
-   and floodways (bridges), floodplain share, built-up share, km beside freeways, urban km, grades. Written to network/alignments/<line>.geojson and network/measured/<line>.yaml.
+   and floodways (bridges), floodplain share, built-up share, km beside freeways, peat share and
+   soil survey coverage, urban km, grades. Written to network/alignments/<line>.geojson and
+   network/measured/<line>.yaml.
 
-Not yet (later slices): SSURGO peat, parcels and single buildings, rail corridors,
+Not yet (later slices): parcels and single buildings, rail corridors,
 public and tribal land, and the at-grade / elevated choice per cell.
 Requires the optional extra: uv sync --extra gis
 """
@@ -55,6 +60,15 @@ NLCD_URL = MRLC_URL.replace("{cov}", "NLCD_2021_Land_Cover_L48")
 # 22 tertiary road, 24 non-road non-energy impervious (buildings, parking), ... (2018 NavStreets roads)
 HIGHWAY_CODES = (20,)
 MAJOR_ROAD_CODES = (20, 21)
+# gSSURGO 30 m map unit keys (EPSG:5070) from UC Davis SoilWeb's WCS (as soilDB::mukey.wcs uses);
+# component tables from USDA Soil Data Access. gSSURGO, not gNATSGO: SoilWeb's gNATSGO keys
+# didn't match SDA's live tables (44% of a Pine County test tile unknown), gSSURGO's all did.
+SOIL_WCS = ("http://casoilresource.lawr.ucdavis.edu/cgi-bin/mapserv?map=mukey-wcs&SERVICE=WCS"
+            "&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=gssurgo&FORMAT=image/tiff"
+            "&GEOTIFF:COMPRESSION=DEFLATE&SUBSETTINGCRS=EPSG:5070&FORMAT=GEOTIFF_FLOAT"
+            "&SUBSET=x({x0},{x1})&SUBSET=y({y0},{y1})&RESOLUTION=x(30)&RESOLUTION=y(30)")
+SDA_URL = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest"
+NOT_SURVEYED = ("NOTCOM", "AREA NOT SURVEYED")
 
 # NLCD class -> our groups
 GROUPS = {
@@ -157,14 +171,20 @@ def fetch_dem(g: Grid, folder: Path) -> np.ndarray:
 def _mrlc_blocks(g: Grid, folder: Path, cov: str, prefix: str):
     """Yield (r0, c0, blocks) per tile of a 30 m MRLC coverage; blocks[i, 7, j, 7] = the 7 x 7
     pixels of cell (r0 + i, c0 + j)."""
+    yield from _wcs_blocks(g, folder, MRLC_URL.replace("{cov}", cov), prefix)
+
+
+def _wcs_blocks(g: Grid, folder: Path, url: str, prefix: str):
+    """Yield (r0, c0, blocks) per tile of a 30 m EPSG:5070 WCS coverage (url with {x0} {y0} {x1}
+    {y1}); blocks[i, 7, j, 7] = the 7 x 7 pixels of cell (r0 + i, c0 + j)."""
     import rasterio
-    tile = 300  # cells per request side (2100 x 2100 NLCD pixels)
+    tile = 300  # cells per request side (2100 x 2100 pixels)
     for r0 in range(0, g.ny, tile):
         for c0 in range(0, g.nx, tile):
             h, w = min(tile, g.ny - r0), min(tile, g.nx - c0)
             x0 = g.x0 + c0 * CELL
             y1 = g.y1 - r0 * CELL
-            p = _get(MRLC_URL.format(cov=cov, x0=x0, y0=y1 - h * CELL, x1=x0 + w * CELL, y1=y1),
+            p = _get(url.format(x0=x0, y0=y1 - h * CELL, x1=x0 + w * CELL, y1=y1),
                      folder / f"{prefix}_{r0}_{c0}.tif")
             with rasterio.open(p) as src:
                 a = src.read(1)
@@ -206,6 +226,83 @@ def fetch_development(g: Grid, folder: Path) -> dict[str, np.ndarray]:
     return {"imp_nonroad": imp, "highway": hwy, "corridor": (hwy * 49 >= 7).astype(np.float32)}
 
 
+def _sda(query: str, tries: int = 6) -> list:
+    """Rows from USDA Soil Data Access (tabular SQL over SSURGO)."""
+    import json
+    body = json.dumps({"query": query, "format": "JSON"}).encode()
+    for k in range(tries):
+        try:
+            req = urllib.request.Request(SDA_URL, data=body, headers={
+                "Content-Type": "application/json", "User-Agent": "minnesota-maglev GIS"})
+            with urllib.request.urlopen(req, timeout=300) as r:
+                return json.loads(r.read()).get("Table", [])
+        except OSError as e:
+            if k == tries - 1:
+                raise
+            print(f"  SDA query failed (try {k + 1}): {e}", flush=True)
+            time.sleep(min(15 * (k + 1), 90))
+    return []
+
+
+def soil_mukeys(keys, path: Path) -> dict[int, tuple[float, bool]]:
+    """{mukey: (peat share, surveyed)}: peat = share of the map unit's components that are
+    Histosols (organic soil >= 40 cm: peat and muck); surveyed = the survey is complete there
+    (not NOTCOM, and the key is known to Soil Data Access). Cached as JSON in path."""
+    import json
+    cache = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    todo = [int(k) for k in keys if str(int(k)) not in cache]
+    for i in range(0, len(todo), 1000):
+        chunk = todo[i:i + 1000]
+        info = {str(k): [0.0, False] for k in chunk}  # unknown to SDA = not surveyed
+        for m, name, pct, order in _sda("SELECT mukey, compname, comppct_r, taxorder FROM component "
+                                        f"WHERE mukey IN ({','.join(map(str, chunk))})"):
+            e = info[str(m)]
+            if name not in NOT_SURVEYED:
+                e[1] = True
+            if order == "Histosols":
+                e[0] = min(e[0] + float(pct or 0) / 100, 1.0)
+        cache.update(info)
+        path.write_text(json.dumps(cache), encoding="utf-8")
+    return {int(k): (v[0], v[1]) for k, v in cache.items()}
+
+
+def soil_cells(blocks: np.ndarray, info: dict[int, tuple[float, bool]]) -> tuple[np.ndarray, np.ndarray]:
+    """Per cell from 7 x 7 blocks of 30 m map unit keys: (peat share of the surveyed pixels,
+    share of pixels surveyed). Key 0 = no data."""
+    keys = np.array(sorted(info), dtype=np.int64)
+    peat = np.array([info[k][0] for k in keys])
+    surv = np.array([info[k][1] for k in keys], dtype=float)
+    b = blocks.astype(np.int64)
+    i = np.clip(np.searchsorted(keys, b), 0, max(len(keys) - 1, 0))
+    known = (keys[i] == b) & (b > 0) if len(keys) else np.zeros(b.shape, bool)
+    s = np.where(known, surv[i], 0.0) if len(keys) else np.zeros(b.shape)
+    p = np.where(known, peat[i], 0.0) if len(keys) else np.zeros(b.shape)
+    n = s.sum(axis=(1, 3))
+    return (p * s).sum(axis=(1, 3)) / np.maximum(n, 1), n / 49.0
+
+
+def fetch_soils(g: Grid, folder: Path) -> dict[str, np.ndarray]:
+    """Per 210 m cell from gSSURGO (30 m map unit keys, SoilWeb WCS) and Soil Data Access:
+    peat = Histosol share of the surveyed pixels, coverage = share of the cell surveyed."""
+    tiles = list(_wcs_blocks(g, folder, SOIL_WCS, "soil"))
+    keys = np.unique(np.concatenate([np.unique(b.astype(np.int64)) for _, _, b in tiles]))
+    info = soil_mukeys(keys[keys > 0], folder / "soil_mukeys.json")
+    peat = np.zeros((g.ny, g.nx), dtype=np.float32)
+    cov = np.zeros((g.ny, g.nx), dtype=np.float32)
+    for r0, c0, b in tiles:
+        hh, ww = b.shape[0], b.shape[2]
+        peat[r0:r0 + hh, c0:c0 + ww], cov[r0:r0 + hh, c0:c0 + ww] = soil_cells(b, info)
+    return {"peat": peat, "coverage": cov}
+
+
+def soft_ground(frac: dict, soil: dict | None) -> np.ndarray:
+    """Peat share per cell: SSURGO Histosols where the soil survey is complete, the wetland share
+    (the old proxy) where it isn't."""
+    if soil is None:
+        return frac["wetland"]
+    return soil["coverage"] * soil["peat"] + (1.0 - soil["coverage"]) * frac["wetland"]
+
+
 def built_up(dev: dict, frac: dict, P: dict) -> np.ndarray:
     """Share of each cell to price as built-up (urban viaduct): a ramp on non-road impervious %."""
     lo, hi = P["land.developed.impervious_low"], P["land.developed.impervious_high"]
@@ -217,7 +314,7 @@ def zone_of_lat(lat: float) -> str:
 
 
 def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None,
-                 dev: dict | None = None) -> np.ndarray:
+                 dev: dict | None = None, soil: dict | None = None) -> np.ndarray:
     """MUSD per km of route through each cell (nominal parameters)."""
     gw = "costs.guideway."
     t = _to_4326()
@@ -232,8 +329,8 @@ def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | No
     # built-up (urban viaduct): dense NLCD classes, and suburbs by how much of them is paved or built
     built = np.minimum(built_up(dev, frac, P) if dev else frac["urban"], 1.0 - span)
     rural = np.clip(1.0 - span - built, 0.0, 1.0)
-    # wetland stands in for peat / soft ground until SSURGO: deep piles, the peat adder
-    soft = 1.0 + frac["wetland"] * P["costs.adders.peat_soft_ground"]
+    # peat (SSURGO Histosols; wetland where the soil survey is incomplete): deep piles, the peat adder
+    soft = 1.0 + soft_ground(frac, soil) * P["costs.adders.peat_soft_ground"]
     # floodplain: piers above the 500-year flood with freeboard, scour protection;
     # beside a freeway: pier crash protection, traffic control while building
     corridor = dev["corridor"] if dev else 0.0
@@ -286,6 +383,78 @@ def path_cost(pts: np.ndarray, cost: np.ndarray, g: Grid) -> float:
     return total
 
 
+def _refine(pts: list, fixed: list, radius, chord, g: Grid, steps=(2000.0, 1000.0, 500.0, 250.0),
+            passes: int = 6, min_gain: float = 0.5) -> tuple[list, int]:
+    """Lower the alignment's cost on the cost surface while every curve keeps fitting: coarse to
+    fine, insert a bend at the middle of a chord (offset sideways) and move free vertices in eight
+    directions, keeping a change when it saves at least min_gain MUSD. Stations stay fixed."""
+    pts, fixed = [np.asarray(p, dtype=float) for p in pts], list(fixed)
+    lo, hi = np.array([g.x0 + CELL, g.y0 + CELL]), np.array([g.x1 - CELL, g.y1 - CELL])
+    dirs = [np.array([math.cos(a), math.sin(a)]) for a in np.arange(8) * math.pi / 4]
+    moves = 0
+
+    def fits(q: list, idx) -> bool:
+        for i in idx:
+            if 0 < i < len(q) - 1:
+                a, b = q[i] - q[i - 1], q[i + 1] - q[i]
+                la, lb = np.linalg.norm(a), np.linalg.norm(b)
+                if la < 1 or lb < 1:
+                    return False
+                theta = math.acos(float(np.clip(np.dot(a, b) / (la * lb), -1, 1)))
+                if radius(q[i]) * math.tan(theta / 2) > 0.5 * min(la, lb) + 1e-6:
+                    return False
+        return True
+
+    for step in steps:
+        for _ in range(passes):
+            improved = False
+            i = 0
+            while i < len(pts) - 1:  # gentle bends on long chords
+                a, b = pts[i], pts[i + 1]
+                v = b - a
+                L = float(np.linalg.norm(v))
+                best = None
+                if L > 4 * step:
+                    n = np.array([-v[1], v[0]]) / L
+                    base = chord(a, b)
+                    for off in (step, -step):
+                        m = (a + b) / 2 + n * off
+                        if (m < lo).any() or (m > hi).any():
+                            continue
+                        q = pts[:i + 1] + [m] + pts[i + 1:]
+                        c = chord(a, m) + chord(m, b)
+                        if c < base - min_gain and (best is None or c < best[0]) and fits(q, (i, i + 1, i + 2)):
+                            best = (c, m)
+                if best:
+                    pts.insert(i + 1, best[1])
+                    fixed.insert(i + 1, False)
+                    moves += 1
+                    improved = True
+                    continue
+                i += 1
+            for j in range(1, len(pts) - 1):  # move corners
+                if fixed[j]:
+                    continue
+                base = chord(pts[j - 1], pts[j]) + chord(pts[j], pts[j + 1])
+                best = None
+                for dvec in dirs:
+                    p = pts[j] + dvec * step
+                    if (p < lo).any() or (p > hi).any():
+                        continue
+                    c = chord(pts[j - 1], p) + chord(p, pts[j + 1])
+                    if c < base - min_gain and (best is None or c < best[0]):
+                        q = pts[:j] + [p] + pts[j + 1:]
+                        if fits(q, (j - 1, j, j + 1)):
+                            best = (c, p)
+                if best:
+                    pts[j] = best[1]
+                    moves += 1
+                    improved = True
+            if not improved:
+                break
+    return pts, moves
+
+
 def smooth(legs: list[np.ndarray], stations_xy: np.ndarray, P: dict, cost: np.ndarray, g: Grid,
            tol: float = 300.0) -> tuple[np.ndarray, dict]:
     """Least-cost path (one polyline per station-to-station leg) -> alignment with circular curves
@@ -295,6 +464,9 @@ def smooth(legs: list[np.ndarray], stations_xy: np.ndarray, P: dict, cost: np.nd
     its neighbours, the vertex (a failing one or a neighbour) whose removal adds the least cost on
     the cost surface is dropped. Stations stay fixed. One global tolerance (slices 1-3) straightened
     the whole line for its tightest spot and cut across lakes the least-cost path went around.
+    Dropping vertices alone can still leave long chords across lakes where the least-cost path
+    threads gaps too tight for the curves, so the result is then refined (_refine): corners moved
+    and gentle bends added wherever that lowers the cost and every curve still fits.
     """
     r_cruise = min_curve_radius_m(P["system.vehicle.cruise_speed"], P["system.geometry.superelevation_max"],
                                   P["system.geometry.unbalanced_lateral"])
@@ -330,6 +502,15 @@ def smooth(legs: list[np.ndarray], stations_xy: np.ndarray, P: dict, cost: np.nd
                    - chord(pts[j - 1], pts[j]) - chord(pts[j], pts[j + 1]))
         del pts[best], fixed[best]
         removed += 1
+
+    def radius(p) -> float:
+        return r_urban if np.min(np.linalg.norm(stations_xy - p, axis=1)) < near else r_cruise
+
+    pts, moves = _refine(pts, fixed, radius, chord, g)
+    s = np.array(pts)
+    d = np.min(np.linalg.norm(s[:, None, :] - stations_xy[None, :, :], axis=2), axis=1)
+    radii = np.where(d < near, r_urban, r_cruise)
+    ok = _fillet_ok(s, radii)
     # discretise the curves
     out = [s[0]]
     for i in range(1, len(s) - 1):
@@ -349,7 +530,7 @@ def smooth(legs: list[np.ndarray], stations_xy: np.ndarray, P: dict, cost: np.nd
     out = np.array(out)
     raw = np.vstack([legs[0]] + [l[1:] for l in legs[1:]])
     return out, {"r_cruise_m": r_cruise, "r_urban_m": r_urban, "simplify_tol_m": tol,
-                 "vertices": len(s), "vertices_removed_for_curves": removed,
+                 "vertices": len(s), "vertices_removed_for_curves": removed, "refinement_moves": moves,
                  "all_curves_fit": bool(ok.all()),
                  "cost_least_cost_path_musd": round(path_cost(raw, cost, g)),
                  "cost_smoothed_musd": round(path_cost(out, cost, g))}
@@ -367,7 +548,8 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     (folder / "nfhl").mkdir(exist_ok=True)
     flood = fetch_floodplain(g, folder / "nfhl")
     dev = fetch_development(g, folder)
-    cost = cost_surface(g, frac, dem, P, flood, dev)
+    soil = fetch_soils(g, folder)
+    cost = cost_surface(g, frac, dem, P, flood, dev, soil)
     cell_km = CELL / 1000.0
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
@@ -383,7 +565,8 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
         legs.append((pa, pb, xy))
     align, curve_info = smooth([l[2] for l in legs], st_xy, P, cost, g)
     layers = {**frac, **{f"fl_{k}": v for k, v in flood.items()},
-              "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"]}
+              "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"],
+              "soil_peat": soil["peat"], "soil_coverage": soil["coverage"]}
     meas = measure(align, st_xy, stops, g, layers, dem, P["system.geometry.max_gradient"])
     return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops}
 
@@ -490,6 +673,10 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
             "floodway_km": round(float((f["fl_floodway"][m] > 0.5).sum() * step / 1000), 2),
             "flood_map_coverage": round(float(f["fl_covered"][m].mean()), 3)} if "fl_flood" in f else {}),
         **dev,
+        # SSURGO Histosols on the surveyed part of the piece, and how much of it is surveyed
+        **({"peat_share": round(float((f["soil_peat"][m] * f["soil_coverage"][m]).sum()
+                                      / max(f["soil_coverage"][m].sum(), 1e-9)), 3),
+            "soil_survey_coverage": round(float(f["soil_coverage"][m].mean()), 3)} if "soil_peat" in f else {}),
         "urban_km": round(float(urban.sum() * step / 1000), 1),
         "urban_start_km": round(float(urban[:half].sum() * step / 1000), 1),
         "urban_end_km": round(float(urban[half:].sum() * step / 1000), 1),
@@ -527,8 +714,10 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
               "# non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).\n"
               "# Guideway height = lowest profile at or above the ground within the grade limit;\n"
               "# pier_excess_m_km = metres above each reference height x km (tall piers are priced\n"
-              "# above costs.guideway.pier_height_ref).\n"
-              "# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
+              "# above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,\n"
+              "# muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in\n"
+              "# for peat elsewhere).\n"
+              "# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
               "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
               "# wetland).\n" % (line.id, line.id))
     mpath.write_text(header + yaml.safe_dump({"line": line.id, "curves": res["curves"], "pieces": res["measured"]},

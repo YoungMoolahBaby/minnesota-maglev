@@ -98,7 +98,7 @@ Decisions for Jon along the way:
 **Slice 1 done 2026-11-03 (spine):** `src/mnmaglev/gis.py`, `mnmaglev gis <line>`. USGS 3DEP
 elevation (ImageServer) + NLCD 2021 land cover (MRLC WCS) on a 210 m EPSG:5070 grid (7x7 NLCD
 pixels per cell, exact class fractions); cost surface from the model's nominal parameters
-(structure by cover, land by cover and zone, wetland mitigation, wetland as peat proxy, terrain);
+(structure by cover, land by cover and zone, wetland mitigation, peat from SSURGO, terrain);
 skimage MCP least-cost path between stations; simplified and filleted to the minimum radius
 (3,980 m at cruise, 861 m within 15 km of stations); measured per piece, split at climate-zone
 latitudes; guideway profile for <=10% grades gives pier heights. Outputs network/alignments/
@@ -155,9 +155,21 @@ Network 1,877 km, all phases $453.7 bn (estimates $471.2), fleet 4 / 6 / 9 units
 timetable offsets unchanged. Wisconsin and Illinois are priced with Minnesota land prices and
 climate zones (RESEARCH 29).
 
-Next slices, in order of how much they move the result: SSURGO organic soils (real peat), parcels
-and buildings, public and tribal lands, out-of-state land prices, and a price for what following a
-highway saves in permits and review.
+**Slice 4, peat soils, 2026-11-04.** gSSURGO 30 m map unit keys from UC Davis SoilWeb's WCS
+(the service soilDB's `mukey.wcs` uses; ~1-2 MB per 63 km tile) and each map unit's components
+from USDA Soil Data Access: peat = the Histosol share (peat and muck), where the survey is
+complete; wetland stands in where it isn't (NOTCOM; 91-100% coverage per line). gSSURGO, not
+gNATSGO: SoilWeb's gNATSGO keys weren't in SDA's live tables. The peat adder
+(`costs.adders.peat_soft_ground`) is unchanged and still a placeholder (RESEARCH 30). With peat
+cheaper up north the least-cost path moved, and on the west line the corner-deleting curve fit
+then cut across the Otter Tail lakes (6.9 km of bridges); a refinement pass (move corners, add
+gentle bends where that lowers the cost and every curve fits) fixed it and every line now
+smooths to within 2% of its least-cost path. All seven lines re-routed: spine 353 km, $94.3 bn
+with fusion (3 units, by 0.2 MW), phase 2 $230.1 bn, all $446.4 bn; peat alone -$3.5 bn.
+
+Next slices, in order of how much they move the result: parcels and buildings, public and tribal
+lands, out-of-state land prices, and a price for what following a highway saves in permits and
+review. Also: small water crossings (<100 m, or cells under half water) aren't counted as bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

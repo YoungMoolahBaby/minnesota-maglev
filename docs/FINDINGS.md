@@ -166,6 +166,23 @@ works), date, details. One section per tool.
   ~$0.07 bn each). Network 1,877 km, all phases $453.7 bn (P10 392, P90 525) vs $471.2 bn on my
   estimates; fleet 10 -> 9 units (overnight warming, ~60 fewer km). great_lakes downloaded 755 MB
   and took 39 minutes, mostly FEMA flood tiles.
+- 2026-11-04, peat soils (GIS slice 4): up north only ~40% of wetland is peat. Histosols (SSURGO)
+  cover 5% of the spine where wetland is 13%, 16% of the Iron Range line (38%), 11% of St. Cloud -
+  Bemidji (22%); so the wetland proxy overpriced the north. In the southern farm belt it underpriced:
+  drained muck is cropland now (Owatonna - Mankato 6% peat on 5% wetland; MSP - Mankato 7% on 5%).
+  Same routes priced both ways: network -$3.5 bn P50, spine -$0.8 bn, Iron Range -$0.9 bn. Cheaper
+  peat moved the least-cost paths, and on the west line the curve fit (which only deletes corners)
+  then cut across the Otter Tail lakes: bridges 2.4 -> 6.9 km, the smoothed route 7% over its
+  least-cost path, although that path itself crossed only 0.8 km of water. Trying other
+  simplification tolerances didn't help (6.5-10 km at 100-900 m). A refinement pass that moves
+  corners and adds gentle bends where that lowers the cost fixed it (west 2.1 km of bridges) and
+  improved every line (all within 2% of their least-cost paths; Chicago bridges 5.3 -> 3.6 km).
+  Re-routed: spine 353 km $88.8 bn line P50, with fusion $94.3 bn; phase 2 $230.1 bn; all
+  $446.4 bn (P10 385, P90 516). The spine's fusion fleet fell to 3 units, but only just: with the
+  storm heating and the 10% margin it needs 99.8 MW of the 100 MW two working units give. Timetable
+  re-optimised: Duluth -> St. Cloud and Moorhead -> Rochester now connect in 10 minutes. SoilWeb's
+  gNATSGO raster had keys SDA doesn't know (44% of a Pine County tile), so gSSURGO it is; its NOTCOM
+  gaps (up to 10% of a piece) fall back to the wetland proxy.
 
 ## OSRD
 

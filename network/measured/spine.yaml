@@ -6,8 +6,10 @@
 # non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
 # Guideway height = lowest profile at or above the ground within the grade limit;
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
-# above costs.guideway.pier_height_ref).
-# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
+# muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
+# for peat elsewhere).
+# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: spine
@@ -15,37 +17,40 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 78
-  vertices_removed_for_curves: 33
+  vertices: 96
+  vertices_removed_for_curves: 29
+  refinement_moves: 158
   all_curves_fit: true
-  cost_least_cost_path_musd: 30090
-  cost_smoothed_musd: 30089
+  cost_least_cost_path_musd: 29795
+  cost_smoothed_musd: 29236
 pieces:
 - from: duluth
   to:
     id: wp_0_1
-    lat: 45.99927
-    lon: -92.66918
+    lat: 45.99944
+    lon: -92.67104
   zone: north
-  length_km: 102.0
-  crow_km: 97.7
-  detour: 1.043
+  length_km: 101.0
+  crow_km: 97.8
+  detour: 1.033
   land_shares:
-    suburban: 0.055
-    urban: 0.018
-    forest: 0.59
-    open: 0.134
-    wetland: 0.201
-    water: 0.001
-  floodplain_share: 0.012
-  floodplain_1pct_share: 0.012
+    suburban: 0.054
+    urban: 0.02
+    forest: 0.569
+    open: 0.126
+    wetland: 0.231
+    water: 0.0
+  floodplain_share: 0.011
+  floodplain_1pct_share: 0.011
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.016
-  highway_corridor_share: 0.009
-  highway_corridor_km: 0.9
-  urban_km: 1.1
-  urban_start_km: 1.1
+  built_up_share: 0.013
+  highway_corridor_share: 0.01
+  highway_corridor_km: 1.1
+  peat_share: 0.072
+  soil_survey_coverage: 0.933
+  urban_km: 1.6
+  urban_start_km: 1.6
   urban_end_km: 0.0
   bridges_m: []
   max_ground_grade_1km: 0.1676
@@ -53,50 +58,52 @@ pieces:
   - 189
   - 396
   guideway_max_height_m: 72.8
-  km_over_25m_high: 1.05
+  km_over_25m_high: 1.16
   pier_excess_m_km:
-    5: 69.76
-    10: 54.63
-    15: 43.53
-    20: 35.44
-    25: 29.58
+    5: 68.58
+    10: 53.48
+    15: 43.04
+    20: 35.43
+    25: 29.53
     30: 24.85
 - from:
     id: wp_0_1
-    lat: 45.99927
-    lon: -92.66918
+    lat: 45.99944
+    lon: -92.67104
   to: midway_hub
   zone: central
-  length_km: 125.6
+  length_km: 124.8
   crow_km: 122.2
-  detour: 1.028
+  detour: 1.021
   land_shares:
     suburban: 0.159
-    urban: 0.056
-    forest: 0.413
-    open: 0.219
-    wetland: 0.148
+    urban: 0.048
+    forest: 0.415
+    open: 0.228
+    wetland: 0.145
     water: 0.005
-  floodplain_share: 0.076
-  floodplain_1pct_share: 0.076
+  floodplain_share: 0.07
+  floodplain_1pct_share: 0.07
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.054
-  highway_corridor_share: 0.063
-  highway_corridor_km: 7.9
-  urban_km: 4.0
+  built_up_share: 0.04
+  highway_corridor_share: 0.019
+  highway_corridor_km: 2.3
+  peat_share: 0.066
+  soil_survey_coverage: 0.905
+  urban_km: 4.4
   urban_start_km: 0.0
-  urban_end_km: 4.0
+  urban_end_km: 4.4
   bridges_m:
   - 210
-  max_ground_grade_1km: 0.028
+  max_ground_grade_1km: 0.025
   elev_range_m:
-  - 233
+  - 235
   - 298
-  guideway_max_height_m: 5.3
+  guideway_max_height_m: 6.5
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 0.05
+    5: 0.16
     10: 0.0
     15: 0.0
     20: 0.0
@@ -105,119 +112,125 @@ pieces:
 - from: midway_hub
   to: msp
   zone: central
-  length_km: 9.9
+  length_km: 9.7
   crow_km: 8.9
-  detour: 1.105
+  detour: 1.088
   land_shares:
-    suburban: 0.466
-    urban: 0.447
-    forest: 0.035
-    open: 0.006
-    wetland: 0.01
-    water: 0.035
-  floodplain_share: 0.04
-  floodplain_1pct_share: 0.04
+    suburban: 0.417
+    urban: 0.485
+    forest: 0.043
+    open: 0.007
+    wetland: 0.009
+    water: 0.039
+  floodplain_share: 0.043
+  floodplain_1pct_share: 0.043
   floodway_km: 0.32
   flood_map_coverage: 1.0
-  built_up_share: 0.627
-  highway_corridor_share: 0.021
-  highway_corridor_km: 0.2
-  urban_km: 3.8
-  urban_start_km: 1.6
-  urban_end_km: 2.2
+  built_up_share: 0.482
+  highway_corridor_share: 0.043
+  highway_corridor_km: 0.4
+  peat_share: 0.0
+  soil_survey_coverage: 1.0
+  urban_km: 5.1
+  urban_start_km: 2.7
+  urban_end_km: 2.4
   bridges_m:
   - 315
-  max_ground_grade_1km: 0.0512
+  max_ground_grade_1km: 0.0508
   elev_range_m:
-  - 223
-  - 280
-  guideway_max_height_m: 16.7
+  - 222
+  - 281
+  guideway_max_height_m: 18.2
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 1.37
-    10: 0.7
-    15: 0.18
+    5: 1.68
+    10: 0.87
+    15: 0.34
     20: 0.0
     25: 0.0
     30: 0.0
 - from: msp
   to:
     id: wp_2_1
-    lat: 44.59965
-    lon: -92.96592
+    lat: 44.59994
+    lon: -92.94909
   zone: central
-  length_km: 38.6
-  crow_km: 37.5
-  detour: 1.03
+  length_km: 39.2
+  crow_km: 38.3
+  detour: 1.024
   land_shares:
-    suburban: 0.231
-    urban: 0.124
-    forest: 0.125
-    open: 0.444
-    wetland: 0.047
-    water: 0.029
-  floodplain_share: 0.056
-  floodplain_1pct_share: 0.055
-  floodway_km: 1.68
+    suburban: 0.228
+    urban: 0.128
+    forest: 0.06
+    open: 0.524
+    wetland: 0.033
+    water: 0.027
+  floodplain_share: 0.054
+  floodplain_1pct_share: 0.052
+  floodway_km: 1.47
   flood_map_coverage: 1.0
-  built_up_share: 0.087
-  highway_corridor_share: 0.041
-  highway_corridor_km: 1.6
-  urban_km: 4.1
-  urban_start_km: 2.8
-  urban_end_km: 1.3
+  built_up_share: 0.108
+  highway_corridor_share: 0.048
+  highway_corridor_km: 1.9
+  peat_share: 0.01
+  soil_survey_coverage: 1.0
+  urban_km: 4.0
+  urban_start_km: 3.8
+  urban_end_km: 0.2
   bridges_m:
-  - 1680
-  max_ground_grade_1km: 0.052
+  - 1470
+  max_ground_grade_1km: 0.0443
   elev_range_m:
   - 213
-  - 311
-  guideway_max_height_m: 10.7
+  - 313
+  guideway_max_height_m: 11.0
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 2.18
-    10: 0.14
+    5: 1.12
+    10: 0.11
     15: 0.0
     20: 0.0
     25: 0.0
     30: 0.0
 - from:
     id: wp_2_1
-    lat: 44.59965
-    lon: -92.96592
+    lat: 44.59994
+    lon: -92.94909
   to: rochester
   zone: south
-  length_km: 80.1
-  crow_km: 75.8
-  detour: 1.056
+  length_km: 78.0
+  crow_km: 75.2
+  detour: 1.038
   land_shares:
-    suburban: 0.086
-    urban: 0.021
-    forest: 0.109
-    open: 0.769
-    wetland: 0.014
+    suburban: 0.093
+    urban: 0.017
+    forest: 0.103
+    open: 0.761
+    wetland: 0.026
     water: 0.001
-  floodplain_share: 0.037
-  floodplain_1pct_share: 0.037
+  floodplain_share: 0.064
+  floodplain_1pct_share: 0.064
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.023
-  highway_corridor_share: 0.028
-  highway_corridor_km: 2.2
+  built_up_share: 0.016
+  highway_corridor_share: 0.015
+  highway_corridor_km: 1.2
+  peat_share: 0.0
+  soil_survey_coverage: 1.0
   urban_km: 0.4
   urban_start_km: 0.0
   urban_end_km: 0.4
   bridges_m: []
-  max_ground_grade_1km: 0.0582
+  max_ground_grade_1km: 0.0613
   elev_range_m:
   - 236
-  - 376
-  guideway_max_height_m: 15.7
+  - 377
+  guideway_max_height_m: 22.1
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 6.1
-    10: 1.26
-    15: 0.07
-    20: 0.0
+    5: 12.99
+    10: 4.92
+    15: 2.01
+    20: 0.33
     25: 0.0
     30: 0.0

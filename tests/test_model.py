@@ -384,3 +384,40 @@ def test_adding_a_parameter_leaves_the_other_draws_alone(world):
     extra = {**params, "costs.zz_new": Param("costs.zz_new", 1.0, 0.5, 2.0, "x", "low", "", "")}
     a, b = sample(params, 500, seed=1), sample(extra, 500, seed=1)
     assert all(np.array_equal(a[k], b[k]) for k in params)
+
+
+def test_peat_comes_from_histosols_where_the_soil_survey_is_complete():
+    from mnmaglev.gis import soft_ground, soil_cells
+
+    # mukey 1: half Histosols; 2: mineral; 3: NOTCOM (not surveyed); 9: unknown to SDA; 0: no data
+    info = {1: (0.5, True), 2: (0.0, True), 3: (0.0, False)}
+    b = np.zeros((1, 7, 3, 7), dtype=np.int64)
+    b[0, :, 0, :] = 1                      # cell 0: all mukey 1
+    b[0, :, 1, :] = 2
+    b[0, :4, 1, :] = 3                     # cell 1: 28 px NOTCOM, 21 px mineral
+    b[0, :, 2, :] = 9                      # cell 2: unknown key
+    peat, cov = soil_cells(b, info)
+    assert peat[0].tolist() == pytest.approx([0.5, 0.0, 0.0])
+    assert cov[0].tolist() == pytest.approx([1.0, 21 / 49, 0.0])
+    wet = np.array([[0.2, 0.7, 0.4]])
+    soft = soft_ground({"wetland": wet}, {"peat": peat, "coverage": cov})
+    # surveyed: the soil decides, unsurveyed: the wetland share stands in
+    assert soft[0].tolist() == pytest.approx([0.5, 0.7 * 28 / 49, 0.4])
+
+
+def test_refinement_bends_a_straight_chord_around_a_lake(world):
+    from mnmaglev.gis import CELL, Grid, _sample, smooth
+
+    params, _, _ = world
+    P = nominal(params)
+    g = Grid(x0=-5000.0, y0=-20000.0, nx=400, ny=200)
+    xs = g.x0 + (np.arange(g.nx) + 0.5) * CELL
+    ys = g.y1 - (np.arange(g.ny) + 0.5) * CELL
+    lake = np.hypot(xs[None, :] - 30000.0, ys[:, None]) < 1500.0
+    cost = np.where(lake, 400.0, 70.0)
+    leg = np.array([[0, 0], [60000, 0]], dtype=float)  # the least-cost path, say, ran straight across
+    out, info = smooth([leg], leg, P, cost, g)
+    assert info["all_curves_fit"] and info["refinement_moves"] >= 1
+    _, x, y = _sample(out)
+    assert np.hypot(x - 30000.0, y).min() >= 1500.0 - CELL  # no longer over the lake
+    assert info["cost_smoothed_musd"] < info["cost_least_cost_path_musd"]

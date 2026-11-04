@@ -7,30 +7,30 @@ offsets:
     forward: 27
     reverse: 0
   iron_range:
-    forward: 1
-    reverse: 5
-  west:
-    forward: 3
-    reverse: 22
-  southwest:
-    forward: 22
-    reverse: 7
-  north_woods:
-    forward: 2
-    reverse: 2
-  southern_link:
     forward: 25
-    reverse: 10
+    reverse: 8
+  west:
+    forward: 11
+    reverse: 19
+  southwest:
+    forward: 5
+    reverse: 23
+  north_woods:
+    forward: 20
+    reverse: 9
+  southern_link:
+    forward: 0
+    reverse: 13
   great_lakes:
-    forward: 17
+    forward: 4
     reverse: 16
 peaks_mw:
 - phase: 1
-  peak_aligned_mw: 104.3
-  peak_staggered_mw: 74.7
+  peak_aligned_mw: 95.4
+  peak_staggered_mw: 74.6
 - phase: 2
-  peak_aligned_mw: 340.8
-  peak_staggered_mw: 135.3
+  peak_aligned_mw: 326.9
+  peak_staggered_mw: 129.9
 - phase: 3
-  peak_aligned_mw: 680.1
-  peak_staggered_mw: 232.6
+  peak_aligned_mw: 648.4
+  peak_staggered_mw: 225.3

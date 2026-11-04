@@ -30,7 +30,7 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
 | Floodplains | FEMA National Flood Hazard Layer | |
 | Rainfall intensity | NOAA Atlas 14 (Atlas 15 coming) | |
 | Climate normals | NOAA NCEI 1991-2020 normals; PRISM / nClimGrid | |
-| Soils (peat) | NRCS SSURGO | |
+| Soils (peat) | NRCS gSSURGO via SoilWeb WCS + Soil Data Access | used, slice 4 |
 | Parcels, land value | [MnGeo parcels](https://gisdata.mn.gov/) (counties opt in); U of MN Land Economics | coverage varies by county |
 | Public and tribal land | DNR, USFS (Superior NF), BIA / tribal nations | consultation, not just data |
 | Rail and roads | MnDOT, OpenStreetMap (ODbL) | ODbL is share-alike: keep OSM-derived data separate |
@@ -105,3 +105,13 @@ All are cached in data/raw/gis (gitignored); the alignment and measurements are 
   for railway bridge viaducts, Structural Engineering and Mechanics 45(6), doi:10.12989/sem.2013.45.6.723
   (40-100 m hollow RC piers; full text closed, no cost figures taken from it). The cost per metre
   itself is an engineering estimate (params/costs.yaml), not a benchmark.
+
+## Soils (GIS slice 4: peat)
+
+- gSSURGO 30 m map unit key grid (EPSG:5070), served by UC Davis / NRCS SoilWeb's WCS, the one
+  soilDB's `mukey.wcs()` uses: http://casoilresource.lawr.ucdavis.edu/cgi-bin/mapserv?map=mukey-wcs
+  (coverage `gssurgo`; request format from https://github.com/ncss-tech/soilDB/blob/master/R/mukey-WCS.R)
+- USDA NRCS Soil Data Access, tabular SQL over SSURGO (component.taxorder, comppct_r):
+  https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest
+- Histosols = soils with >= 40 cm of organic material (peat, mucky peat, muck): USDA Keys to Soil
+  Taxonomy, https://www.nrcs.usda.gov/resources/guides-and-instructions/keys-to-soil-taxonomy

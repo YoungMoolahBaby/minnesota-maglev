@@ -257,8 +257,8 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
 
     Measured: detour, zone, land shares (incl. freeway right-of-way), urban km at each end, built-up
     share (priced as urban viaduct), bridges, floodplain where FEMA has maps, guideway height above
-    reference pier heights (tall piers); peat = wetland share
-    (proxy until SSURGO). Inherited from the planner segment that starts or ends at the same
+    reference pier heights (tall piers), peat (SSURGO Histosols where the soil survey is complete,
+    the wetland share where it isn't). Inherited from the planner segment that starts or ends at the same
     station (else the line defaults): elevated / at-grade split, urban tunnel share.
     """
     path = MEASURED_DIR / f"{line_id}.yaml"
@@ -308,7 +308,10 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             "urban_end_km": piece["urban_end_km"],
             "land": land,
             "structure": structure,
-            "peat": sh["wetland"],
+            # SSURGO Histosols where the soil survey is complete; wetland stands in where it isn't
+            "peat": (piece["soil_survey_coverage"] * piece["peat_share"]
+                     + (1 - piece["soil_survey_coverage"]) * sh["wetland"])
+            if "peat_share" in piece else sh["wetland"],
             # measured where FEMA maps cover the piece, the estimate where they don't
             "floodplain": (piece["flood_map_coverage"] * piece["floodplain_share"]
                            + (1 - piece["flood_map_coverage"]) * float(base["floodplain"]))
@@ -316,7 +319,8 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             "bridges": [{"name": f"water crossing {i + 1}", "length_m": m} for i, m in enumerate(piece["bridges_m"])],
             "pier_excess": piece.get("pier_excess_m_km", {}),
             "note": (f"measured (GIS); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades"
-                     + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")),
+                     + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")
+                     + (f"; soil survey covers {piece['soil_survey_coverage']:.0%}" if "soil_survey_coverage" in piece else "")),
             "_a": a, "_b": b,
         })
     return points, specs

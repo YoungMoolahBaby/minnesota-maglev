@@ -154,3 +154,9 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     Milwaukee approaches' urban tunnel shares (planner 40% on the Chicago urban km), and climate
     zones (the line takes `south`, Minnesota's warmest). The line costs $139 bn P50, so a 2x error
     on its land is ~$1-2 bn.
+
+30. [ ] Peat foundations: what deep piles through peat and muck add to elevated guideway
+    (`costs.adders.peat_soft_ground`, 20% of the guideway cost on peat km, 8-45%, placeholder), and
+    whether depth matters enough to split shallow (Terric, 40-130 cm over mineral soil) from deep
+    Histosols (SSURGO taxsubgrp). Sources: MnDOT foundation practice on peat (I-35 and US-2
+    through bogs), Shanghai maglev piling on soft soil, Dutch and Finnish rail on peat.

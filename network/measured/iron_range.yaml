@@ -6,8 +6,10 @@
 # non-bridge km priced as built-up viaduct; highway_corridor = beside a freeway).
 # Guideway height = lowest profile at or above the ground within the grade limit;
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
-# above costs.guideway.pier_height_ref).
-# Not yet: peat, parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
+# muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
+# for peat elsewhere).
+# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: iron_range
@@ -15,80 +17,86 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 38
-  vertices_removed_for_curves: 5
+  vertices: 35
+  vertices_removed_for_curves: 13
+  refinement_moves: 53
   all_curves_fit: true
-  cost_least_cost_path_musd: 10452
-  cost_smoothed_musd: 10410
+  cost_least_cost_path_musd: 10123
+  cost_smoothed_musd: 9988
 pieces:
 - from: duluth
   to: virginia
   zone: north
-  length_km: 91.8
-  crow_km: 88.3
-  detour: 1.04
+  length_km: 89.5
+  crow_km: 87.8
+  detour: 1.019
   land_shares:
-    suburban: 0.065
-    urban: 0.027
-    forest: 0.473
-    open: 0.054
-    wetland: 0.373
+    suburban: 0.067
+    urban: 0.035
+    forest: 0.443
+    open: 0.052
+    wetland: 0.397
     water: 0.007
-  floodplain_share: 0.072
-  floodplain_1pct_share: 0.071
+  floodplain_share: 0.067
+  floodplain_1pct_share: 0.066
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.015
-  highway_corridor_share: 0.0
-  highway_corridor_km: 0.0
-  urban_km: 1.5
+  built_up_share: 0.019
+  highway_corridor_share: 0.008
+  highway_corridor_km: 0.7
+  peat_share: 0.179
+  soil_survey_coverage: 1.0
+  urban_km: 2.5
   urban_start_km: 1.1
-  urban_end_km: 0.4
+  urban_end_km: 1.5
   bridges_m:
-  - 105
   - 210
+  - 105
   max_ground_grade_1km: 0.1747
   elev_range_m:
   - 201
-  - 552
+  - 540
   guideway_max_height_m: 79.5
-  km_over_25m_high: 1.26
+  km_over_25m_high: 1.05
   pier_excess_m_km:
-    5: 68.74
-    10: 59.85
-    15: 52.21
-    20: 45.22
-    25: 38.47
-    30: 32.32
+    5: 69.82
+    10: 57.4
+    15: 48.71
+    20: 41.78
+    25: 36.2
+    30: 31.38
 - from: virginia
   to: hibbing
   zone: north
-  length_km: 33.8
-  crow_km: 31.8
-  detour: 1.062
+  length_km: 33.6
+  crow_km: 31.6
+  detour: 1.065
   land_shares:
-    suburban: 0.129
-    urban: 0.075
-    forest: 0.41
-    open: 0.191
-    wetland: 0.192
+    suburban: 0.078
+    urban: 0.079
+    forest: 0.411
+    open: 0.102
+    wetland: 0.327
     water: 0.003
-  floodplain_share: 0.012
-  floodplain_1pct_share: 0.012
+  floodplain_share: 0.017
+  floodplain_1pct_share: 0.017
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.033
-  highway_corridor_share: 0.04
-  highway_corridor_km: 1.4
-  urban_km: 2.5
-  urban_start_km: 1.8
-  urban_end_km: 0.7
-  bridges_m: []
-  max_ground_grade_1km: 0.0252
+  built_up_share: 0.017
+  highway_corridor_share: 0.016
+  highway_corridor_km: 0.5
+  peat_share: 0.123
+  soil_survey_coverage: 1.0
+  urban_km: 2.6
+  urban_start_km: 2.1
+  urban_end_km: 0.5
+  bridges_m:
+  - 105
+  max_ground_grade_1km: 0.0164
   elev_range_m:
-  - 428
-  - 467
-  guideway_max_height_m: 4.0
+  - 416
+  - 465
+  guideway_max_height_m: 1.1
   km_over_25m_high: 0.0
   pier_excess_m_km:
     5: 0.0
