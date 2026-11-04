@@ -107,7 +107,15 @@ def cmd_gis(args) -> int:
     if line is None:
         print(f"no line {args.line!r}")
         return 1
-    res = gis.route(line, nominal(params))
+    P = nominal(params)
+    if line.gis_split_at:
+        if args.section is not None:  # one section only (run sections in parallel, then merge)
+            r = gis.route_section(line, P, args.section)
+            print(f"section {args.section} done: {r['curves']}")
+            return 0
+        res = gis.route_sections(line, P, reuse=args.reuse_sections)
+    else:
+        res = gis.route(line, P)
     print(f"curves: {res['curves']}")
     for p in res["measured"]:
         a = p["from"] if isinstance(p["from"], str) else p["from"]["id"]
@@ -144,6 +152,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("benchmarks", help="sourced cost benchmarks in 2026 USD vs parameter ranges").set_defaults(fn=cmd_benchmarks)
     gp = sub.add_parser("gis", help="route a line on elevation + land cover and measure it (needs --extra gis)")
     gp.add_argument("line", help="line id from network/lines.yaml")
+    gp.add_argument("--section", type=int, default=None,
+                    help="lines with gis_split_at: route only this section (0-based) and save it")
+    gp.add_argument("--reuse-sections", action="store_true",
+                    help="lines with gis_split_at: merge saved section results instead of re-routing them")
     gp.set_defaults(fn=cmd_gis)
     tp = sub.add_parser("timetable", help="stagger departures to minimise the network power peak")
     tp.add_argument("--write", action="store_true", help="write network/timetable.yaml")

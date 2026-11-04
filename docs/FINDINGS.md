@@ -235,6 +235,18 @@ works), date, details. One section per tool.
   a key.
   Python edit scripts piped through a bash heredoc keep tripping on quoting (a triple-quoted string
   ended the heredoc early: "unexpected EOF"); writing the script to a file first works.
+- 2026-11-04, the Denver line on GIS: one grid around an L-shaped 1,400 km line is 631k km2 (14 M
+  cells, ~3.5 GB of rasters at the Chicago line's ~5 MB per 1,000 km2), most of it off the route.
+  Routing in sections split at stations (four grids, 211k km2, 1.4 GB) needed only a merge step:
+  stations are fixed points of the smoothing, so section alignments meet exactly there. Four
+  processes in parallel took 25, 41, 62 and 63 min; one MRLC download failed once with
+  '[SSL] record layer failure' and the retry worked. C: had 12 GB free, so the cache went to D:
+  through a directory junction (data/raw/gis/heartland), invisible to the code. Measured 1,434 km
+  vs 1,486 planned, $288.1 bn vs $303.0 bn P50. The 4(f) avoidance at 1 km per km wasn't enough to
+  keep the DEN - Denver approach out of Rocky Mountain Arsenal NWR (5.9 km): through Commerce City
+  the alternative is urban viaduct at ~2.3x the rural price, so a refuge looks cheap to the router.
+  National wildlife refuges probably need their own, much higher, weight (or a no-go), and the
+  rail corridor beside it a lower one.
 
 ## OSRD
 

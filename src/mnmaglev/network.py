@@ -97,6 +97,9 @@ class Line:
     reserve: bool = False  # hold land and build-for-two provisions for a second system
     offset_fwd_min: int = 0  # first departure, minutes after 06:00, from the first point
     offset_rev_min: int = 0  # first departure, minutes after 06:00, from the last point
+    # GIS: route in sections split at these stations (each its own grid), for long lines whose
+    # bounding box would be mostly empty country (network/lines.yaml gis_split_at)
+    gis_split_at: tuple[str, ...] = ()
 
     @property
     def length_km(self) -> float:
@@ -214,7 +217,8 @@ def load_lines(
         lines.append(
             Line(id=raw["id"], name=raw["name"], phase=int(raw["phase"]),
                  points=pts, segments=segs, note=str(raw.get("note", "")).strip(),
-                 reserve=bool(raw.get("reserve_second_system", False)))
+                 reserve=bool(raw.get("reserve_second_system", False)),
+                 gis_split_at=tuple(raw.get("gis_split_at", ())))
         )
     offsets = load_timetable()
     for line in lines:

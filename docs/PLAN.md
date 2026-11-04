@@ -252,15 +252,35 @@ routes had run on stale offsets): 1-second peaks 67 / 134 / 236 / 390 MW, fusion
 Spine with fusion $94.2 bn (3 units again), phase 2 $231.1 bn, phase 3 $447.8 bn, through phase 4
 $759.1 bn (P10 654.3, P90 880.9).
 
+**Denver line routed on GIS, 2026-11-04** (`use_measured: true`). Its bounding box (631k km2, an
+L of mostly empty plains) would have been ~3.5 GB of rasters and 14 M cells, so lines can now be
+routed in sections (`gis_split_at` in lines.yaml; `mnmaglev gis <line> --section N` routes one
+section on its own grid, `--reuse-sections` joins them): four grids split at Des Moines, Lincoln and
+North Platte (211k km2, 1.4 GB, cached on D: through a junction at data/raw/gis/heartland), run in
+parallel in 25-63 min each; the sections meet at the split stations. All curves fit (surface cost
+smoothed 111.4 vs least-cost path 114.9 bn: the refinement pass beats the raw path). Measured 1,434 km (planner
+1,486; detours 1.01-1.07 outside the metro approaches), MSP - Denver 4 h 12, $288.1 bn P50 (P10
+246.1, P90 335.7; planner $303.0 bn), $201 M per km, 22 trains; ~1,140 homes taken (Omaha - Lincoln
+234, Ames - Des Moines 187, the MSP approach 154); bridges: the Missouri 420 m, the Platte 1.4 km
+south of Omaha and 0.6 km toward Grand Island. Fusion fleet 3 / 6 / 9 / 15 units. Through phase 4
+$743.4 bn (P10 640.8, P90 862.9). Caveats: land out of state is priced with Minnesota class prices
+(no parcels), so NLCD 'urban' cells in Omaha, Lincoln and Denver cost $3 M/acre (the slice-5
+problem; land $1.7 bn of the line), and the route crosses 5.9 km of Rocky Mountain Arsenal National
+Wildlife Refuge between DEN and Denver: going around through Commerce City and Montbello costs more
+as urban viaduct than the 4(f) penalty, but a refuge crossing needs a compatibility finding under
+16 U.S.C. 668dd and the refuge is a former chemical-weapons Superfund site. RTD's A Line runs from
+DEN to Union Station in a rail corridor along its south edge; rail corridors aren't modelled yet.
+
 Next slices, in order of how much they move the result: how hard to avoid 4(f) land (the
 placeholder avoidance moved ~$4.8 bn; RESEARCH 33), out-of-state land prices and parcels
 (Wisconsin's statewide parcel layer; RESEARCH 32), a price for what following a highway saves in
 permits and review, travel time in the route search (detours cost minutes it doesn't see), and the
 fusion fleet's sensitivity to the 1-second peak (it swings a unit, ~$1.7 bn, when the timetable
-offsets aren't re-optimised after a re-route; `gis` should re-run the timetable, or warn). Routing
-the Denver line on GIS (~1,500 km, three states; the Chicago line's 556 km took 36-61 min) and
-out-of-state land prices for it. Also: small water crossings (<100 m, or cells under half water)
-aren't counted as bridges.
+offsets aren't re-optimised after a re-route; `gis` should re-run the timetable, or warn).
+Out-of-state land prices and parcels for the Denver and Chicago lines (RESEARCH 29, 32, 34), and
+rail corridors (the DEN - Denver approach should follow RTD's A Line, not cross Rocky Mountain
+Arsenal NWR). Also: small water crossings (<100 m, or cells under half water) aren't counted as
+bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

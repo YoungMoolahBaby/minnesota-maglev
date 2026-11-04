@@ -591,3 +591,16 @@ def test_security_fleet_covers_the_line(world):
     assert s_on["security_mw"] == pytest.approx(charge_mw(spine, P0, "robots"))
     assert s_on["demand_mwh"] - s_off["demand_mwh"] == pytest.approx(charge_mw(spine, P0, "robots") * 8760)
     assert s_on["units"] >= s_off["units"]
+
+
+def test_long_lines_route_in_sections_that_share_stations(world):
+    from mnmaglev.gis import line_sections
+
+    _, _, lines = world
+    line = next(l for l in lines if l.id == "heartland")
+    secs = line_sections(line)
+    assert len(secs) == len(line.gis_split_at) + 1
+    assert [s.points[-1].id for s in secs[:-1]] == list(line.gis_split_at)
+    assert all(a.points[-1] is b.points[0] for a, b in zip(secs, secs[1:]))
+    assert sum(len(s.segments) for s in secs) == len(line.segments)
+    assert sum(s.length_km for s in secs) == pytest.approx(line.length_km)

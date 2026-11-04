@@ -1206,3 +1206,69 @@ def public_land_crossed(align: np.ndarray, feats: list, min_km: float = 0.1) -> 
     rows = [{"kind": k, "name": n, "km": round(line.intersection(unary_union(ps)).length / 1000.0, 2)}
             for (k, n), ps in groups.items()]
     return sorted((r for r in rows if r["km"] >= min_km), key=lambda r: (PUBLIC_KINDS.index(r["kind"]), -r["km"]))
+
+
+# --- Long lines in sections ---------------------------------------------------------------------
+
+def line_sections(line: Line) -> list[Line]:
+    """The line split at its gis_split_at stations: sub-lines sharing the split stations."""
+    from dataclasses import replace
+
+    ids = [p.id for p in line.points]
+    cuts = [0] + [ids.index(s) for s in line.gis_split_at] + [len(ids) - 1]
+    return [replace(line, points=line.points[i:j + 1], segments=line.segments[i:j])
+            for i, j in zip(cuts, cuts[1:])]
+
+
+def _section_folder(line: Line, k: int, sec: Line) -> Path:
+    return RAW / line.id / f"s{k}_{sec.points[0].id}_{sec.points[-1].id}"
+
+
+def route_section(line: Line, P: dict, k: int) -> dict:
+    """Route section k on its own grid; save the result (alignment, curves, pieces, crossings)."""
+    import json
+
+    sec = line_sections(line)[k]
+    folder = _section_folder(line, k, sec)
+    res = route(sec, P, cache=folder)
+    out = {"alignment": res["alignment"].tolist(), "curves": res["curves"], "measured": res["measured"],
+           "public_land_crossed": res["public_land_crossed"], "stations": [s.id for s in res["stations"]]}
+    (folder / "section_result.json").write_text(json.dumps(out), encoding="utf-8")
+    return res
+
+
+def route_sections(line: Line, P: dict, reuse: bool = False) -> dict:
+    """Route a long line section by section and join them at the split stations: one alignment, the
+    pieces in order (waypoint ids prefixed by section), curve stats summed, crossings merged."""
+    import json
+
+    secs = line_sections(line)
+    parts = []
+    for k, sec in enumerate(secs):
+        path = _section_folder(line, k, sec) / "section_result.json"
+        if not (reuse and path.exists()):
+            route_section(line, P, k)
+        parts.append(json.loads(path.read_text(encoding="utf-8")))
+    align = np.vstack([np.array(parts[0]["alignment"])] + [np.array(r["alignment"])[1:] for r in parts[1:]])
+    measured = []
+    for k, r in enumerate(parts):
+        for piece in r["measured"]:
+            piece = dict(piece)
+            for end in ("from", "to"):
+                if isinstance(piece[end], dict):
+                    piece[end] = {**piece[end], "id": f"s{k}_{piece[end]['id']}"}
+            measured.append(piece)
+    cs = [r["curves"] for r in parts]
+    curves = {"r_cruise_m": cs[0]["r_cruise_m"], "r_urban_m": cs[0]["r_urban_m"], "sections": len(cs),
+              "split_at": list(line.gis_split_at),
+              **{k: sum(c[k] for c in cs) for k in ("vertices", "vertices_removed_for_curves", "refinement_moves",
+                                                    "cost_least_cost_path_musd", "cost_smoothed_musd")},
+              "all_curves_fit": all(c["all_curves_fit"] for c in cs)}
+    km: dict[tuple[str, str], float] = {}
+    for r in parts:
+        for c in r["public_land_crossed"]:
+            km[(c["kind"], c["name"])] = km.get((c["kind"], c["name"]), 0.0) + c["km"]
+    crossed = sorted(({"kind": k, "name": n, "km": round(v, 2)} for (k, n), v in km.items()),
+                     key=lambda c: (PUBLIC_KINDS.index(c["kind"]), -c["km"]))
+    return {"grid": None, "alignment": align, "curves": curves, "measured": measured,
+            "stations": [p for p in line.points if p.is_station], "public_land_crossed": crossed}
