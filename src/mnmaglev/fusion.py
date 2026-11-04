@@ -15,6 +15,7 @@ import numpy as np
 from .kinematics import line_summary
 from .network import Line
 from .power import demand_summary, line_day_profile
+from .security import charge_mw
 from .winter import critical_km, heating_mwh, night_mw, storm_mw
 
 HOURS_PER_YEAR = 8760.0
@@ -27,7 +28,8 @@ def annual_demand_mwh(line: Line, P) -> float:
     return train_km * s["kwh_per_train_km"] / 1000.0
 
 
-def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none") -> list[dict]:
+def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none",
+                  security: str = "none") -> list[dict]:
     """Cumulative demand, peaks and units per phase (nominal; sizing is a design decision)."""
     f = "power.fusion."
     unit = P0[f + "unit_mwe"]
@@ -39,17 +41,18 @@ def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none"
         built = [l for l in lines if l.phase <= ph]
         d = demand_summary(sum(profiles[l.id] for l in built))
         storm = sum(storm_mw(l, P0, heating) for l in built)  # icing doesn't wait for quiet hours
+        patrol = sum(charge_mw(l, P0, security) for l in built)  # robot and drone charging, day and night
         night_hours = 24.0 - P0["system.service.service_hours"]
         night = sum(night_mw(l, P0, heating, night_hours) for l in built)
         spare = int(P0[f + "spare_units"])
-        by_peak = math.ceil((d["peak_mw"] + storm) * (1 + P0[f + "sizing_margin"]) / unit) + spare
-        by_night = math.ceil(night / unit) + spare  # overnight warming runs on the non-spare units
+        by_peak = math.ceil((d["peak_mw"] + storm + patrol) * (1 + P0[f + "sizing_margin"]) / unit) + spare
+        by_night = math.ceil((night + patrol) / unit) + spare  # overnight warming runs on the non-spare units
         units = max(by_peak, by_night, prev_units)
         binding = "day peak" if by_peak >= by_night else "overnight warming"
         if units == prev_units and prev_units > max(by_peak, by_night):
             binding = "earlier phase"
         heat_mwh = sum(heating_mwh(l, P0, heating) for l in built)
-        demand = sum(mwh[l.id] for l in built) + heat_mwh
+        demand = sum(mwh[l.id] for l in built) + heat_mwh + patrol * HOURS_PER_YEAR
         out.append({
             "phase": ph,
             "demand_mwh": demand,
@@ -66,6 +69,7 @@ def size_by_phase(lines: list[Line], P0: dict[str, float], heating: str = "none"
             "binding": binding,
             "storm_heating_mw": storm,
             "night_warming_mw": night,
+            "security_mw": patrol,
             "night_idle_mw": (units - int(P0[f + "spare_units"])) * unit,
             "heating_mwh": heat_mwh,
             "critical_km": sum(critical_km(l, P0) for l in built) if heating == "targeted" else

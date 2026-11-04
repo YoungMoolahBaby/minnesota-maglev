@@ -558,3 +558,36 @@ def test_public_and_tribal_land_cost_replacement_and_premium(world):
     avoid = P0["land.public.section_4f_avoidance_km"] * P0["costs.guideway.elevated"]
     # this toy grid sits near lat 23 (south zone prices); every cell is fully in the park
     assert park - plain == pytest.approx(np.full_like(plain, land * r + avoid))
+
+
+def test_security_fleet_covers_the_line(world):
+    """Robots sweep both beams in the usable night hours; drones overfly every km once per revisit
+    interval while airborne flight_share of the time; at least one dock per dock_spacing_km."""
+    from mnmaglev.costs import line_capital, line_operating
+    from mnmaglev.fusion import size_by_phase
+    from mnmaglev.security import capital, charge_mw, fleet, operating
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    L = spine.length_km
+    night = (24 - P0["system.service.service_hours"]) * P0["security.ground.window_share"]
+    per_robot = P0["security.ground.speed"] * night
+    f = fleet(spine, P0)
+    working = math.ceil(2 * L * P0["security.ground.sweeps_per_night"] / per_robot)
+    assert f["robots"] == math.ceil(working * (1 + P0["security.ground.spare_ratio"]))
+    airborne = L / (P0["security.aerial.speed"] * P0["security.aerial.revisit_hours"])
+    assert f["drones"] == math.ceil(airborne / P0["security.aerial.flight_share"] * (1 + P0["security.aerial.spare_ratio"]))
+    assert f["docks"] >= max(f["drones"], L / P0["security.aerial.dock_spacing_km"])
+    # off means nothing anywhere: capital, opex, charging power, the fusion fleet's load
+    assert capital(spine, P0, "none") == 0 and operating(spine, P0, "none")["total"] == 0
+    assert charge_mw(spine, P0, "none") == 0
+    t = 3600.0
+    on, off = (line_capital(spine, P0, spine.stations, t, security=m) for m in ("robots", "none"))
+    assert on["construction"] - off["construction"] == pytest.approx(capital(spine, P0, "robots"))
+    ops = {m: line_operating(spine, P0, 8, 22.0, security=m)["total"] for m in ("robots", "none")}
+    assert ops["robots"] - ops["none"] == pytest.approx(operating(spine, P0, "robots")["total"])
+    s_on, s_off = (size_by_phase([spine], P0, "none", m)[0] for m in ("robots", "none"))
+    assert s_on["security_mw"] == pytest.approx(charge_mw(spine, P0, "robots"))
+    assert s_on["demand_mwh"] - s_off["demand_mwh"] == pytest.approx(charge_mw(spine, P0, "robots") * 8760)
+    assert s_on["units"] >= s_off["units"]

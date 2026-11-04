@@ -197,3 +197,11 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     Then GIS routing. Demand: MSP - Denver at 4 h 26 against ~2 h flights plus airport time, and
     what the Iowa and Nebraska stops add (phase 7).
 
+35. [ ] Robot security patrols (params/security.yaml, mostly placeholders): what a magnetic
+    gradiometer can find on a Transrapid guideway, whose laminated stator packs are steel every
+    metre (smallest ferrous object seen against a baseline map, at what robot speed; whether the
+    robot rides the beam or the access road), a guideway robot's price (no product: Spot launched at
+    $74,500 in 2020), drone revisit interval and fleet per km from rail and pipeline practice
+    (BNSF's dock-based program), FAA Part 108 (proposed 2025-08-07) and its final form, airspace
+    near the MSP and DEN airport stations, who may counter hostile drones (federal agencies only),
+    and the threat list the patrols answer (sabotage, metal theft, vandalism, debris, animals).

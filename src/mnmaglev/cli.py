@@ -53,8 +53,9 @@ def cmd_report(args) -> int:
     local = settings["local_supply"] if args.local_supply is None else args.local_supply == "on"
     fusion = settings["fusion"] if args.fusion is None else args.fusion
     heating = settings["winter_heating"] if args.winter_heating is None else args.winter_heating
+    security = settings["security"] if args.security is None else args.security
     net = run_network(lines, params, n=args.n, seed=args.seed, local_supply=local, fusion=fusion,
-                      heating=heating)
+                      heating=heating, security=security)
     net["variant"] = args.variant
     write_markdown(net, out / "report.md")
     write_json(net, out / "results.json")
@@ -132,6 +133,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="override settings.fusion in network/lines.yaml")
     rp.add_argument("--winter-heating", choices=["targeted", "full", "none"], default=None,
                     help="override settings.winter_heating in network/lines.yaml")
+    rp.add_argument("--security", choices=["robots", "none"], default=None,
+                    help="override settings.security in network/lines.yaml (robot and drone patrols)")
     rp.add_argument("--no-measured", action="store_true",
                     help="use the planner estimates even where a GIS alignment exists")
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")

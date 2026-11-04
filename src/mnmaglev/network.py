@@ -119,9 +119,10 @@ SEGMENT_KEYS = (
 
 
 VARIANTS_DIR = NETWORK_DIR / "variants"
-SETTINGS_DEFAULTS = {"local_supply": False, "fusion": "none", "winter_heating": "none"}
+SETTINGS_DEFAULTS = {"local_supply": False, "fusion": "none", "winter_heating": "none", "security": "none"}
 FUSION_CHOICES = ("own", "none")
 HEATING_CHOICES = ("targeted", "full", "none")
+SECURITY_CHOICES = ("robots", "none")
 
 
 def load_settings(path: Path = NETWORK_DIR / "lines.yaml") -> dict:
@@ -135,6 +136,8 @@ def load_settings(path: Path = NETWORK_DIR / "lines.yaml") -> dict:
         raise ValueError(f"settings.fusion must be one of {FUSION_CHOICES}, got {out['fusion']!r}")
     if out["winter_heating"] not in HEATING_CHOICES:
         raise ValueError(f"settings.winter_heating must be one of {HEATING_CHOICES}, got {out['winter_heating']!r}")
+    if out["security"] not in SECURITY_CHOICES:
+        raise ValueError(f"settings.security must be one of {SECURITY_CHOICES}, got {out['security']!r}")
     return out
 
 

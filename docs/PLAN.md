@@ -70,6 +70,18 @@ from the one before with measurements.
   not direct via Sioux Falls (shortest, but ~800 km of nearly empty high plains). Why: 21% longer
   than direct but people the whole way, Iowa's and Nebraska's cities on it, and Des Moines - Denver
   is the trunk a Chicago - Denver line would share. Needs Iowa, Nebraska and Colorado partners.
+- **2026-11-04, robot security patrols** (Jon): autonomous ground robots with magnetic gradiometers
+  and aerial robots (dock-based drones) watch all the track, charged from the network's own power
+  (the fusion fleet). `settings.security: robots`, params/security.yaml, src/mnmaglev/security.py.
+  Robots sweep both guideway beams every night while no trains run and the long stator is off,
+  comparing each pass with a baseline magnetic map (foreign ferrous objects, tampering, shifted
+  stator packs); drones overfly every point of the route hourly, day and night; remote operators
+  (10 units each) supervise from an operations room, as BNSF flies its dock-based drones. Fleet
+  from coverage: spine 18 robots, 18 drones, 24 docks; network through phase 4 176 robots, 165
+  drones, 229 docks, $86 M capital before soft costs and contingency, $32 M/yr (mostly operators),
+  0.7 MW of charging (no change to the fusion fleet). Through phase 4 $759.3 bn P50 (was $759.1).
+  Cheap next to the line; the open questions are whether a gradiometer can see small objects
+  against the stator's own steel, and FAA rules for beyond-visual-line-of-sight flights (RESEARCH 35).
 - **2026-11-03, staggered timetable** (Jon): departures staggered at the Midway hub instead of every
   line leaving on the hour. `mnmaglev timetable --write` -> network/timetable.yaml (offsets per line
   and direction, phase by phase, minimising the network's 1-second power peak; a direction that

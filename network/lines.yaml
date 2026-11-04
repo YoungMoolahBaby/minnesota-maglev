@@ -37,6 +37,10 @@ settings:
   # Guideway heating against ice (params/winter.yaml): targeted = critical spots during icing plus
   # overnight warming of the whole line with idle fusion units; full = whole line during icing; none.
   winter_heating: targeted
+  # Track security (params/security.yaml), Jon 2026-11-04: autonomous ground robots with magnetic
+  # gradiometers sweep both guideway beams every night, dock-based drones patrol the route day and
+  # night, remote operators supervise; charged from the network's power (the fusion fleet). none = off.
+  security: robots
 
 lines:
   - id: spine

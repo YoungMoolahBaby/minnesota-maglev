@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from .security import capital as security_capital
+from .security import operating as security_operating
 from .winter import heater_capital
 
 from .network import CORRIDOR, Line, Segment
@@ -223,7 +225,7 @@ def fleet_size(round_trip_s: float, P) -> np.ndarray | float:
 
 
 def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_supply: bool = False,
-                 heating: str = "none") -> dict:
+                 heating: str = "none", security: str = "none") -> dict:
     segs = [segment_capital(s, P) for s in line.segments]
     total = lambda k: sum(sc[k] for sc in segs)  # noqa: E731
 
@@ -235,8 +237,9 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
     vehicles = trains * P["costs.vehicles.sections_per_train"] * P["costs.vehicles.per_section"]
 
     heaters = heater_capital(line, P, heating)
+    patrols = security_capital(line, P, security)  # ground robots, drone docks, control room
     construction = (total("guideway") + total("adders") + total("systems") + stations + switches + depot
-                    + vehicles + heaters)
+                    + vehicles + heaters + patrols)
     # local supply (Minnesota beam and stator plants, tailings aggregate, supply contracts)
     local = local_supply_savings(line, P, total("systems"))
     contingency_rate = P["costs.soft.contingency"]
@@ -261,6 +264,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         "depot": depot,
         "vehicles": vehicles,
         "heaters": heaters,
+        "security": patrols,
         "trains": trains,
         "construction": construction,
         "soft": soft,
@@ -278,7 +282,8 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
     }
 
 
-def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease=0.0, heating_mwh=0.0) -> dict:
+def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease=0.0, heating_mwh=0.0,
+                   security: str = "none") -> dict:
     """Annual operating cost, MUSD/year. reserve_lease: farm lease income from a held reserve."""
     train_km = 2 * P["system.service.trains_per_hour"] * P["system.service.service_hours"] * 365 * line.length_km
     energy = (train_km * kwh_per_train_km + heating_mwh * 1000.0) * P["costs.operations.energy_price"] / 1e6
@@ -288,14 +293,16 @@ def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease
         for s in line.segments
     )
     staff = trains * P["costs.operations.staff_per_train_year"]
+    patrols = security_operating(line, P, security)["total"]
     return {
         "train_km": train_km,
         "energy": energy,
         "om": om,
         "winter": winter,
         "staff": staff,
+        "security": patrols,
         "reserve_lease_income": reserve_lease,
-        "total": energy + om + winter + staff - reserve_lease,
+        "total": energy + om + winter + staff + patrols - reserve_lease,
     }
 
 

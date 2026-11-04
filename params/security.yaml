@@ -1,0 +1,163 @@
+# Track security patrols (network/lines.yaml settings.security). Same leaf format as costs.yaml.
+# Jon (2026-11-04): autonomous ground robots with magnetic gradiometers and aerial robots (drones)
+# watch the whole line, charged from the network's own power (the fusion fleet).
+#   ground: robots run along both guideway beams in the overnight window, when no trains run and the
+#           long stator is switched off, and compare each pass with a baseline magnetic map of the
+#           guideway: foreign ferrous objects, tampering, loosened or shifted stator packs and fixings
+#           show up as gradient anomalies; cameras and lidar for the rest.
+#   aerial: dock-based drones ("drone in a box") overfly the route day and night at a set revisit
+#           interval: intrusions, vehicles or debris near the piers, washouts, fallen trees, ice.
+# Operators supervise both from a central operations room (remote, several aircraft per person).
+
+ground:
+  speed:
+    value: 10
+    low: 5
+    high: 20
+    unit: km/h while surveying
+    conf: placeholder
+    source: "magnetometer surveys run slowly to resolve small anomalies: drone-carried UXO magnetometers fly 1-2 m/s (3.6-7 km/h, SPH Engineering comparison test) up to ~10 m/s towed (36 km/h, Remote Sensing 2022 'High-Speed Magnetic Surveying for UXO'); a robot on a smooth guideway beam with a fixed sensor height should sit in between"
+  sweeps_per_night:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: passes over every metre of both guideway beams per night
+    conf: placeholder
+    source: design choice (0.5 = every other night)
+  window_share:
+    value: 0.8
+    low: 0.6
+    high: 0.9
+    unit: share of the overnight non-service hours the robots can survey
+    conf: placeholder
+    source: "the rest goes to launching and recovering robots, track possession hand-over and other maintenance in the same window (system.service.service_hours sets the window)"
+  robot_capex:
+    value: 0.25
+    low: 0.12
+    high: 0.5
+    unit: MUSD per robot (guideway-running chassis, gradiometer array, cameras, lidar, comms)
+    conf: placeholder
+    source: "no guideway-robot price found; Boston Dynamics Spot launched at $74,500 (June 2020, base robot, The Register / Deseret News); a fluxgate gradiometer array scales with the number of sensors (2-8, INL UXO study). Custom low-volume build"
+  spare_ratio:
+    value: 0.2
+    low: 0.1
+    high: 0.3
+    unit: spare robots per working robot
+    conf: placeholder
+    source: design choice (charging, repair, swap-outs)
+  life_years:
+    value: 7
+    low: 5
+    high: 10
+    unit: years before replacement
+    conf: placeholder
+    source: industrial mobile robots, outdoor duty in Minnesota winters
+  charge_kw:
+    value: 3.0
+    low: 1.0
+    high: 6.0
+    unit: kW average charging draw per robot
+    conf: placeholder
+    source: "~10-15 kWh battery recharged during the day"
+
+aerial:
+  speed:
+    value: 50
+    low: 36
+    high: 70
+    unit: km/h patrol speed
+    conf: placeholder
+    source: "small multirotors cruise ~10-20 m/s; slower for inspection-quality imagery"
+  revisit_hours:
+    value: 1.0
+    low: 0.5
+    high: 4.0
+    unit: hours between overflights of any point on the route, around the clock
+    conf: placeholder
+    source: design choice
+  flight_share:
+    value: 0.5
+    low: 0.4
+    high: 0.65
+    unit: share of time a drone is airborne (the rest charging in its dock)
+    conf: placeholder
+    source: "dock drones fly ~40-50 min and recharge ~30-45 min (vendor specs for DJI Dock-class systems)"
+  spare_ratio:
+    value: 0.2
+    low: 0.1
+    high: 0.3
+    unit: spare drones per working drone
+    conf: placeholder
+    source: design choice
+  dock_spacing_km:
+    value: 15
+    low: 10
+    high: 25
+    unit: km between docks at most (range, weather fallback landing)
+    conf: placeholder
+    source: "a ~40 min flight at 50 km/h covers ~15 km out and back with reserve"
+  dock_capex:
+    value: 0.03
+    low: 0.016
+    high: 0.15
+    unit: MUSD per dock with its drone
+    conf: "low"
+    source: "DJI Dock 3 $15,890 dock alone, ~$30,000 with a Matrice 4TD drone (US reseller prices, 2025-26); Skydio and Percepto sell docks by subscription (high = an enterprise system with hardened enclosure and service)"
+  site_capex:
+    value: 0.05
+    low: 0.02
+    high: 0.12
+    unit: MUSD per dock site (pad, fence, power drop from the guideway's supply, fibre, de-icing)
+    conf: placeholder
+    source: engineering estimate
+  life_years:
+    value: 4
+    low: 3
+    high: 6
+    unit: years before drone and dock are replaced
+    conf: placeholder
+    source: consumer-derived enterprise drones turn over quickly
+  charge_kw:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: kW average charging draw per drone (dock heating included)
+    conf: placeholder
+    source: "~1 kWh battery per ~45 min flight, plus dock climate control in winter"
+
+operations:
+  units_per_operator:
+    value: 10
+    low: 4
+    high: 25
+    unit: drones or robots one remote operator supervises at once
+    conf: placeholder
+    source: "FAA proposed Part 108 (NPRM 2025-08-07) for beyond-visual-line-of-sight flights, incl. one person supervising several aircraft; until it is final, waivers: BNSF holds FAA approval for remote, dock-based flights from its Flight Operations Center and flew the first U.S. BVLOS flights without observers (2015, Clovis Subdivision)"
+  fte_per_seat:
+    value: 5.0
+    low: 4.2
+    high: 5.5
+    unit: full-time staff per seat staffed around the clock
+    conf: "medium"
+    source: "8,760 h / ~1,700-2,000 working h per person-year = 4.4-5.2"
+  staff_cost:
+    value: 0.15
+    low: 0.11
+    high: 0.2
+    unit: MUSD per operator-year, loaded
+    conf: placeholder
+    source: technician / dispatcher pay plus benefits and overhead
+  maintenance_share:
+    value: 0.15
+    low: 0.08
+    high: 0.25
+    unit: of the robot, drone and dock capital per year (repairs, software, data links)
+    conf: placeholder
+    source: engineering estimate
+  control_room_capex:
+    value: 3.0
+    low: 1.0
+    high: 8.0
+    unit: MUSD per line (workstations, software, integration with train control and the depot)
+    conf: placeholder
+    source: engineering estimate

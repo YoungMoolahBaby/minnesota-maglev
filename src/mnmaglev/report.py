@@ -14,6 +14,10 @@ from .benchmarks import benchmark_table
 from .costs import curve_radius_note, line_capital, line_materials, line_operating
 from .fusion import fleet_money, size_by_phase
 from .timetable import hub_times
+from .security import capital as security_capital
+from .security import charge_mw as security_charge_mw
+from .security import fleet as security_fleet
+from .security import operating as security_operating
 from .winter import heating_mwh
 from .kinematics import line_summary
 from .network import Line
@@ -45,7 +49,8 @@ def sensitivity(params: dict[str, Param], samples: dict[str, np.ndarray], total:
 
 
 def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1,
-                local_supply: bool = False, fusion: str = "none", heating: str = "none") -> dict:
+                local_supply: bool = False, fusion: str = "none", heating: str = "none",
+                security: str = "none") -> dict:
     P0 = nominal(params)
     PS = sample(params, n, seed)
     seen: set[str] = set()
@@ -55,14 +60,16 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         new = [c for c in line.stations if c.id not in seen]
         seen |= {c.id for c in new}
         kin = line_summary(line, P0)
-        cap0 = line_capital(line, P0, new, kin["end_to_end_s"], local_supply, heating)
-        capS = line_capital(line, PS, new, kin["end_to_end_s"], local_supply, heating)
-        alt = line_capital(line, PS, new, kin["end_to_end_s"], not local_supply, heating)["total"]
+        cap0 = line_capital(line, P0, new, kin["end_to_end_s"], local_supply, heating, security)
+        capS = line_capital(line, PS, new, kin["end_to_end_s"], local_supply, heating, security)
+        alt = line_capital(line, PS, new, kin["end_to_end_s"], not local_supply, heating, security)["total"]
         local_saving = (alt - capS["total"]) if local_supply else (capS["total"] - alt)
         lease0 = cap0["reserve"]["lease_income"] if line.reserve else 0.0
         leaseS = capS["reserve"]["lease_income"] if line.reserve else 0.0
-        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0, heating_mwh(line, P0, heating))
-        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"], leaseS, heating_mwh(line, PS, heating))
+        ops0 = line_operating(line, P0, cap0["trains"], kin["kwh_per_train_km"], lease0,
+                              heating_mwh(line, P0, heating), security)
+        opsS = line_operating(line, PS, capS["trains"], kin["kwh_per_train_km"], leaseS,
+                              heating_mwh(line, PS, heating), security)
         net_total = net_total + capS["total"]
         results.append({
             "line": line, "new_stations": new, "kin": kin,
@@ -71,8 +78,9 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
             "local_saving": local_saving,
         })
     # power supply: the fusion fleet, sized from the network's second-by-second peak
-    sizing = size_by_phase([r["line"] for r in results], P0, heating)
-    sizing_full = size_by_phase([r["line"] for r in results], P0, "full") if heating != "full" else sizing
+    sizing = size_by_phase([r["line"] for r in results], P0, heating, security)
+    sizing_full = (size_by_phase([r["line"] for r in results], P0, "full", security) if heating != "full"
+                   else sizing)
     fus0, fusS = fleet_money(sizing, P0), fleet_money(sizing, PS)
     own = fusion == "own"
     fusion_cum = {s["phase"]: sum(f["capital"] for f in fusS if f["phase"] <= s["phase"]) for s in sizing}
@@ -87,6 +95,7 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
             for ph in sorted({r["line"].phase for r in results})
         },
         "fusion": fusion, "fusion0": fus0, "fusionS": fusS, "heating": heating, "sizing_full": sizing_full,
+        "security": security,
         "min_radius_m": curve_radius_note(P0),
         "benchmarks": benchmark_table(params),
         "conf_counts": Counter(p.conf for p in params.values()),
@@ -207,7 +216,7 @@ def write_markdown(net: dict, path: Path) -> None:
                  "optimistic (the classic megaproject trap). Plan with the P50 and P90 above.\n")
         L.append("| Item | MUSD |")
         L.append("|---|---|")
-        for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters",
+        for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters", "security",
                   "soft", "land", "wetlands", "buildings", "public_land", "contingency"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
         rv = c0["reserve"]
@@ -346,6 +355,28 @@ def write_markdown(net: dict, path: Path) -> None:
                  f"| {float(f0['heating_mwh']) / 1000:,.1f} | {f0['binding']} "
                  f"({f0['units_by_peak']} by day peak, {f0['units_by_night']} by overnight warming) |")
     L.append("")
+
+    L.append("### Track security: ground robots and drones\n")
+    sm = net.get("security", "none")
+    L.append(f"Security patrols: **{sm}** (network/lines.yaml settings.security; `--security robots|none` "
+             "overrides; params/security.yaml). Ground robots with magnetic gradiometers sweep both guideway "
+             "beams every night, while no trains run and the long stator is off, against a baseline magnetic "
+             "map of the guideway (foreign ferrous objects, tampering, shifted stator packs); dock-based drones "
+             "overfly the route day and night. Remote operators supervise both. Robots, docks and the control "
+             "room are in each line's construction; operators, maintenance, replacement and charging energy in "
+             "its opex; charging adds to the fusion fleet's load.\n")
+    if sm != "none":
+        P0 = net["P0"]
+        L.append("| Line | Robots | Drones | Docks | Capital MUSD (before soft costs and contingency) "
+                 "| Opex MUSD/yr | Charging kW |")
+        L.append("|---|---|---|---|---|---|---|")
+        for r in R:
+            ln = r["line"]
+            fl = security_fleet(ln, P0)
+            L.append(f"| {ln.id} | {fl['robots']:,.0f} | {fl['drones']:,.0f} | {fl['docks']:,.0f} "
+                     f"| {float(security_capital(ln, P0, sm)):,.1f} | {float(security_operating(ln, P0, sm)['total']):,.1f} "
+                     f"| {float(security_charge_mw(ln, P0, sm)) * 1000:,.0f} |")
+        L.append("")
 
     L.append("### Timetable: staggered departures\n")
     stag = any(r["line"].offset_fwd_min or r["line"].offset_rev_min for r in R)

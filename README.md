@@ -22,6 +22,7 @@ uv run mnmaglev benchmarks       # sourced cost benchmarks in 2026 USD vs the pa
 uv run mnmaglev report --local-supply off   # the same without the Minnesota local-supply policy
 uv run mnmaglev report --fusion none            # the same without the fusion fleet (grid power only)
 uv run mnmaglev report --winter-heating full    # heat the whole guideway during icing (vs targeted / none)
+uv run mnmaglev report --security none          # without the robot and drone patrols
 uv run mnmaglev timetable --write               # stagger departures to cut the power peak, keep hub connections
 uv sync --extra gis && uv run mnmaglev gis spine # route a line on elevation + land cover (downloads ~85 MB, cached)
 uv run pytest
@@ -46,10 +47,10 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 3 fusion units | 359 | 1 h 02 | $94.2 bn ($82 - 109 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $94.3 bn ($82 - 109 bn) |
 | Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $231 bn ($200 - 268 bn) |
 | Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $448 bn ($387 - 518 bn) |
-| Through phase 4, incl. Denver via Des Moines and Omaha (planner estimates, 16 fusion units) | 3,364 | MSP - Denver 4 h 26 | $759 bn ($654 - 881 bn) |
+| Through phase 4, incl. Denver via Des Moines and Omaha (planner estimates, 16 fusion units) | 3,364 | MSP - Denver 4 h 26 | $759 bn ($655 - 881 bn) |
 
 (2026-11-04: GIS slices 1-6, i.e. elevation, land cover, floods, suburbs and freeways, peat,
 buildings and parcels, public and tribal land; the Denver line isn't routed yet.)

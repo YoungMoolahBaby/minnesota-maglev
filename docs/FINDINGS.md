@@ -233,6 +233,8 @@ works), date, details. One section per tool.
   `gis` should warn). Census's data API (api.census.gov) now redirects keyless requests to a
   'missing key' page; TIGERweb's 2020 Census place layer (POP100) gives the same 2020 counts without
   a key.
+  Python edit scripts piped through a bash heredoc keep tripping on quoting (a triple-quoted string
+  ended the heredoc early: "unexpected EOF"); writing the script to a file first works.
 
 ## OSRD
 
