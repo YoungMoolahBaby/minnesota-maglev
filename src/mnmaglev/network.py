@@ -54,6 +54,12 @@ class Segment:
     note: str = ""
     # measured (GIS): reference pier height (m) -> m x km of guideway standing above it
     pier_excess: dict[float, float] = field(default_factory=dict)
+    # measured (GIS): buildings per km2 beside the takeable km, by group (residential,
+    # nonresidential, agriculture) -> {n, side, area, aside} (count, sum sqrt(m2), sum m2, sum m2^1.5)
+    buildings: dict[str, dict[str, float]] = field(default_factory=dict)
+    # measured (GIS): share of the route with county parcel data, and its land EMV (USD/acre) there
+    parcel_coverage: float = 0.0
+    parcel_price: float = 0.0
 
     @property
     def crow_km(self) -> float:
@@ -191,6 +197,10 @@ def load_lines(
                     bridges=[Bridge(**b_) for b_ in spec["bridges"]],
                     note=str(spec.get("note", "")),
                     pier_excess={float(k): float(v) for k, v in spec.get("pier_excess", {}).items()},
+                    buildings={g: {k: float(v) for k, v in d.items()}
+                               for g, d in spec.get("buildings", {}).items()},
+                    parcel_coverage=float(spec.get("parcel_coverage", 0.0)),
+                    parcel_price=float(spec.get("parcel_price", 0.0)),
                 )
             )
         lines.append(
@@ -258,7 +268,8 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
     Measured: detour, zone, land shares (incl. freeway right-of-way), urban km at each end, built-up
     share (priced as urban viaduct), bridges, floodplain where FEMA has maps, guideway height above
     reference pier heights (tall piers), peat (SSURGO Histosols where the soil survey is complete,
-    the wetland share where it isn't). Inherited from the planner segment that starts or ends at the same
+    the wetland share where it isn't), buildings beside the route (FEMA USA Structures), county
+    parcel land value where counties publish it. Inherited from the planner segment that starts or ends at the same
     station (else the line defaults): elevated / at-grade split, urban tunnel share.
     """
     path = MEASURED_DIR / f"{line_id}.yaml"
@@ -318,6 +329,9 @@ def measured_specs(line_id: str, cities: dict, defaults: dict, planner: dict) ->
             if "floodplain_share" in piece else base["floodplain"],
             "bridges": [{"name": f"water crossing {i + 1}", "length_m": m} for i, m in enumerate(piece["bridges_m"])],
             "pier_excess": piece.get("pier_excess_m_km", {}),
+            "buildings": piece.get("buildings_per_km2", {}),
+            "parcel_coverage": piece.get("parcel_coverage", 0.0),
+            "parcel_price": piece.get("parcel_land_usd_per_acre", 0.0),
             "note": (f"measured (GIS); guideway up to {piece['guideway_max_height_m']} m high for <=10% grades"
                      + (f"; FEMA flood maps cover {piece['flood_map_coverage']:.0%}" if "flood_map_coverage" in piece else "")
                      + (f"; soil survey covers {piece['soil_survey_coverage']:.0%}" if "soil_survey_coverage" in piece else "")),

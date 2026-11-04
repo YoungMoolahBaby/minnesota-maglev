@@ -16,16 +16,54 @@ ACRE_M2 = 4046.8564224
 
 
 def land_price_per_acre(s: Segment, P):
-    """Mean price per acre over the segment's land classes. Highway right-of-way (existing_corridor)
-    costs land.corridor.price_factor x the price of the other land on the segment."""
+    """Mean price per acre over the segment's land classes; on measured lines, county parcel values
+    (assessed land EMV x land.parcels.emv_to_market) where the counties publish them. Highway
+    right-of-way (existing_corridor) costs land.corridor.price_factor x the price of the land around it."""
     others = {c: v for c, v in s.land.items() if c != CORRIDOR}
     base = sum(v * P[f"land.price_per_acre.{c}"] for c, v in others.items())
     corr = s.land.get(CORRIDOR, 0.0)
-    if not corr:
-        return base
     total = sum(others.values())
     around = base / total if total > 0 else P["land.price_per_acre.cropland_central"]
+    if s.parcel_coverage > 0:
+        around = (s.parcel_coverage * s.parcel_price / 1e6 * P["land.parcels.emv_to_market"]
+                  + (1 - s.parcel_coverage) * around)
+        base = around * total
+    if not corr:
+        return base
     return base + corr * P["land.corridor.price_factor"] * around
+
+
+TAKE_WIDTHS = (("elevated", "elevated"), ("at_grade", "at_grade"), ("urban_viaduct", "urban"))
+
+
+def building_takes(s: Segment, widths: dict) -> tuple[dict, dict]:
+    """Buildings a strip takes along the segment's takeable km (outside the urban ends, bridges and
+    freeway right-of-way): structure type -> strip width (m). Returns (count, footprint m2) by group;
+    a building is taken when the strip touches it (gis.building_takes)."""
+    if not s.buildings:
+        return {}, {}
+    km_free = s.rural_guideway_km * (1 - s.land.get(CORRIDOR, 0.0))
+    n, m2 = {}, {}
+    for grp, d in s.buildings.items():
+        n[grp] = m2[grp] = 0.0
+        for typ, w in widths.items():
+            km = km_free * s.structure.get(typ, 0.0)
+            n[grp] = n[grp] + km * (w * d["n"] + d["side"]) / 1000.0
+            m2[grp] = m2[grp] + km * (w * d["area"] + d["aside"]) / 1000.0
+    return n, m2
+
+
+def building_cost(n: dict, m2: dict, P):
+    """MUSD to buy, clear and relocate the buildings taken: homes by count (assessed building value
+    + Uniform Act relocation), businesses and farm buildings by footprint, demolition by footprint."""
+    if not n:
+        return 0.0
+    b = "land.buildings."
+    return (n.get("residential", 0.0) * (P[b + "home_value"] * P["land.parcels.emv_to_market"] + P[b + "home_relocation"])
+            + n.get("nonresidential", 0.0) * P[b + "business_relocation"]
+            + (m2.get("nonresidential", 0.0) * P[b + "nonresidential_value_per_m2"]
+               + m2.get("agriculture", 0.0) * P[b + "farm_value_per_m2"]
+               + sum(m2.values()) * P[b + "demolition_per_m2"]) / 1e6)
 
 
 def segment_quantities(s: Segment) -> dict[str, float]:
@@ -91,6 +129,9 @@ def segment_capital(s: Segment, P) -> dict:
     )
     wetlands = filled_acres * P["land.wetlands.replacement_ratio"] * P["land.wetlands.credit_price"]
 
+    taken, taken_m2 = building_takes(s, {typ: P[f"land.row_width.{w}"] for typ, w in TAKE_WIDTHS})
+    buildings = building_cost(taken, taken_m2, P)
+
     return {
         "quantities": q,
         "guideway": civil,
@@ -99,6 +140,8 @@ def segment_capital(s: Segment, P) -> dict:
         "systems": systems,
         "land": land,
         "wetlands": wetlands,
+        "buildings": buildings,
+        "buildings_taken": taken,
         "acres": acres,
         "wetland_acres_filled": filled_acres,
     }
@@ -122,12 +165,18 @@ def segment_reserve(s: Segment, P) -> dict:
     urban_acres = q["urban_viaduct_km"] * 1000.0 * P["land.reserve.width_urban"] / ACRE_M2
     price = land_price_per_acre(s, P)
     land = (rural_acres + urban_acres) * price * P["land.reserve.acquisition_multiplier"]
+    # buildings in the strip beside A: B's right-of-way + the separation (country), width_urban (suburbs)
+    sep = P["land.reserve.construction_separation"]
+    taken, taken_m2 = building_takes(s, {"elevated": P["land.row_width.elevated"] + sep,
+                                         "at_grade": P["land.row_width.at_grade"] + sep,
+                                         "urban_viaduct": P["land.reserve.width_urban"]})
     urban_civil = q["urban_viaduct_km"] * P[g + "urban_viaduct"] + q["tunnel_km"] * P[g + "tunnel"]
     bridge_civil = q["bridge_m"] * P[g + "bridge_per_m"]
     leasable = sum(s.land.get(c, 0.0) for c in LEASABLE_CLASSES)
     return {
         "acres": rural_acres + urban_acres,
         "land": land,
+        "buildings": building_cost(taken, taken_m2, P),
         "urban_provision": urban_civil * P["costs.reserve.urban_provision"],
         "bridge_provision": bridge_civil * P["costs.reserve.bridge_provision"],
         "lease_income": rural_acres * leasable * P["land.reserve.lease_income"],
@@ -141,11 +190,12 @@ def line_reserve(line: Line, P, new_stations: list, construction, soft_rate, con
     stations = sum(P[f"costs.stations.{c.type}"] for c in new_stations) * P["costs.reserve.station_provision"]
     provisions = total("urban_provision") + total("bridge_provision") + stations
     review = construction * P["costs.reserve.review_extra"]
-    base = total("land") + provisions * (1 + soft_rate) + review
+    base = total("land") + total("buildings") + provisions * (1 + soft_rate) + review
     return {
         "segments": segs,
         "acres": total("acres"),
         "land": total("land"),
+        "buildings": total("buildings"),
         "urban_provision": total("urban_provision"),
         "bridge_provision": total("bridge_provision"),
         "station_provision": stations,
@@ -184,7 +234,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         construction = construction - local["construction"]
         contingency_rate = contingency_rate - local["contingency_points"]
     soft = construction * P["costs.soft.engineering_admin"]
-    land = total("land") + total("wetlands")
+    land = total("land") + total("wetlands") + total("buildings")
     base = construction + soft + land
     contingency = base * contingency_rate
     # the reserve is priced for every line; it counts in the total only where the line opts in
@@ -206,6 +256,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         "soft": soft,
         "land": total("land"),
         "wetlands": total("wetlands"),
+        "buildings": total("buildings"),
         "contingency": contingency,
         "reserve": reserve,
         "reserve_included": line.reserve,

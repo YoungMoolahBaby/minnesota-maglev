@@ -8,8 +8,11 @@
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
 # above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
 # muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
-# for peat elsewhere).
-# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
+# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
+# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
+# acre where parcel_coverage says the parcels cover the route.
+# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: iron_range
@@ -17,86 +20,120 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 35
-  vertices_removed_for_curves: 13
-  refinement_moves: 53
+  vertices: 36
+  vertices_removed_for_curves: 6
+  refinement_moves: 39
   all_curves_fit: true
-  cost_least_cost_path_musd: 10123
-  cost_smoothed_musd: 9988
+  cost_least_cost_path_musd: 10047
+  cost_smoothed_musd: 9747
 pieces:
 - from: duluth
   to: virginia
   zone: north
-  length_km: 89.5
-  crow_km: 87.8
-  detour: 1.019
+  length_km: 90.5
+  crow_km: 87.9
+  detour: 1.03
   land_shares:
-    suburban: 0.067
-    urban: 0.035
-    forest: 0.443
-    open: 0.052
-    wetland: 0.397
-    water: 0.007
-  floodplain_share: 0.067
-  floodplain_1pct_share: 0.066
+    suburban: 0.062
+    urban: 0.024
+    forest: 0.466
+    open: 0.056
+    wetland: 0.387
+    water: 0.004
+  floodplain_share: 0.068
+  floodplain_1pct_share: 0.067
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.019
-  highway_corridor_share: 0.008
-  highway_corridor_km: 0.7
-  peat_share: 0.179
+  built_up_share: 0.013
+  highway_corridor_share: 0.0
+  highway_corridor_km: 0.0
+  buildings_per_km2:
+    residential:
+      n: 20.2
+      side: 219.5
+      area: 2559.9
+      aside: 32488.0
+    nonresidential:
+      n: 1.1
+      side: 21.8
+      area: 558.6
+      aside: 18397.5
+    agriculture:
+      n: 0.3
+      side: 3.8
+      area: 55.6
+      aside: 895.4
+  parcel_coverage: 1.0
+  parcel_land_usd_per_acre: 11326
+  peat_share: 0.178
   soil_survey_coverage: 1.0
-  urban_km: 2.5
-  urban_start_km: 1.1
-  urban_end_km: 1.5
-  bridges_m:
-  - 210
-  - 105
+  urban_km: 1.3
+  urban_start_km: 0.9
+  urban_end_km: 0.3
+  bridges_m: []
   max_ground_grade_1km: 0.1747
   elev_range_m:
   - 201
-  - 540
+  - 539
   guideway_max_height_m: 79.5
-  km_over_25m_high: 1.05
+  km_over_25m_high: 1.57
   pier_excess_m_km:
-    5: 69.82
-    10: 57.4
-    15: 48.71
-    20: 41.78
-    25: 36.2
-    30: 31.38
+    5: 75.28
+    10: 65.46
+    15: 57.34
+    20: 49.46
+    25: 41.59
+    30: 34.96
 - from: virginia
   to: hibbing
   zone: north
-  length_km: 33.6
-  crow_km: 31.6
-  detour: 1.065
+  length_km: 33.9
+  crow_km: 31.8
+  detour: 1.066
   land_shares:
-    suburban: 0.078
-    urban: 0.079
-    forest: 0.411
-    open: 0.102
-    wetland: 0.327
+    suburban: 0.083
+    urban: 0.059
+    forest: 0.431
+    open: 0.095
+    wetland: 0.33
     water: 0.003
-  floodplain_share: 0.017
-  floodplain_1pct_share: 0.017
+  floodplain_share: 0.019
+  floodplain_1pct_share: 0.019
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.017
-  highway_corridor_share: 0.016
-  highway_corridor_km: 0.5
-  peat_share: 0.123
+  built_up_share: 0.019
+  highway_corridor_share: 0.012
+  highway_corridor_km: 0.4
+  buildings_per_km2:
+    residential:
+      n: 21.0
+      side: 223.9
+      area: 2561.6
+      aside: 31609.8
+    nonresidential:
+      n: 1.0
+      side: 18.0
+      area: 559.7
+      aside: 24236.7
+    agriculture:
+      n: 0.5
+      side: 5.8
+      area: 79.0
+      aside: 1149.5
+  parcel_coverage: 1.0
+  parcel_land_usd_per_acre: 5293
+  peat_share: 0.124
   soil_survey_coverage: 1.0
-  urban_km: 2.6
-  urban_start_km: 2.1
+  urban_km: 1.9
+  urban_start_km: 1.4
   urban_end_km: 0.5
   bridges_m:
   - 105
-  max_ground_grade_1km: 0.0164
+  max_ground_grade_1km: 0.0172
   elev_range_m:
   - 416
-  - 465
-  guideway_max_height_m: 1.1
+  - 461
+  guideway_max_height_m: 2.1
   km_over_25m_high: 0.0
   pier_excess_m_km:
     5: 0.0

@@ -1,5 +1,5 @@
-"""GIS phase, slices 1-4: a real alignment for a line from elevation, land cover, flood zones,
-built-up land, freeways and peat soils.
+"""GIS phase, slices 1-5: a real alignment for a line from elevation, land cover, flood zones,
+built-up land, freeways, peat soils, buildings and county parcels.
 
 1. Data (cached in data/raw/gis, gitignored): USGS 3DEP elevation (ImageServer exportImage) and
    NLCD 2021 land cover (MRLC WCS, 30 m class codes), both in EPSG:5070 (CONUS Albers, metres),
@@ -25,8 +25,13 @@ built-up land, freeways and peat soils.
    soil survey coverage, urban km, grades. Written to network/alignments/<line>.geojson and
    network/measured/<line>.yaml.
 
-Not yet (later slices): parcels and single buildings, rail corridors,
-public and tribal land, and the at-grade / elevated choice per cell.
+5. Buildings and parcels (slice 5): FEMA USA Structures centroids, occupancy and footprint (ArcGIS
+   feature service, 10 km tiles within 15 km of the line's last alignment; land cover stands in
+   further out) give the buildings a right-of-way takes per km through each cell; MnGeo's open
+   county parcels give assessed land value per acre where counties publish them.
+
+Not yet (later slices): rail corridors, public and tribal land, and the at-grade / elevated
+choice per cell.
 Requires the optional extra: uv sync --extra gis
 """
 
@@ -314,7 +319,8 @@ def zone_of_lat(lat: float) -> str:
 
 
 def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | None = None,
-                 dev: dict | None = None, soil: dict | None = None) -> np.ndarray:
+                 dev: dict | None = None, soil: dict | None = None, bldg: dict | None = None,
+                 parcels: dict | None = None) -> np.ndarray:
     """MUSD per km of route through each cell (nominal parameters)."""
     gw = "costs.guideway."
     t = _to_4326()
@@ -338,16 +344,31 @@ def cost_surface(g: Grid, frac: dict, dem: np.ndarray, P: dict, flood: dict | No
               + corridor * P["costs.adders.highway_corridor"])
     structure = (span * P[gw + "bridge_per_m"] * 1000
                  + (built * P[gw + "urban_viaduct"] + rural * P[gw + "elevated"] * soft) * adders)
+    # land price per acre: by cover class, or the counties' assessed land value where they publish parcels
+    per_acre = (frac["suburban"] * P["land.price_per_acre.suburban"] + frac["urban"] * P["land.price_per_acre.urban_core"]
+                + frac["forest"] * forest + frac["open"] * crop + frac["wetland"] * P["land.price_per_acre.wetland"])
+    if parcels:
+        cov = parcels["coverage"]
+        per_acre = (cov * (1.0 - frac["water"]) * parcels["price"] / 1e6 * P["land.parcels.emv_to_market"]
+                    + (1.0 - cov) * per_acre)
     # in a freeway's right-of-way the land costs a share of what the land around it would
-    land = acres_per_km * P["land.acquisition_multiplier"] * (1.0 - corridor * (1.0 - P["land.corridor.price_factor"])) * (
-        frac["suburban"] * P["land.price_per_acre.suburban"] + frac["urban"] * P["land.price_per_acre.urban_core"]
-        + frac["forest"] * forest + frac["open"] * crop + frac["wetland"] * P["land.price_per_acre.wetland"])
+    land = (acres_per_km * P["land.acquisition_multiplier"]
+            * (1.0 - corridor * (1.0 - P["land.corridor.price_factor"])) * per_acre)
+    # buildings the right-of-way takes (not in dense urban cells, which run in streets, nor over water
+    # or in freeway right-of-way)
+    takes = 0.0
+    if bldg:
+        from .costs import building_cost
+        width = built * P["land.row_width.urban"] + (1.0 - built) * P["land.row_width.elevated"]
+        t = building_takes(bldg, width)
+        takes = (building_cost({k: v["n"] for k, v in t.items()}, {k: v["m2"] for k, v in t.items()}, P)
+                 * (1.0 - frac["urban"]) * (1.0 - span) * (1.0 - corridor))
     wetland = (frac["wetland"] * acres_per_km * P["land.wetlands.impact_fraction_elevated"]
                * P["land.wetlands.replacement_ratio"] * P["land.wetlands.credit_price"])
     gy, gx = np.gradient(np.nan_to_num(dem, nan=np.nanmean(dem)), CELL)
     slope = np.hypot(gx, gy)
     terrain = P[gw + "elevated"] * 0.5 * np.minimum(slope / P["system.geometry.max_gradient"], 1.0)
-    cost = structure + land + wetland + terrain
+    cost = structure + land + takes + wetland + terrain
     return np.where(np.isnan(dem), np.nanmax(cost) * 10, cost).astype(np.float64)
 
 
@@ -549,7 +570,9 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     flood = fetch_floodplain(g, folder / "nfhl")
     dev = fetch_development(g, folder)
     soil = fetch_soils(g, folder)
-    cost = cost_surface(g, frac, dem, P, flood, dev, soil)
+    bldg = fetch_buildings(g, line, folder / "buildings", frac)
+    parcels = fetch_parcels(g, line, folder / "parcels")
+    cost = cost_surface(g, frac, dem, P, flood, dev, soil, bldg, parcels)
     cell_km = CELL / 1000.0
     to5070 = _to_5070()
     stops = [p for p in line.points if p.is_station]
@@ -566,7 +589,10 @@ def route(line: Line, P: dict, cache: Path | None = None) -> dict:
     align, curve_info = smooth([l[2] for l in legs], st_xy, P, cost, g)
     layers = {**frac, **{f"fl_{k}": v for k, v in flood.items()},
               "dev_built": built_up(dev, frac, P), "dev_corridor": dev["corridor"],
-              "soil_peat": soil["peat"], "soil_coverage": soil["coverage"]}
+              "soil_peat": soil["peat"], "soil_coverage": soil["coverage"],
+              "pc_price": parcels["price"], "pc_coverage": parcels["coverage"],
+              **{f"bl_{grp}_{k}": bldg[f"{grp}_{k}"] / (CELL ** 2 / 1e6)  # per km2
+                 for grp in BUILDING_GROUPS for k in BUILDING_SUMS}}
     meas = measure(align, st_xy, stops, g, layers, dem, P["system.geometry.max_gradient"])
     return {"grid": g, "alignment": align, "curves": curve_info, "measured": meas, "stations": stops}
 
@@ -661,6 +687,17 @@ def _piece(m, start, end, f, z, lat, lon, zone, step, g_max) -> dict:
         dev = {"built_up_share": round(float(f["dev_built"][m][rest].mean()), 3) if rest.any() else 0.0,
                "highway_corridor_share": round(float(f["dev_corridor"][m].mean()), 3),
                "highway_corridor_km": round(float(f["dev_corridor"][m].sum() * step / 1000), 1)}
+        # buildings beside the km where the right-of-way can take them (not the urban ends, bridges or
+        # freeway right-of-way); the model multiplies by those km and the right-of-way width
+        w = rest * (1.0 - f["dev_corridor"][m])
+        if "bl_residential_n" in f and w.sum() > 0:
+            dev["buildings_per_km2"] = {
+                grp: {k: round(float((f[f"bl_{grp}_{k}"][m] * w).sum() / w.sum()), 1) for k in BUILDING_SUMS}
+                for grp in BUILDING_GROUPS}
+    if "pc_coverage" in f:
+        cov = f["pc_coverage"][m]
+        dev["parcel_coverage"] = round(float(cov.mean()), 3)
+        dev["parcel_land_usd_per_acre"] = round(float((f["pc_price"][m] * cov).sum() / cov.sum())) if cov.sum() else 0
     zones, counts = np.unique(zone[m], return_counts=True)
     return {
         "from": start, "to": end, "zone": str(zones[np.argmax(counts)]),
@@ -716,8 +753,11 @@ def write_outputs(line: Line, res: dict) -> tuple[Path, Path]:
               "# pier_excess_m_km = metres above each reference height x km (tall piers are priced\n"
               "# above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,\n"
               "# muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in\n"
-              "# for peat elsewhere).\n"
-              "# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed\n"
+              "# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside\n"
+              "# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).\n"
+              "# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per\n"
+              "# acre where parcel_coverage says the parcels cover the route.\n"
+              "# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed\n"
               "# open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,\n"
               "# wetland).\n" % (line.id, line.id))
     mpath.write_text(header + yaml.safe_dump({"line": line.id, "curves": res["curves"], "pieces": res["measured"]},
@@ -731,13 +771,15 @@ NFHL_QUERY = "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServe
 FLOOD_WHERE = "SFHA_TF='T' OR ZONE_SUBTY LIKE '0.2 PCT%' OR ZONE_SUBTY LIKE '%FLOODWAY%'"
 
 
-def _get_json(params: dict, path: Path, tries: int = 10) -> dict:
+def _get_json(params: dict, path: Path | None, tries: int = 10, url: str = NFHL_QUERY,
+              pause: float = 1.0) -> dict:
+    """ArcGIS REST query (GET), cached at path unless path is None."""
     import json
     import urllib.parse
 
-    if path.exists() and path.stat().st_size > 20:
+    if path is not None and path.exists() and path.stat().st_size > 20:
         return json.loads(path.read_text(encoding="utf-8"))
-    url = NFHL_QUERY + "?" + urllib.parse.urlencode(params)
+    url = url + "?" + urllib.parse.urlencode(params)
     for k in range(tries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "minnesota-maglev GIS"})
@@ -745,14 +787,16 @@ def _get_json(params: dict, path: Path, tries: int = 10) -> dict:
                 data = json.loads(r.read())
             if "error" in data:
                 raise RuntimeError(data["error"])
-            path.write_text(json.dumps(data), encoding="utf-8")
-            time.sleep(1.0)
-            return data
-        except Exception:  # the FEMA server drops requests now and then
+            break
+        except (OSError, ValueError, RuntimeError):  # servers drop requests or answer errors now and then
             if k == tries - 1:
                 raise
             time.sleep(min(10 * (k + 1), 60))
-    return {}
+    if path is not None:  # outside the retry loop: a local write error is not a server hiccup
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data), encoding="utf-8")
+    time.sleep(pause)
+    return data
 
 
 def _esri_polygons(geom: dict):
@@ -831,3 +875,186 @@ def fetch_floodplain(g: Grid, folder: Path, tile_km: float = 25.0) -> dict[str, 
     out["covered"] = covered.astype(np.float32)
     out["flood"] = np.maximum(out["sfha"], out["x500"])
     return out
+
+
+# --- Buildings (FEMA USA Structures) and parcels (MnGeo open counties), slice 5 ------------------
+
+STRUCTURES_QUERY = ("https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/"
+                    "USA_Structures_View/FeatureServer/0/query")
+PARCELS_URL = ("https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_mngeo/"
+               "plan_parcels_open/FeatureServer")
+# USA Structures occupancy class -> pricing group; every other class (commercial, industrial,
+# government, education, assembly, utility, unclassified) is nonresidential
+BUILDING_GROUPS = ("residential", "nonresidential", "agriculture")
+OCC_GROUP = {"Residential": 0, "Agriculture": 2}
+BUILDING_SUMS = ("n", "side", "area", "aside")  # per cell: count, sum sqrt(m2), sum m2, sum m2 x sqrt(m2)
+BAND_KM = 15.0        # buildings and parcels are fetched for tiles this close to the line's last alignment
+POINT_TILE_KM = 10.0
+PARCEL_SMOOTH_CELLS = 2.0  # Gaussian sigma for land value per acre (rural parcels are 400-800 m across)
+
+
+def _band_tiles(g: Grid, line: Line, tile_km: float = POINT_TILE_KM, band_km: float = BAND_KM):
+    """(r0, c0, h, w) grid tiles within band_km of the line's previous GIS alignment
+    (network/alignments/<id>.geojson), or of the straight lines between its points without one."""
+    import json
+    from shapely.geometry import LineString, box
+
+    path = ROOT / "network" / "alignments" / f"{line.id}.geojson"
+    t = _to_5070()
+    if path.exists():
+        coords = json.loads(path.read_text(encoding="utf-8"))["features"][0]["geometry"]["coordinates"]
+    else:
+        coords = [(p.lon, p.lat) for p in line.points]
+    ref = LineString([t.transform(lon, lat) for lon, lat in coords])
+    tc = int(tile_km * 1000 / CELL)
+    tiles = []
+    for r0 in range(0, g.ny, tc):
+        for c0 in range(0, g.nx, tc):
+            h, w = min(tc, g.ny - r0), min(tc, g.nx - c0)
+            x0, y1 = g.x0 + c0 * CELL, g.y1 - r0 * CELL
+            if ref.distance(box(x0, y1 - h * CELL, x0 + w * CELL, y1)) <= band_km * 1000:
+                tiles.append((r0, c0, h, w))
+    return tiles
+
+
+def _tile_mask(g: Grid, tiles) -> np.ndarray:
+    m = np.zeros((g.ny, g.nx), dtype=bool)
+    for r0, c0, h, w in tiles:
+        m[r0:r0 + h, c0:c0 + w] = True
+    return m
+
+
+def _fetch_points(url: str, tiles, g: Grid, folder: Path, prefix: str, fields: list[str], oid: str,
+                  columns: tuple[str, ...], convert, workers: int = 4) -> dict[str, np.ndarray]:
+    """Centroids (EPSG:5070) of the features of an ArcGIS feature layer, with attributes turned into
+    numbers by convert(attributes) -> one value per column. A feature belongs to the tile its
+    centroid lies in (features crossing tile edges are kept once). Cached per tile as .npz."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    def one(tile):
+        r0, c0, h, w = tile
+        path = folder / f"{prefix}_{r0}_{c0}.npz"
+        if path.exists():
+            with np.load(path) as z:
+                return {k: z[k] for k in z.files}
+        x0, y1 = g.x0 + c0 * CELL, g.y1 - r0 * CELL
+        x1, y0 = x0 + w * CELL, y1 - h * CELL
+        base = {"where": "1=1", "geometry": f"{x0},{y0},{x1},{y1}", "geometryType": "esriGeometryEnvelope",
+                "inSR": 5070, "spatialRel": "esriSpatialRelIntersects", "outFields": ",".join(fields),
+                "returnGeometry": "false", "returnCentroid": "true", "outSR": 5070,
+                "orderByFields": oid, "resultRecordCount": 2000, "f": "json"}
+        rows, offset = [], 0
+        while True:
+            data = _get_json({**base, "resultOffset": offset}, None, url=url, pause=0.2)
+            feats = data.get("features", [])
+            for f in feats:
+                c = f.get("centroid")
+                if c and x0 <= c["x"] < x1 and y0 < c["y"] <= y1:
+                    rows.append((c["x"], c["y"], *convert(f["attributes"])))
+            if not data.get("exceededTransferLimit") or not feats:
+                break
+            offset += len(feats)
+        arr = np.array(rows, dtype=np.float64).reshape(-1, 2 + len(columns))
+        out = {"x": arr[:, 0], "y": arr[:, 1], **{k: arr[:, 2 + i] for i, k in enumerate(columns)}}
+        np.savez_compressed(path, **out)
+        return out
+
+    with ThreadPoolExecutor(workers) as ex:
+        parts = list(ex.map(one, tiles))
+    keys = ("x", "y", *columns)
+    return {k: np.concatenate([p[k] for p in parts]) if parts else np.zeros(0) for k in keys}
+
+
+def _cell_sums(g: Grid, x: np.ndarray, y: np.ndarray, weights: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    r = np.floor((g.y1 - y) / CELL).astype(int)
+    c = np.floor((x - g.x0) / CELL).astype(int)
+    ok = (r >= 0) & (r < g.ny) & (c >= 0) & (c < g.nx)
+    idx = r[ok] * g.nx + c[ok]
+    return {k: np.bincount(idx, weights=w[ok], minlength=g.ny * g.nx).reshape(g.ny, g.nx)
+            for k, w in weights.items()}
+
+
+def _by_cover(v: np.ndarray, frac: dict, mask: np.ndarray) -> np.ndarray:
+    """v outside mask, estimated from inside it: the mean of v per unit of each NLCD group, mixed by
+    each cell's own land cover."""
+    out = np.zeros(v.shape, dtype=np.float64)
+    for f in frac.values():
+        w = f[mask].sum()
+        if w > 0:
+            out += f * (v[mask] * f[mask]).sum() / w
+    return out
+
+
+def fetch_buildings(g: Grid, line: Line, folder: Path, frac: dict) -> dict[str, np.ndarray]:
+    """Per cell and pricing group: number of buildings (USA Structures, footprints > 450 sq ft) and
+    sums of sqrt(footprint), footprint and footprint x sqrt(footprint), which give the buildings a
+    right-of-way of any width takes (building_takes). Fetched near the line; elsewhere estimated from
+    the land cover."""
+    folder.mkdir(parents=True, exist_ok=True)
+    tiles = _band_tiles(g, line)
+    p = _fetch_points(STRUCTURES_QUERY, tiles, g, folder, "bldg", ["OCC_CLS", "SQMETERS"], "OBJECTID",
+                      ("group", "m2"),
+                      lambda a: (OCC_GROUP.get(a.get("OCC_CLS"), 1), float(a.get("SQMETERS") or 0.0)))
+    band = _tile_mask(g, tiles)
+    out = {}
+    for gi, name in enumerate(BUILDING_GROUPS):
+        m = p["group"] == gi
+        a = p["m2"][m]
+        s = np.sqrt(a)
+        sums = _cell_sums(g, p["x"][m], p["y"][m], {"n": np.ones_like(a), "side": s, "area": a, "aside": a * s})
+        for k, v in sums.items():
+            out[f"{name}_{k}"] = np.where(band, v, _by_cover(v, frac, band))
+    out["band"] = band.astype(np.float32)
+    return out
+
+
+def building_takes(b: dict, width) -> dict[str, dict[str, np.ndarray]]:
+    """Buildings taken and their footprint (m2) per km of route through each cell, by group.
+
+    A building of side s (sqrt of its footprint) is hit by a right-of-way of width W when its
+    centre lies within (W + s) / 2 of the centreline (route and building axis-aligned; a random
+    orientation would widen s by up to ~27%), so a km of route through a cell holding buildings
+    i takes sum_i (W + s_i) x 1000 / CELL^2 of them and sum_i a_i (W + s_i) x 1000 / CELL^2 m2.
+    """
+    k = 1000.0 / CELL ** 2
+    return {name: {"n": (width * b[f"{name}_n"] + b[f"{name}_side"]) * k,
+                   "m2": (width * b[f"{name}_area"] + b[f"{name}_aside"]) * k} for name in BUILDING_GROUPS}
+
+
+def _parcel_counties(g: Grid, folder: Path) -> np.ndarray:
+    """Cells inside counties that publish parcels as open data (MnGeo gac_open_approval)."""
+    from rasterio.features import rasterize
+    from rasterio.transform import from_origin
+
+    data = _get_json({"where": "gac_open_approval='true'", "outFields": "countyname", "returnGeometry": "true",
+                      "outSR": 5070, "maxAllowableOffset": 100, "f": "json"},
+                     folder / "parcel_counties.json", url=PARCELS_URL + "/0/query")
+    polys = [p for f in data.get("features", []) for p in _esri_polygons(f.get("geometry") or {})]
+    if not polys:
+        return np.zeros((g.ny, g.nx), dtype=bool)
+    return rasterize(((p, 1) for p in polys), out_shape=(g.ny, g.nx),
+                     transform=from_origin(g.x0, g.y1, CELL, CELL), fill=0, dtype="uint8").astype(bool)
+
+
+def fetch_parcels(g: Grid, line: Line, folder: Path) -> dict[str, np.ndarray]:
+    """Assessed land value per acre (estimated market value of the land alone, USD/acre) from the
+    county parcels MnGeo compiles (counties that publish them as open data), smoothed over ~400 m,
+    and where it is known ('coverage'). Out of state, in closed counties and far from the line: 0."""
+    from scipy.ndimage import gaussian_filter
+
+    folder.mkdir(parents=True, exist_ok=True)
+    open_c = _parcel_counties(g, folder)
+    tiles = [t for t in _band_tiles(g, line) if open_c[t[0]:t[0] + t[2], t[1]:t[1] + t[3]].any()]
+    p = _fetch_points(PARCELS_URL + "/1/query", tiles, g, folder, "parcel",
+                      ["emv_land", "emv_bldg", "acres_poly", "useclass1"], "objectid",
+                      ("emv_land", "emv_bldg", "acres", "residential"),
+                      lambda a: (float(a.get("emv_land") or 0.0), float(a.get("emv_bldg") or 0.0),
+                                 float(a.get("acres_poly") or 0.0),
+                                 1.0 if str(a.get("useclass1") or "").lower().startswith("res") else 0.0))
+    use = (p["emv_land"] > 0) & (p["acres"] > 0)
+    s = _cell_sums(g, p["x"][use], p["y"][use], {"emv": p["emv_land"][use], "acres": p["acres"][use]})
+    emv = gaussian_filter(s["emv"], PARCEL_SMOOTH_CELLS, mode="constant")
+    acres = gaussian_filter(s["acres"], PARCEL_SMOOTH_CELLS, mode="constant")
+    cover = open_c & _tile_mask(g, tiles) & (acres > 0.5)
+    price = np.where(cover, emv / np.maximum(acres, 1e-9), 0.0)
+    return {"price": price, "coverage": cover.astype(np.float32)}

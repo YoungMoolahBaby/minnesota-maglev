@@ -94,6 +94,12 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
     }
 
 
+def _taken(sc: dict, groups) -> str:
+    """Buildings a segment's right-of-way takes (measured lines only)."""
+    t = sc.get("buildings_taken") or {}
+    return f"{sum(float(t.get(g, 0.0)) for g in groups):,.0f}" if t else "-"
+
+
 def _hm(seconds: float) -> str:
     m = int(round(seconds / 60))
     return f"{m // 60}h{m % 60:02d}" if m >= 60 else f"{m} min"
@@ -189,7 +195,7 @@ def write_markdown(net: dict, path: Path) -> None:
         L.append("| Item | MUSD |")
         L.append("|---|---|")
         for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters",
-                  "soft", "land", "wetlands", "contingency"):
+                  "soft", "land", "wetlands", "buildings", "contingency"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
         rv = c0["reserve"]
         L.append(f"| second-system reserve ({'held' if line.reserve else 'not held'}) "
@@ -202,13 +208,15 @@ def write_markdown(net: dict, path: Path) -> None:
                  f"station provision {float(rv['station_provision']):,.0f}, review {float(rv['review']):,.0f}, "
                  f"contingency {float(rv['contingency']):,.0f} = **{float(rv['total']):,.0f} MUSD**; "
                  f"farm lease income {float(rv['lease_income']):,.2f} MUSD/yr.\n")
-        L.append("| Segment | km | Elevated | At grade | Urban viaduct | Tunnel | Bridges m | Acres | Wetland acres filled |")
-        L.append("|---|---|---|---|---|---|---|---|---|")
+        L.append("| Segment | km | Elevated | At grade | Urban viaduct | Tunnel | Bridges m | Acres | Wetland acres filled "
+                 "| Homes taken | Other buildings taken |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|")
         for s, sc in zip(line.segments, c0["segments"]):
             q = sc["quantities"]
             L.append(f"| {s.a.id} -> {s.b.id} | {q['route_km']:,.0f} | {q['elevated_km']:,.0f} | {q['at_grade_km']:,.0f} "
                      f"| {q['urban_viaduct_km']:,.1f} | {q['tunnel_km']:,.1f} | {q['bridge_m']:,.0f} "
-                     f"| {sc['acres']:,.0f} | {sc['wetland_acres_filled']:,.1f} |")
+                     f"| {sc['acres']:,.0f} | {sc['wetland_acres_filled']:,.1f} "
+                     f"| {_taken(sc, ('residential',))} | {_taken(sc, ('nonresidential', 'agriculture'))} |")
         L.append("")
 
     L.append("## Materials and the ore behind them (nominal)\n")

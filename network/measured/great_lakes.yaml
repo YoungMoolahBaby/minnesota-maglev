@@ -8,8 +8,11 @@
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
 # above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
 # muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
-# for peat elsewhere).
-# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
+# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
+# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
+# acre where parcel_coverage says the parcels cover the route.
+# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: great_lakes
@@ -17,52 +20,70 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 130
-  vertices_removed_for_curves: 57
-  refinement_moves: 188
+  vertices: 127
+  vertices_removed_for_curves: 45
+  refinement_moves: 197
   all_curves_fit: true
-  cost_least_cost_path_musd: 51213
-  cost_smoothed_musd: 51161
+  cost_least_cost_path_musd: 51390
+  cost_smoothed_musd: 51175
 pieces:
 - from: rochester
   to: winona
   zone: south
   length_km: 68.5
   crow_km: 67.2
-  detour: 1.018
+  detour: 1.019
   land_shares:
-    suburban: 0.097
+    suburban: 0.102
     urban: 0.042
-    forest: 0.152
-    open: 0.693
-    wetland: 0.015
+    forest: 0.142
+    open: 0.698
+    wetland: 0.014
     water: 0.001
   floodplain_share: 0.007
   floodplain_1pct_share: 0.005
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.033
+  built_up_share: 0.036
   highway_corridor_share: 0.0
   highway_corridor_km: 0.0
-  peat_share: 0.006
+  buildings_per_km2:
+    residential:
+      n: 46.8
+      side: 522.7
+      area: 6419.1
+      aside: 87885.4
+    nonresidential:
+      n: 1.6
+      side: 22.5
+      area: 383.0
+      aside: 7879.8
+    agriculture:
+      n: 5.3
+      side: 80.2
+      area: 1470.5
+      aside: 32575.8
+  parcel_coverage: 0.515
+  parcel_land_usd_per_acre: 25348
+  peat_share: 0.005
   soil_survey_coverage: 1.0
-  urban_km: 2.2
+  urban_km: 2.0
   urban_start_km: 0.4
-  urban_end_km: 1.8
+  urban_end_km: 1.6
   bridges_m: []
-  max_ground_grade_1km: 0.1657
+  max_ground_grade_1km: 0.1567
   elev_range_m:
-  - 198
+  - 199
   - 401
-  guideway_max_height_m: 85.7
+  guideway_max_height_m: 82.6
   km_over_25m_high: 3.99
   pier_excess_m_km:
-    5: 198.21
-    10: 168.84
-    15: 144.06
-    20: 121.67
-    25: 101.18
-    30: 81.31
+    5: 190.49
+    10: 162.47
+    15: 138.13
+    20: 116.23
+    25: 95.63
+    30: 76.72
 - from: winona
   to: la_crosse
   zone: south
@@ -70,118 +91,174 @@ pieces:
   crow_km: 42.1
   detour: 1.015
   land_shares:
-    suburban: 0.096
-    urban: 0.133
-    forest: 0.295
-    open: 0.378
+    suburban: 0.104
+    urban: 0.127
+    forest: 0.283
+    open: 0.383
     wetland: 0.074
-    water: 0.023
-  floodplain_share: 0.098
-  floodplain_1pct_share: 0.097
-  floodway_km: 1.57
+    water: 0.028
+  floodplain_share: 0.1
+  floodplain_1pct_share: 0.099
+  floodway_km: 1.68
   flood_map_coverage: 1.0
-  built_up_share: 0.013
-  highway_corridor_share: 0.02
-  highway_corridor_km: 0.8
-  peat_share: 0.001
+  built_up_share: 0.011
+  highway_corridor_share: 0.029
+  highway_corridor_km: 1.3
+  buildings_per_km2:
+    residential:
+      n: 15.0
+      side: 227.4
+      area: 3846.5
+      aside: 71449.7
+    nonresidential:
+      n: 0.7
+      side: 10.1
+      area: 164.3
+      aside: 2963.7
+    agriculture:
+      n: 1.5
+      side: 18.6
+      area: 245.7
+      aside: 3498.3
+  parcel_coverage: 0.231
+  parcel_land_usd_per_acre: 102249
+  peat_share: 0.002
   soil_survey_coverage: 1.0
-  urban_km: 6.0
+  urban_km: 5.8
   urban_start_km: 3.7
-  urban_end_km: 2.3
+  urban_end_km: 2.1
   bridges_m:
+  - 105
+  - 105
   - 840
   - 735
-  max_ground_grade_1km: 0.1547
+  max_ground_grade_1km: 0.1492
   elev_range_m:
   - 193
   - 394
-  guideway_max_height_m: 85.5
-  km_over_25m_high: 5.67
+  guideway_max_height_m: 80.8
+  km_over_25m_high: 5.25
   pier_excess_m_km:
-    5: 295.16
-    10: 244.13
-    15: 200.58
-    20: 164.1
-    25: 134.43
-    30: 107.92
+    5: 277.11
+    10: 227.19
+    15: 185.59
+    20: 151.32
+    25: 123.59
+    30: 99.38
 - from: la_crosse
   to: madison
   zone: south
-  length_km: 175.1
+  length_km: 175.2
   crow_km: 168.9
   detour: 1.037
   land_shares:
-    suburban: 0.094
-    urban: 0.032
-    forest: 0.235
-    open: 0.619
+    suburban: 0.096
+    urban: 0.031
+    forest: 0.228
+    open: 0.625
     wetland: 0.019
     water: 0.002
-  floodplain_share: 0.035
+  floodplain_share: 0.036
   floodplain_1pct_share: 0.028
   floodway_km: 0.84
   flood_map_coverage: 1.0
-  built_up_share: 0.016
+  built_up_share: 0.015
   highway_corridor_share: 0.007
   highway_corridor_km: 1.2
-  peat_share: 0.024
+  buildings_per_km2:
+    residential:
+      n: 24.7
+      side: 341.1
+      area: 5420.1
+      aside: 115401.9
+    nonresidential:
+      n: 1.7
+      side: 31.3
+      area: 984.5
+      aside: 55900.4
+    agriculture:
+      n: 7.9
+      side: 123.1
+      area: 2319.6
+      aside: 53920.7
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
+  peat_share: 0.023
   soil_survey_coverage: 1.0
-  urban_km: 4.5
-  urban_start_km: 1.7
-  urban_end_km: 2.8
+  urban_km: 4.3
+  urban_start_km: 1.8
+  urban_end_km: 2.5
   bridges_m:
   - 210
   - 630
-  max_ground_grade_1km: 0.1402
+  max_ground_grade_1km: 0.1372
   elev_range_m:
   - 201
   - 415
   guideway_max_height_m: 82.8
-  km_over_25m_high: 6.83
+  km_over_25m_high: 6.72
   pier_excess_m_km:
-    5: 356.19
-    10: 263.59
-    15: 197.31
-    20: 147.84
-    25: 110.66
-    30: 81.65
+    5: 358.39
+    10: 268.11
+    15: 202.24
+    20: 152.47
+    25: 114.71
+    30: 85.88
 - from: madison
   to: milwaukee
   zone: south
   length_km: 128.7
-  crow_km: 121.3
+  crow_km: 121.4
   detour: 1.061
   land_shares:
-    suburban: 0.179
-    urban: 0.106
-    forest: 0.084
-    open: 0.482
-    wetland: 0.146
+    suburban: 0.161
+    urban: 0.116
+    forest: 0.093
+    open: 0.489
+    wetland: 0.138
     water: 0.003
-  floodplain_share: 0.085
-  floodplain_1pct_share: 0.072
-  floodway_km: 0.32
+  floodplain_share: 0.092
+  floodplain_1pct_share: 0.074
+  floodway_km: 0.63
   flood_map_coverage: 1.0
-  built_up_share: 0.059
-  highway_corridor_share: 0.037
-  highway_corridor_km: 4.7
-  peat_share: 0.102
-  soil_survey_coverage: 0.923
-  urban_km: 11.9
-  urban_start_km: 3.4
-  urban_end_km: 8.5
+  built_up_share: 0.043
+  highway_corridor_share: 0.029
+  highway_corridor_km: 3.8
+  buildings_per_km2:
+    residential:
+      n: 47.3
+      side: 576.6
+      area: 7709.0
+      aside: 112200.3
+    nonresidential:
+      n: 2.9
+      side: 59.2
+      area: 1820.7
+      aside: 76096.1
+    agriculture:
+      n: 2.9
+      side: 44.7
+      area: 770.8
+      aside: 14812.6
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
+  peat_share: 0.108
+  soil_survey_coverage: 0.917
+  urban_km: 14.1
+  urban_start_km: 3.9
+  urban_end_km: 10.2
   bridges_m:
+  - 420
   - 210
-  - 105
   max_ground_grade_1km: 0.0509
   elev_range_m:
-  - 179
-  - 314
+  - 180
+  - 316
   guideway_max_height_m: 17.2
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 4.81
-    10: 1.64
+    5: 4.64
+    10: 1.59
     15: 0.38
     20: 0.0
     25: 0.0
@@ -189,35 +266,52 @@ pieces:
 - from: milwaukee
   to: chicago
   zone: south
-  length_km: 139.3
+  length_km: 140.6
   crow_km: 130.5
-  detour: 1.068
+  detour: 1.078
   land_shares:
-    suburban: 0.304
-    urban: 0.216
-    forest: 0.092
-    open: 0.334
-    wetland: 0.051
-    water: 0.004
-  floodplain_share: 0.057
-  floodplain_1pct_share: 0.057
-  floodway_km: 0.53
+    suburban: 0.213
+    urban: 0.212
+    forest: 0.16
+    open: 0.344
+    wetland: 0.068
+    water: 0.002
+  floodplain_share: 0.077
+  floodplain_1pct_share: 0.071
+  floodway_km: 0.42
   flood_map_coverage: 1.0
-  built_up_share: 0.137
-  highway_corridor_share: 0.031
-  highway_corridor_km: 4.3
+  built_up_share: 0.083
+  highway_corridor_share: 0.026
+  highway_corridor_km: 3.7
+  buildings_per_km2:
+    residential:
+      n: 77.7
+      side: 1028.9
+      area: 15576.1
+      aside: 279562.2
+    nonresidential:
+      n: 2.5
+      side: 40.5
+      area: 1016.3
+      aside: 41322.2
+    agriculture:
+      n: 1.8
+      side: 23.3
+      area: 360.7
+      aside: 6507.3
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
   peat_share: 0.014
   soil_survey_coverage: 0.936
-  urban_km: 26.9
+  urban_km: 27.6
   urban_start_km: 6.7
-  urban_end_km: 20.2
+  urban_end_km: 20.9
   bridges_m:
-  - 105
-  - 735
-  max_ground_grade_1km: 0.0195
+  - 630
+  max_ground_grade_1km: 0.0212
   elev_range_m:
   - 178
-  - 247
+  - 246
   guideway_max_height_m: 0.0
   km_over_25m_high: 0.0
   pier_excess_m_km:

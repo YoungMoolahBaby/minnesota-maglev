@@ -315,8 +315,8 @@ def test_corridor_land_costs_a_share_of_the_land_around_it(world):
     params, _, lines = world
     P0 = nominal(params)
     seg = next(l for l in lines if l.id == "spine").segments[0]
-    farm = replace(seg, land={"cropland_central": 1.0})
-    half = replace(seg, land={"cropland_central": 0.5, "existing_corridor": 0.5})
+    farm = replace(seg, land={"cropland_central": 1.0}, parcel_coverage=0.0)
+    half = replace(seg, land={"cropland_central": 0.5, "existing_corridor": 0.5}, parcel_coverage=0.0)
     crop = P0["land.price_per_acre.cropland_central"]
     f = P0["land.corridor.price_factor"]
     assert land_price_per_acre(farm, P0) == pytest.approx(crop)
@@ -421,3 +421,70 @@ def test_refinement_bends_a_straight_chord_around_a_lake(world):
     _, x, y = _sample(out)
     assert np.hypot(x - 30000.0, y).min() >= 1500.0 - CELL  # no longer over the lake
     assert info["cost_smoothed_musd"] < info["cost_least_cost_path_musd"]
+
+
+def test_a_strip_takes_the_buildings_it_touches():
+    """building_takes against real geometry: random square buildings in a cell, a strip of width W
+    across it; the count and footprint the strip touches match (W + s) x 1000 / CELL^2 per km."""
+    from shapely.geometry import box
+
+    from mnmaglev.gis import BUILDING_GROUPS, CELL, building_takes
+
+    rng = np.random.default_rng(7)
+    n, width = 20000, 20.0
+    side = rng.uniform(8.0, 40.0, n)
+    cx, cy = rng.uniform(0, CELL, n), rng.uniform(0, CELL, n)
+    strip = box(-100.0, CELL / 2 - width / 2, CELL + 100.0, CELL / 2 + width / 2)
+    hit = np.array([strip.intersects(box(x - s / 2, y - s / 2, x + s / 2, y + s / 2))
+                    for x, y, s in zip(cx, cy, side)])
+    a = side ** 2
+    sums = {"n": n, "side": side.sum(), "area": a.sum(), "aside": (a * side).sum()}
+    b = {f"{g}_{k}": (v if g == "residential" else 0.0) for g in BUILDING_GROUPS for k, v in sums.items()}
+    t = building_takes(b, width)["residential"]
+    per_km = 1000.0 / CELL  # the strip crosses the cell once: CELL metres of route
+    assert t["n"] == pytest.approx(hit.sum() * per_km, rel=0.03)
+    assert t["m2"] == pytest.approx(a[hit].sum() * per_km, rel=0.03)
+
+
+def test_parcel_values_replace_class_prices_where_they_cover(world):
+    from dataclasses import replace
+
+    from mnmaglev.costs import land_price_per_acre
+
+    params, _, lines = world
+    P0 = nominal(params)
+    seg = next(l for l in lines if l.id == "spine").segments[0]
+    crop = P0["land.price_per_acre.cropland_central"]
+    k = P0["land.parcels.emv_to_market"]
+    f = P0["land.corridor.price_factor"]
+    farm = replace(seg, land={"cropland_central": 1.0}, parcel_price=20000.0)
+    assert land_price_per_acre(replace(farm, parcel_coverage=0.0), P0) == pytest.approx(crop)
+    assert land_price_per_acre(replace(farm, parcel_coverage=1.0), P0) == pytest.approx(0.02 * k)
+    assert land_price_per_acre(replace(farm, parcel_coverage=0.25), P0) == pytest.approx(0.25 * 0.02 * k + 0.75 * crop)
+    # beside a freeway the right-of-way still costs price_factor x the (parcel) land around it
+    half = replace(farm, land={"cropland_central": 0.5, "existing_corridor": 0.5}, parcel_coverage=1.0)
+    assert land_price_per_acre(half, P0) == pytest.approx(0.5 * 0.02 * k * (1 + f))
+
+
+def test_buildings_are_taken_only_where_the_right_of_way_can_take_them(world):
+    """Takes scale with the takeable km (not urban ends, bridges, freeway right-of-way) and width."""
+    from dataclasses import replace
+
+    from mnmaglev.costs import building_cost, building_takes, segment_capital
+
+    params, _, lines = world
+    P0 = nominal(params)
+    seg = next(l for l in lines if l.id == "spine").segments[0]
+    dens = {"residential": {"n": 100.0, "side": 1200.0, "area": 15000.0, "aside": 2e5},
+            "nonresidential": {"n": 0.0, "side": 0.0, "area": 0.0, "aside": 0.0},
+            "agriculture": {"n": 0.0, "side": 0.0, "area": 0.0, "aside": 0.0}}
+    s = replace(seg, buildings=dens, structure={"elevated": 1.0}, land={"cropland_central": 1.0})
+    n, m2 = building_takes(s, {"elevated": 20.0})
+    assert n["residential"] == pytest.approx(s.rural_guideway_km * (20 * 100 + 1200) / 1000)
+    assert m2["residential"] == pytest.approx(s.rural_guideway_km * (20 * 15000 + 2e5) / 1000)
+    half = replace(s, land={"cropland_central": 0.5, "existing_corridor": 0.5})
+    assert building_takes(half, {"elevated": 20.0})[0]["residential"] == pytest.approx(0.5 * n["residential"])
+    home = P0["land.buildings.home_value"] * P0["land.parcels.emv_to_market"] + P0["land.buildings.home_relocation"]
+    assert building_cost(n, m2, P0) == pytest.approx(
+        n["residential"] * home + m2["residential"] * P0["land.buildings.demolition_per_m2"] / 1e6)
+    assert segment_capital(s, P0)["buildings"] > segment_capital(replace(s, buildings={}), P0)["buildings"] == 0

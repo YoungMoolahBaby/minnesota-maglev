@@ -160,3 +160,17 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     whether depth matters enough to split shallow (Terric, 40-130 cm over mineral soil) from deep
     Histosols (SSURGO taxsubgrp). Sources: MnDOT foundation practice on peat (I-35 and US-2
     through bogs), Shanghai maglev piling on soft soil, Dutch and Finnish rail on peat.
+
+31. [ ] Buildings in the right-of-way (GIS slice 5): business relocation per building
+    (`land.buildings.business_relocation`, 0.15 MUSD, placeholder: 49 CFR 24 moving costs are
+    uncapped and machinery dominates; MnDOT or Met Council relocation records for the Southwest and
+    Blue Line LRT takings would give real figures), the depreciated value of commercial and farm
+    buildings per m2 of footprint (`nonresidential_value_per_m2`, `farm_value_per_m2`: the parcels
+    have emv_bldg, but tying it to footprints needs parcel polygons), demolition and abatement per m2,
+    and apartment buildings (one USA Structures footprint, many households to relocate).
+
+32. [ ] Parcels where MnGeo has none: the 28 counties that don't publish open parcels (on our
+    routes Pine, Goodhue, Dodge, Blue Earth, Nicollet, Beltrami, Kandiyohi, Todd, Wadena) via a data
+    request to the counties or the internal MnGeo compilation (state agencies only), and Wisconsin
+    (statewide parcel layer V10 from the Wisconsin State Cartographer's Office, with assessed
+    values) and Illinois (county by county) for the Chicago line.

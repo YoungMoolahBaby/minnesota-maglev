@@ -8,8 +8,11 @@
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
 # above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
 # muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
-# for peat elsewhere).
-# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
+# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
+# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
+# acre where parcel_coverage says the parcels cover the route.
+# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: north_woods
@@ -21,33 +24,51 @@ curves:
   vertices_removed_for_curves: 12
   refinement_moves: 74
   all_curves_fit: true
-  cost_least_cost_path_musd: 17748
-  cost_smoothed_musd: 17389
+  cost_least_cost_path_musd: 17728
+  cost_smoothed_musd: 17325
 pieces:
 - from: st_cloud
   to:
     id: wp_0_1
-    lat: 46.00078
-    lon: -94.17321
+    lat: 46.00051
+    lon: -94.17316
   zone: central
   length_km: 50.5
   crow_km: 49.1
   detour: 1.028
   land_shares:
-    suburban: 0.039
-    urban: 0.054
-    forest: 0.118
-    open: 0.639
-    wetland: 0.148
+    suburban: 0.04
+    urban: 0.052
+    forest: 0.112
+    open: 0.661
+    wetland: 0.132
     water: 0.002
-  floodplain_share: 0.032
-  floodplain_1pct_share: 0.031
+  floodplain_share: 0.028
+  floodplain_1pct_share: 0.027
   floodway_km: 0.1
   flood_map_coverage: 1.0
-  built_up_share: 0.013
+  built_up_share: 0.011
   highway_corridor_share: 0.008
   highway_corridor_km: 0.4
-  peat_share: 0.056
+  buildings_per_km2:
+    residential:
+      n: 9.7
+      side: 140.0
+      area: 2412.1
+      aside: 56748.7
+    nonresidential:
+      n: 1.2
+      side: 13.7
+      area: 175.3
+      aside: 2472.5
+    agriculture:
+      n: 0.3
+      side: 3.9
+      area: 55.2
+      aside: 823.3
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
+  peat_share: 0.05
   soil_survey_coverage: 1.0
   urban_km: 2.3
   urban_start_km: 2.3
@@ -69,28 +90,46 @@ pieces:
     30: 0.0
 - from:
     id: wp_0_1
-    lat: 46.00078
-    lon: -94.17321
+    lat: 46.00051
+    lon: -94.17316
   to: brainerd
   zone: north
   length_km: 40.3
   crow_km: 39.7
   detour: 1.015
   land_shares:
-    suburban: 0.033
+    suburban: 0.031
     urban: 0.026
-    forest: 0.257
-    open: 0.485
-    wetland: 0.199
+    forest: 0.258
+    open: 0.486
+    wetland: 0.2
     water: 0.0
   floodplain_share: 0.012
   floodplain_1pct_share: 0.012
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.018
+  built_up_share: 0.017
   highway_corridor_share: 0.0
   highway_corridor_km: 0.0
-  peat_share: 0.112
+  buildings_per_km2:
+    residential:
+      n: 17.0
+      side: 167.7
+      area: 1786.5
+      aside: 20786.5
+    nonresidential:
+      n: 0.7
+      side: 13.2
+      area: 346.1
+      aside: 11107.9
+    agriculture:
+      n: 0.6
+      side: 8.2
+      area: 150.4
+      aside: 3384.4
+  parcel_coverage: 0.589
+  parcel_land_usd_per_acre: 15272
+  peat_share: 0.114
   soil_survey_coverage: 1.0
   urban_km: 0.7
   urban_start_km: 0.0
@@ -112,38 +151,57 @@ pieces:
 - from: brainerd
   to: bemidji
   zone: north
-  length_km: 141.6
-  crow_km: 134.3
-  detour: 1.055
+  length_km: 140.8
+  crow_km: 134.4
+  detour: 1.048
   land_shares:
-    suburban: 0.071
-    urban: 0.015
-    forest: 0.497
-    open: 0.159
-    wetland: 0.254
+    suburban: 0.076
+    urban: 0.014
+    forest: 0.504
+    open: 0.166
+    wetland: 0.236
     water: 0.004
-  floodplain_share: 0.008
-  floodplain_1pct_share: 0.008
-  floodway_km: 0.0
-  flood_map_coverage: 0.438
-  built_up_share: 0.009
-  highway_corridor_share: 0.019
-  highway_corridor_km: 2.7
-  peat_share: 0.133
+  floodplain_share: 0.01
+  floodplain_1pct_share: 0.01
+  floodway_km: 0.21
+  flood_map_coverage: 0.441
+  built_up_share: 0.01
+  highway_corridor_share: 0.013
+  highway_corridor_km: 1.9
+  buildings_per_km2:
+    residential:
+      n: 22.8
+      side: 275.2
+      area: 3578.0
+      aside: 49984.5
+    nonresidential:
+      n: 1.0
+      side: 15.9
+      area: 294.9
+      aside: 6441.1
+    agriculture:
+      n: 0.3
+      side: 3.2
+      area: 41.7
+      aside: 574.7
+  parcel_coverage: 0.283
+  parcel_land_usd_per_acre: 25325
+  peat_share: 0.118
   soil_survey_coverage: 1.0
-  urban_km: 1.3
-  urban_start_km: 0.6
+  urban_km: 0.9
+  urban_start_km: 0.3
   urban_end_km: 0.6
-  bridges_m: []
-  max_ground_grade_1km: 0.0439
+  bridges_m:
+  - 210
+  max_ground_grade_1km: 0.0388
   elev_range_m:
-  - 360
+  - 354
   - 493
-  guideway_max_height_m: 10.9
+  guideway_max_height_m: 9.7
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 1.27
-    10: 0.09
+    5: 1.81
+    10: 0.0
     15: 0.0
     20: 0.0
     25: 0.0

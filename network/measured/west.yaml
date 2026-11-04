@@ -8,8 +8,11 @@
 # pier_excess_m_km = metres above each reference height x km (tall piers are priced
 # above costs.guideway.pier_height_ref). gSSURGO soils: peat_share = Histosols (peat,
 # muck) on the surveyed part, soil_survey_coverage = share surveyed (wetland stands in
-# for peat elsewhere).
-# Not yet: parcels, rail corridors. Land shares: NLCD groups (water, suburban = developed
+# for peat elsewhere). Buildings (FEMA USA Structures): buildings_per_km2 by group beside
+# the takeable km (n = count, side = sum sqrt(m2), area = sum m2, aside = sum m2^1.5).
+# County parcels (MnGeo open counties): parcel_land_usd_per_acre = assessed land EMV per
+# acre where parcel_coverage says the parcels cover the route.
+# Not yet: rail corridors, public and tribal land. Land shares: NLCD groups (water, suburban = developed
 # open/low, urban = developed medium/high, forest, open = crops/pasture/grass/shrub/barren,
 # wetland).
 line: west
@@ -17,48 +20,66 @@ curves:
   r_cruise_m: 3980.2213558022463
   r_urban_m: 861.0538357603562
   simplify_tol_m: 300.0
-  vertices: 85
-  vertices_removed_for_curves: 40
-  refinement_moves: 135
+  vertices: 91
+  vertices_removed_for_curves: 37
+  refinement_moves: 143
   all_curves_fit: true
-  cost_least_cost_path_musd: 30105
-  cost_smoothed_musd: 30728
+  cost_least_cost_path_musd: 30023
+  cost_smoothed_musd: 30528
 pieces:
 - from: midway_hub
   to: st_cloud
   zone: central
-  length_km: 107.3
+  length_km: 107.7
   crow_km: 102.7
-  detour: 1.045
+  detour: 1.049
   land_shares:
-    suburban: 0.209
-    urban: 0.138
+    suburban: 0.191
+    urban: 0.148
     forest: 0.059
-    open: 0.552
-    wetland: 0.034
+    open: 0.559
+    wetland: 0.035
     water: 0.008
-  floodplain_share: 0.032
-  floodplain_1pct_share: 0.028
-  floodway_km: 0.84
+  floodplain_share: 0.028
+  floodplain_1pct_share: 0.027
+  floodway_km: 0.73
   flood_map_coverage: 1.0
-  built_up_share: 0.14
-  highway_corridor_share: 0.014
-  highway_corridor_km: 1.5
+  built_up_share: 0.117
+  highway_corridor_share: 0.017
+  highway_corridor_km: 1.8
+  buildings_per_km2:
+    residential:
+      n: 87.1
+      side: 1122.0
+      area: 15743.0
+      aside: 242764.8
+    nonresidential:
+      n: 1.7
+      side: 31.3
+      area: 733.9
+      aside: 21156.3
+    agriculture:
+      n: 0.7
+      side: 9.3
+      area: 138.2
+      aside: 2393.7
+  parcel_coverage: 0.85
+  parcel_land_usd_per_acre: 103830
   peat_share: 0.019
   soil_survey_coverage: 1.0
-  urban_km: 11.1
-  urban_start_km: 9.4
-  urban_end_km: 1.7
+  urban_km: 13.9
+  urban_start_km: 12.3
+  urban_end_km: 1.6
   bridges_m:
-  - 315
+  - 210
   - 105
   - 105
   - 315
-  max_ground_grade_1km: 0.0237
+  max_ground_grade_1km: 0.0304
   elev_range_m:
   - 248
-  - 317
-  guideway_max_height_m: 2.6
+  - 316
+  guideway_max_height_m: 2.9
   km_over_25m_high: 0.0
   pier_excess_m_km:
     5: 0.0
@@ -70,37 +91,55 @@ pieces:
 - from: st_cloud
   to: alexandria
   zone: central
-  length_km: 105.0
+  length_km: 105.2
   crow_km: 100.9
-  detour: 1.04
+  detour: 1.042
   land_shares:
-    suburban: 0.069
-    urban: 0.045
-    forest: 0.059
-    open: 0.73
-    wetland: 0.098
-    water: 0.0
-  floodplain_share: 0.021
-  floodplain_1pct_share: 0.021
+    suburban: 0.07
+    urban: 0.044
+    forest: 0.063
+    open: 0.713
+    wetland: 0.108
+    water: 0.002
+  floodplain_share: 0.019
+  floodplain_1pct_share: 0.019
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.031
-  highway_corridor_share: 0.009
-  highway_corridor_km: 0.9
+  built_up_share: 0.029
+  highway_corridor_share: 0.008
+  highway_corridor_km: 0.8
+  buildings_per_km2:
+    residential:
+      n: 21.9
+      side: 303.6
+      area: 4888.5
+      aside: 100083.0
+    nonresidential:
+      n: 0.6
+      side: 11.9
+      area: 382.5
+      aside: 17532.1
+    agriculture:
+      n: 0.9
+      side: 14.0
+      area: 245.7
+      aside: 4774.3
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
   peat_share: 0.067
   soil_survey_coverage: 1.0
   urban_km: 3.3
-  urban_start_km: 2.9
-  urban_end_km: 0.3
+  urban_start_km: 3.0
+  urban_end_km: 0.2
   bridges_m: []
   max_ground_grade_1km: 0.0453
   elev_range_m:
-  - 313
-  - 434
-  guideway_max_height_m: 4.9
+  - 311
+  - 432
+  guideway_max_height_m: 5.4
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 0.0
+    5: 0.04
     10: 0.0
     15: 0.0
     20: 0.0
@@ -109,30 +148,48 @@ pieces:
 - from: alexandria
   to:
     id: wp_2_1
-    lat: 46.00023
-    lon: -95.49653
+    lat: 46.00034
+    lon: -95.4966
   zone: central
   length_km: 16.1
   crow_km: 15.7
-  detour: 1.024
+  detour: 1.025
   land_shares:
-    suburban: 0.101
-    urban: 0.088
-    forest: 0.08
-    open: 0.614
-    wetland: 0.096
+    suburban: 0.103
+    urban: 0.09
+    forest: 0.081
+    open: 0.617
+    wetland: 0.089
     water: 0.022
   floodplain_share: 0.0
   floodplain_1pct_share: 0.0
   floodway_km: 0.0
   flood_map_coverage: 1.0
-  built_up_share: 0.058
+  built_up_share: 0.052
   highway_corridor_share: 0.0
   highway_corridor_km: 0.0
-  peat_share: 0.061
+  buildings_per_km2:
+    residential:
+      n: 35.9
+      side: 465.6
+      area: 6644.2
+      aside: 105131.6
+    nonresidential:
+      n: 0.8
+      side: 13.2
+      area: 222.8
+      aside: 3908.9
+    agriculture:
+      n: 0.5
+      side: 6.6
+      area: 110.9
+      aside: 2194.4
+  parcel_coverage: 0.0
+  parcel_land_usd_per_acre: 0
+  peat_share: 0.059
   soil_survey_coverage: 1.0
-  urban_km: 0.9
-  urban_start_km: 0.9
+  urban_km: 1.1
+  urban_start_km: 1.1
   urban_end_km: 0.0
   bridges_m:
   - 105
@@ -152,28 +209,46 @@ pieces:
     30: 0.0
 - from:
     id: wp_2_1
-    lat: 46.00023
-    lon: -95.49653
+    lat: 46.00034
+    lon: -95.4966
   to: moorhead
   zone: north
-  length_km: 141.2
-  crow_km: 137.5
+  length_km: 141.1
+  crow_km: 137.4
   detour: 1.027
   land_shares:
-    suburban: 0.079
+    suburban: 0.077
     urban: 0.011
-    forest: 0.081
-    open: 0.734
-    wetland: 0.082
+    forest: 0.083
+    open: 0.739
+    wetland: 0.077
     water: 0.013
-  floodplain_share: 0.032
+  floodplain_share: 0.03
   floodplain_1pct_share: 0.021
-  floodway_km: 0.21
-  flood_map_coverage: 0.714
+  floodway_km: 0.32
+  flood_map_coverage: 0.716
   built_up_share: 0.021
   highway_corridor_share: 0.007
-  highway_corridor_km: 1.1
-  peat_share: 0.035
+  highway_corridor_km: 0.9
+  buildings_per_km2:
+    residential:
+      n: 24.9
+      side: 315.2
+      area: 4328.6
+      aside: 64652.6
+    nonresidential:
+      n: 0.8
+      side: 15.3
+      area: 362.0
+      aside: 10583.5
+    agriculture:
+      n: 0.4
+      side: 6.0
+      area: 106.2
+      aside: 2178.3
+  parcel_coverage: 0.382
+  parcel_land_usd_per_acre: 22723
+  peat_share: 0.033
   soil_survey_coverage: 1.0
   urban_km: 0.3
   urban_start_km: 0.0
@@ -181,8 +256,8 @@ pieces:
   bridges_m:
   - 210
   - 210
-  - 420
-  - 210
+  - 315
+  - 315
   max_ground_grade_1km: 0.0343
   elev_range_m:
   - 276
@@ -190,8 +265,8 @@ pieces:
   guideway_max_height_m: 11.8
   km_over_25m_high: 0.0
   pier_excess_m_km:
-    5: 2.25
-    10: 0.4
+    5: 1.85
+    10: 0.26
     15: 0.0
     20: 0.0
     25: 0.0

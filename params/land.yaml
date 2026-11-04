@@ -35,12 +35,12 @@ price_per_acre:
     conf: "low"
     source: "downtown Minneapolis: 0.8 acre sold for $8.4 M in 2021 (~10.5 M/acre, Star Tribune); listings at 2.8-7.3 M/acre (LoopNet asks). St. Paul not found"
   suburban:
-    value: 0.35
-    low: 0.12
-    high: 0.9
+    value: 0.23
+    low: 0.073
+    high: 0.44
     unit: MUSD/acre
-    conf: placeholder
-    source: developed suburban land incl. structures
+    conf: "medium"
+    source: "land only (buildings are priced per building taken, land.buildings): MnGeo open parcels, assessed land EMV per acre in NLCD developed open/low-intensity cells (>60%) on the spine grid, 2026-11-04 run, 15,412 cells: median 230,111, p10 73,070, p90 436,356 USD/acre. Used where counties don't publish parcels"
   cropland_south:
     value: 0.011
     low: 0.0095
@@ -105,7 +105,65 @@ acquisition_multiplier:
   high: 2.2
   unit: x land price
   conf: placeholder
-  source: severance damages (cut farm fields), relocations, appraisal and legal, eminent domain delays
+  source: severance damages (cut farm fields), appraisal and legal, eminent domain delays (buildings and relocations are priced separately where the GIS counts them, see buildings below)
+
+# Measured lines (GIS slice 5): land price from county parcels where counties publish them as open
+# data (MnGeo; estimated market value of the land, emv_land / acres), the class prices above elsewhere.
+parcels:
+  emv_to_market:
+    value: 1.05
+    low: 0.98
+    high: 1.15
+    unit: x assessed estimated market value (EMV)
+    conf: "low"
+    source: "Minn. Stat. 273.11 subd. 1: EMV is meant to be market value; the Department of Revenue's sales ratio study holds county median ratios to 90-105% (IAAO standard), so sales run ~0-10% above EMV; EMV also lags a rising market by a year or two"
+
+# Buildings in the right-of-way (GIS slice 5): FEMA USA Structures footprints (> 450 sq ft) along the
+# route; a building is taken when the right-of-way touches it. Land under it is priced above (per acre).
+# Dense urban ends run in streets (urban viaduct price, no takes); freeway right-of-way has none.
+buildings:
+  home_value:
+    value: 0.255
+    low: 0.197
+    high: 0.346
+    unit: MUSD per home taken (building only, EMV)
+    conf: "medium"
+    source: "MnGeo open parcels on the spine grid (2026-11-04 run, 367,871 residential parcels with a building): emv_bldg median $254,500, p25 197,300, p75 345,600; cf. ACS 2020-2024 median owner-occupied value in Minnesota $329,300 incl. land. Apartment buildings count as one home (undercounts relocations there)"
+  home_relocation:
+    value: 0.06
+    low: 0.03
+    high: 0.10
+    unit: MUSD per home taken
+    conf: "low"
+    source: "49 CFR 24 as amended 2024-05-03 (89 FR 36908, in force 2024-06-03): replacement housing payment up to $41,200 for homeowners, $9,570 for tenants (more as 'last resort housing'), plus moving costs, closing costs and relocation advisory services"
+  business_relocation:
+    value: 0.15
+    low: 0.06
+    high: 0.50
+    unit: MUSD per nonresidential building taken
+    conf: placeholder
+    source: "49 CFR 24.301-24.305 (2024 amounts): actual reasonable moving costs (no cap; machinery and stock dominate), reestablishment up to $33,200, site search up to $5,000, or a fixed payment up to $53,200 instead; goodwill and business losses are not federal entitlements"
+  nonresidential_value_per_m2:
+    value: 1200
+    low: 600
+    high: 2500
+    unit: USD per m2 of footprint
+    conf: placeholder
+    source: "depreciated value of commercial and industrial buildings, mostly one storey; new construction runs ~2,000-3,500 USD/m2 of floor"
+  farm_value_per_m2:
+    value: 150
+    low: 75
+    high: 300
+    unit: USD per m2 of footprint
+    conf: placeholder
+    source: "barns, sheds, machine buildings, bins (USA Structures 'Agriculture'); new pole barns cost ~160-430 USD/m2 ($15-40 per sq ft), older buildings are worth much less"
+  demolition_per_m2:
+    value: 100
+    low: 50
+    high: 200
+    unit: USD per m2 of footprint
+    conf: placeholder
+    source: "demolition, abatement (asbestos, lead), utility disconnects and site restoration; residential demolition ~$4-15 per sq ft of footprint"
 
 wetlands:
   impact_fraction_elevated:

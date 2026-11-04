@@ -183,6 +183,25 @@ works), date, details. One section per tool.
   re-optimised: Duluth -> St. Cloud and Moorhead -> Rochester now connect in 10 minutes. SoilWeb's
   gNATSGO raster had keys SDA doesn't know (44% of a Pine County tile), so gSSURGO it is; its NOTCOM
   gaps (up to 10% of a piece) fall back to the wetland proxy.
+- 2026-11-04, buildings and parcels (GIS slice 5): land was overpriced, mostly by NLCD. Its 'urban'
+  class (developed medium/high intensity) covers small-town main streets, and I priced it like
+  downtown Minneapolis ($3 M/acre). Assessed parcels give $11.3k/acre on Duluth - Virginia and
+  $679k/acre on Midway - MSP. Nominal land: spine $550 -> 323 M, Iron Range line $164 -> 11 M.
+  Buildings taken add it back: spine $203 M, Chicago line $325 M, network 2,312 homes and 214 other
+  buildings. Line P50s moved under $1 bn (spine 88.8 -> 87.5), all phases $446.4 -> 443.0 bn.
+  Parcels cover 8% of the Chicago line (Minnesota open counties only) up to 100% of the Iron Range
+  line. Spine calibration: residential building EMV median $254.5k (367,871 parcels); open-county
+  land EMV medians: suburban 230k, southern farmland 10.8k (UMN's assessor table: ~11k), central
+  11.8k, forest 7.6k USD/acre.
+  The fusion fleet is fragile: re-routing the spine 0.3 km shorter moved the 1-second coincident
+  traction peak 74.6 -> 87.2 MW and the fleet 3 -> 4 units (~$1.7 bn); phase 2 130 -> 167 MW,
+  5 -> 6. Sizing on a 1-second peak makes a unit swing on small, essentially random timing changes.
+  Friction: (1) `_get_json` retried any exception, so a cache write into a missing folder looked
+  like a flaky server and the smoke test hung for minutes; now it retries only network/parse errors,
+  makes the folder and writes outside the loop. (2) A missing constant (`BUILDING_SUMS`) only
+  surfaced at runtime deep in `route()`; `ruff --select F` catches it, worth running before slow
+  GIS runs. (3) Fetch times on ArcGIS feature services, 4 workers: buildings 27 s (Iron Range, 0.27 M)
+  to 657 s (Chicago, 7.9 M points in the band); parcels 28-329 s.
 
 ## OSRD
 

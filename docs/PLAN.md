@@ -167,9 +167,35 @@ gentle bends where that lowers the cost and every curve fits) fixed it and every
 smooths to within 2% of its least-cost path. All seven lines re-routed: spine 353 km, $94.3 bn
 with fusion (3 units, by 0.2 MW), phase 2 $230.1 bn, all $446.4 bn; peat alone -$3.5 bn.
 
-Next slices, in order of how much they move the result: parcels and buildings, public and tribal
-lands, out-of-state land prices, and a price for what following a highway saves in permits and
-review. Also: small water crossings (<100 m, or cells under half water) aren't counted as bridges.
+**Slice 5, buildings and parcels, 2026-11-04.** FEMA / ORNL USA Structures (CC BY 4.0; centroid,
+occupancy class and footprint of every building over 450 sq ft, national) and MnGeo's open county
+parcels (assessed land EMV per acre; 59 of 87 counties), both from ArcGIS feature services in
+10 km tiles within 15 km of each line's last alignment (land cover stands in further out). A
+building is taken when the right-of-way touches it: per km through a cell, sum (W + sqrt(footprint))
+x 1000 / cell area, checked against polygon geometry in a test. Takes are priced per home (assessed
+building value, median $254,500 from 367,871 spine-grid parcels, + Uniform Act relocation) and per
+m2 for businesses and farm buildings (+ business relocation, placeholders), plus demolition; not
+in dense urban cells (street running), over water or in freeway right-of-way. Land: parcel EMV
+x `land.parcels.emv_to_market` where counties publish parcels, class prices elsewhere; the suburban
+class price is now land only, from the parcels ($0.23 M/acre, was $0.35 M incl. buildings). Both
+go into the cost surface, so the router steers around houses. All seven lines re-routed (all
+curves fit): spine 352 km, ~535 homes and ~32 other buildings taken ($0.2 bn nominal), line P50
+$87.5 bn (was $88.8 bn: land at parcel prices, -$0.2 bn nominal, mostly NLCD 'urban' cells in
+small cities that were priced like downtown Minneapolis); with fusion $94.6 bn, up $0.3 bn because
+the fleet went back to 4 units (the 1-second peak moved 74.6 -> 87.2 MW on a route 0.3 km
+shorter; phase 2 130 -> 167 MW, 5 -> 6 units; same timetable offsets, the optimiser kept them).
+Phase 2 $228.6 bn, all $443.0 bn (was $446.4 bn). Network: 2,312 homes and 214 other buildings
+taken.
+The routes now steer around houses: counted cell by cell along each path at the 20 m elevated width
+on the same building layers, homes taken went spine 480 -> 460, west 486 -> 417, Great Lakes
+946 -> 757 (old alignments vs new; other buildings about the same). The report's counts differ
+because it averages building density over each measured piece.
+
+Next slices, in order of how much they move the result: public and tribal lands, out-of-state land
+prices and parcels (Wisconsin's statewide parcel layer; RESEARCH 32), a price for what following a
+highway saves in permits and review, and the fusion fleet's sensitivity to the 1-second peak
+(it swings a unit, ~$1.7 bn, on small route changes). Also: small water crossings (<100 m, or cells
+under half water) aren't counted as bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

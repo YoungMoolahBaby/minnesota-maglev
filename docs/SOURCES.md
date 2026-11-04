@@ -31,7 +31,8 @@ Cost benchmarks with exact quotes, price years and conversions: `reference/bench
 | Rainfall intensity | NOAA Atlas 14 (Atlas 15 coming) | |
 | Climate normals | NOAA NCEI 1991-2020 normals; PRISM / nClimGrid | |
 | Soils (peat) | NRCS gSSURGO via SoilWeb WCS + Soil Data Access | used, slice 4 |
-| Parcels, land value | [MnGeo parcels](https://gisdata.mn.gov/) (counties opt in); U of MN Land Economics | coverage varies by county |
+| Parcels, land value | [Parcels, Compiled from Opt-In Open Data Counties](https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_mngeo/plan_parcels_open/FeatureServer) (MnGeo, published 2026-09-02; feature service layer 1, `emv_land` / `acres_poly`); U of MN Land Economics | used, slice 5. 59 of 87 counties open (`gac_open_approval`); closed include Beltrami, Blue Earth, Nicollet, Goodhue, Dodge, Pine, Kandiyohi, Todd, Wadena. [MnGeo data disclaimer](https://mn.gov/mngeo/gis-data-and-maps/disclaimer.jsp). Only per-piece averages are committed |
+| Buildings | [FEMA / ORNL USA Structures](https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0) (footprints > 450 sq ft, occupancy class, area; national, so WI and IL too) | used, slice 5. **CC BY 4.0**, attribution: Oak Ridge National Laboratory (ORNL); FEMA Geospatial Response Office. Not Microsoft footprints (ODbL) |
 | Public and tribal land | DNR, USFS (Superior NF), BIA / tribal nations | consultation, not just data |
 | Rail and roads | MnDOT, OpenStreetMap (ODbL) | ODbL is share-alike: keep OSM-derived data separate |
 | Mines | MN DNR minerals, Iron Range pit maps | |
