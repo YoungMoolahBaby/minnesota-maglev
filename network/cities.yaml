@@ -30,3 +30,18 @@ la_crosse:     {name: La Crosse WI,          lat: 43.8014, lon: -91.2396, pop: 5
 madison:       {name: Madison WI,            lat: 43.0731, lon: -89.4012, pop: 269840, type: terminal_major}
 milwaukee:     {name: Milwaukee WI,          lat: 43.0389, lon: -87.9065, pop: 577222, type: terminal_major}
 chicago:       {name: Chicago IL,            lat: 41.8786, lon: -87.6400, pop: 2746388, type: terminal_major}
+# Phase 4, Twin Cities - Des Moines - Omaha - Denver (2026-11-04). pop: 2020 Census (POP100, TIGERweb
+# tigerWMS_Census2020 incorporated places). Coordinates: downtowns for the big cities, the Census
+# internal point for the rest; Omaha's station serves Council Bluffs (62,799) across the river, Des
+# Moines's the metro (Ankeny 67,887, West Des Moines 68,723, Waukee 23,940).
+albert_lea:    {name: Albert Lea,            lat: 43.6543, lon: -93.3641, pop: 18492,  type: city}
+mason_city:    {name: Mason City IA,         lat: 43.1486, lon: -93.1998, pop: 27338,  type: city}
+ames:          {name: Ames IA,               lat: 42.0257, lon: -93.6225, pop: 66427,  type: city}
+des_moines:    {name: Des Moines IA,         lat: 41.5868, lon: -93.6250, pop: 214133, type: terminal_major}
+omaha:         {name: Omaha NE / Council Bluffs, lat: 41.2587, lon: -95.9378, pop: 486051, type: terminal_major}
+lincoln:       {name: Lincoln NE,            lat: 40.8136, lon: -96.7026, pop: 291082, type: terminal_major}
+grand_island:  {name: Grand Island NE,       lat: 40.9219, lon: -98.3587, pop: 53131,  type: city}
+kearney:       {name: Kearney NE,            lat: 40.7012, lon: -99.0837, pop: 33790,  type: city}
+north_platte:  {name: North Platte NE,       lat: 41.1271, lon: -100.7643, pop: 23390, type: city}
+den:           {name: Denver Airport (DEN),  lat: 39.8561, lon: -104.6737, pop: 0,     type: airport}
+denver:        {name: Denver Union Station,  lat: 39.7527, lon: -105.0002, pop: 715522, type: terminal_major}

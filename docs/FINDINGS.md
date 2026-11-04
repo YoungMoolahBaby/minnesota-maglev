@@ -224,6 +224,15 @@ works), date, details. One section per tool.
   33 min, the spine 18-23 min (the route search and refinement; the PAD-US fetch is 1-8 MB per
   line). Text replacements containing a literal backslash-n, piped to Python through a bash
   heredoc, arrived as real newlines and broke a string twice; the Edit tool doesn't.
+- 2026-11-04, the Denver line and a stale timetable: `mnmaglev timetable` without `--write` prints
+  re-optimised offsets but keeps network/timetable.yaml, and I read its unchanged file as "the
+  optimiser kept the offsets". So slices 5 and 6 ran on offsets tuned for the slice-4 routes; the
+  slice-5 jump of the spine's 1-second peak (74.6 -> 87.2 MW, 3 -> 4 fusion units) was mostly
+  that. Re-optimised with `--write` for the current routes: spine 67.3 MW, 3 units, phase 1
+  $94.2 bn (the slice-6 run said $95.8 bn). The re-route workflow should re-run the timetable (or
+  `gis` should warn). Census's data API (api.census.gov) now redirects keyless requests to a
+  'missing key' page; TIGERweb's 2020 Census place layer (POP100) gives the same 2020 counts without
+  a key.
 
 ## OSRD
 

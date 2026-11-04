@@ -395,7 +395,7 @@ def write_json(net: dict, path: Path) -> None:
     path.write_text(json.dumps(out, indent=2), encoding="utf-8")
 
 
-PHASE_COLOURS = {1: "#c0392b", 2: "#2471a3", 3: "#7f8c8d"}
+PHASE_COLOURS = {1: "#c0392b", 2: "#2471a3", 3: "#7f8c8d", 4: "#b9770e"}
 
 
 def write_map(net: dict, path: Path) -> None:
@@ -431,12 +431,12 @@ MAP_TEMPLATE = """<!DOCTYPE html>
 .legend{background:#fff;padding:8px 10px;font:13px sans-serif;border-radius:4px}</style></head>
 <body><div id="map"></div><script>
 const lines = __LINES__, stations = __STATIONS__;
-const map = L.map('map').setView([45.6, -93.5], 7);
+const map = L.map('map').setView([44.0, -96.0], 6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   {maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
 for (const l of lines) {
   L.polyline(l.coords, {color: l.colour, weight: l.phase === 1 ? 6 : 4,
-    dashArray: l.phase === 3 ? '8 6' : null}).bindPopup(l.popup).addTo(map);
+    dashArray: l.phase >= 3 ? '8 6' : null}).bindPopup(l.popup).addTo(map);
 }
 for (const s of stations) {
   L.circleMarker([s.lat, s.lon], {radius: s.type === 'terminal_major' ? 8 : 6,
@@ -446,7 +446,8 @@ const legend = L.control({position: 'bottomleft'});
 legend.onAdd = () => { const d = L.DomUtil.create('div', 'legend');
   d.innerHTML = '<b>Phase</b><br><span style="color:#c0392b">&#9644;</span> 1 spine<br>' +
     '<span style="color:#2471a3">&#9644;</span> 2<br><span style="color:#7f8c8d">&#9644;</span> 3 (future)<br>' +
-    '<small>spine: GIS alignment;<br>other lines: straight lines until routed</small>'; return d; };
+    '<span style="color:#b9770e">&#9644;</span> 4 (Denver)<br>' +
+    '<small>routed lines: GIS alignment;<br>others: straight lines until routed</small>'; return d; };
 legend.addTo(map);
 </script></body></html>
 """

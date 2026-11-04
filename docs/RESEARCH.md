@@ -185,3 +185,15 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     reservations), trust vs fee land inside reservation boundaries (BIA land records). Also county
     tax-forfeit land (2.8 M acres, DNR land portfolio; not in PAD-US's fee layer) and the PAD-US
     easement layer (RIM and other conservation easements bind private land the route may take).
+
+34. [ ] The Denver line (phase 4, planner estimates): Iowa, Nebraska and Colorado land prices (Iowa
+    State's land value survey, UNL's Nebraska farm real estate report, Colorado dryland and range;
+    the model prices them as southern and central Minnesota cropland), a climate zone for the high
+    plains (wind and ground blizzards that close I-80 and I-76, thinner air at Denver's ~1,600 m
+    cuts drag), the Platte crossings and floodplain (braided channels; the central Platte between
+    Grand Island and Kearney is designated whooping crane critical habitat and the sandhill crane
+    staging area, so expect a hard environmental review there), the Missouri at Omaha / Council
+    Bluffs, and station sites (Des Moines, the Omaha riverfront, DEN, Denver Union Station with RTD).
+    Then GIS routing. Demand: MSP - Denver at 4 h 26 against ~2 h flights plus airport time, and
+    what the Iowa and Nebraska stops add (phase 7).
+

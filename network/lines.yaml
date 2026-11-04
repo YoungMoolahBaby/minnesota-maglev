@@ -252,3 +252,91 @@ lines:
         urban_end_km: 20
         urban_tunnel: 0.4
         land: {suburban: 0.4, urban_core: 0.1, existing_corridor: 0.4, cropland_south: 0.1}
+
+  - id: heartland
+    name: Twin Cities - Des Moines - Omaha - Denver
+    phase: 4
+    points: [msp, owatonna, albert_lea, mason_city, ames, des_moines, omaha, lincoln, grand_island, kearney, north_platte, den, denver]
+    note: >
+      Jon (2026-11-04): Minneapolis - Des Moines - Omaha - Denver, not via Chicago, with Albert Lea as a stop (MSP - Chicago -
+      Denver is 2,049 km in straight lines, this route 1,394, direct 1,122). Down I-35 (Owatonna,
+      Albert Lea, Mason City, Ames and Ankeny sit within a few km of the straight MSP - Des Moines
+      line), then I-80 across Iowa and up the Platte valley, then I-76 to Denver: Kearney - North
+      Platte - Denver is 26 km longer than Kearney - Denver direct and serves the only city in that
+      480 km gap. Des Moines - Omaha - Denver is the trunk a Chicago - Denver line (via Iowa City)
+      would share. Needs Iowa, Nebraska and Colorado partners; land prices and climate zones are
+      Minnesota's (RESEARCH 29, 34).
+    defaults:
+      detour: 1.06
+      zone: south
+      urban_start_km: 3
+      urban_end_km: 3
+      urban_tunnel: 0.0
+      structure: {elevated: 0.6, at_grade: 0.4}
+      land: {cropland_south: 0.75, existing_corridor: 0.15, suburban: 0.05, wetland: 0.05}
+      floodplain: 0.06
+      peat: 0.01
+      bridges: []
+    segments:
+      - from: msp
+        to: owatonna
+        urban_start_km: 8
+        land: {suburban: 0.25, cropland_south: 0.5, existing_corridor: 0.2, wetland: 0.05}
+        floodplain: 0.1
+        note: leaves MSP south over the Minnesota River (measured water and floodway there, 2026-11-04 routes - southwest line 0.6 km, spine 1.9 km)
+        bridges: [{name: Minnesota River, length_m: 1000}]
+      - from: owatonna
+        to: albert_lea
+        note: down I-35
+      - from: albert_lea
+        to: mason_city
+      - from: mason_city
+        to: ames
+      - from: ames
+        to: des_moines
+        urban_end_km: 8
+        land: {suburban: 0.3, cropland_south: 0.5, existing_corridor: 0.2}
+        note: Ankeny's suburbs on the way in
+      - from: des_moines
+        to: omaha
+        detour: 1.08
+        urban_start_km: 6
+        urban_end_km: 6
+        floodplain: 0.1
+        note: the Loess Hills drop to the Missouri at Council Bluffs
+        bridges: [{name: Missouri River and floodplain, length_m: 1000}]
+      - from: omaha
+        to: lincoln
+        urban_start_km: 6
+        urban_end_km: 5
+        floodplain: 0.12
+        bridges: [{name: Platte River, length_m: 800}]
+      - from: lincoln
+        to: grand_island
+        urban_start_km: 5
+        floodplain: 0.1
+        note: crosses to the Platte's north bank (Grand Island, Kearney, North Platte)
+        bridges: [{name: Platte River, length_m: 800}]
+      - from: grand_island
+        to: kearney
+        floodplain: 0.2
+        note: Platte valley
+      - from: kearney
+        to: north_platte
+        floodplain: 0.2
+        note: Platte valley
+      - from: north_platte
+        to: den
+        land: {cropland_central: 0.8, existing_corridor: 0.15, wetland: 0.05}
+        floodplain: 0.05
+        note: >
+          High plains along I-76 (Sterling, Fort Morgan), climbing ~800 m to Denver over ~360 km;
+          dryland wheat and range, priced as central Minnesota cropland
+        bridges: [{name: South Platte River, length_m: 400}]
+      - from: den
+        to: denver
+        detour: 1.15
+        urban_start_km: 4
+        urban_end_km: 12
+        urban_tunnel: 0.3
+        land: {suburban: 0.4, urban_core: 0.1, existing_corridor: 0.45, cropland_central: 0.05}

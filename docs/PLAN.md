@@ -64,6 +64,12 @@ from the one before with measurements.
   in params/winter.yaml and src/mnmaglev/winter.py, `settings.winter_heating: targeted`. Heating
   adds to the storm-time peak in fusion sizing (spine 4 -> 5 units); heating the whole line during
   icing would need 10. Overnight warming fits in the idle units.
+- **2026-11-04, Denver via Des Moines and Omaha** (Jon): a phase 4 line Twin Cities - Owatonna -
+  Albert Lea - Mason City - Ames - Des Moines - Omaha - Lincoln - Grand Island - Kearney - North Platte - DEN -
+  Denver, not Twin Cities - Chicago - Denver (the rail network's shape, 82% longer than direct) and
+  not direct via Sioux Falls (shortest, but ~800 km of nearly empty high plains). Why: 21% longer
+  than direct but people the whole way, Iowa's and Nebraska's cities on it, and Des Moines - Denver
+  is the trunk a Chicago - Denver line would share. Needs Iowa, Nebraska and Colorado partners.
 - **2026-11-03, staggered timetable** (Jon): departures staggered at the Midway hub instead of every
   line leaving on the hour. `mnmaglev timetable --write` -> network/timetable.yaml (offsets per line
   and direction, phase by phase, minimising the network's 1-second power peak; a direction that
@@ -183,7 +189,9 @@ curves fit): spine 352 km, ~535 homes and ~32 other buildings taken ($0.2 bn nom
 $87.5 bn (was $88.8 bn: land at parcel prices, -$0.2 bn nominal, mostly NLCD 'urban' cells in
 small cities that were priced like downtown Minneapolis); with fusion $94.6 bn, up $0.3 bn because
 the fleet went back to 4 units (the 1-second peak moved 74.6 -> 87.2 MW on a route 0.3 km
-shorter; phase 2 130 -> 167 MW, 5 -> 6 units; same timetable offsets, the optimiser kept them).
+shorter; phase 2 130 -> 167 MW, 5 -> 6 units). Correction (later the same day): those peaks ran on
+the slice-4 timetable offsets; `mnmaglev timetable` without `--write` only prints, so the offsets
+re-optimised for the new routes were never saved (fixed with phase 4, below).
 Phase 2 $228.6 bn, all $443.0 bn (was $446.4 bn). Network: 2,312 homes and 214 other buildings
 taken.
 The routes now steer around houses: counted cell by cell along each path at the 20 m elevated width
@@ -210,16 +218,37 @@ west 371 -> 379 km (around Elm Creek Park Reserve), and on the Chicago line buil
 19.7 -> 28.0 km, because in the suburbs the parks and forest preserves were the open gaps. Line P50
 spine $88.8 bn (was $87.5), west 80.9 (80.3), southwest 24.1 (23.5), Chicago 139.5 (137.3); 4(f)
 replacement land and tribal premiums $33 M nominal in all. Spine with fusion $95.8 bn, phase 2
-$231.1 bn, all $447.8 bn (was $443.0; P10 387.3, P90 518.1). Fusion fleet 4 / 6 / 9 units; the
-spine's 1-second peak fell back to 74.8 MW, still 4 units (with storm heating and the 10% margin
-it needs 100.6 MW of the 100 two working units give). Timetable offsets unchanged.
+$231.1 bn, all $447.8 bn (was $443.0; P10 387.3, P90 518.1). Fusion fleet 4 / 6 / 9 units, still on
+the stale slice-4 offsets (spine 1-second peak 74.8 MW); see phase 4 for the re-optimised timetable.
+
+**Phase 4 line: Twin Cities - Des Moines - Omaha - Denver, 2026-11-04 (planner estimates).** Jon
+(2026-11-04): reach Denver from Minneapolis through Des Moines and Omaha, not through Chicago, and
+serve Iowa's and Nebraska's cities; Albert Lea a stop too (Jon: "a solid town"). Straight-line km: MSP - Chicago - Denver 2,049, this route
+1,394, MSP - Denver direct 1,122; Des Moines - Omaha - Denver is also the trunk a Chicago - Denver
+line would share (Chicago - Des Moines - Omaha - Denver is as short as Chicago - Denver direct,
+1,478). Stations: MSP, Owatonna (transfer to the Rochester - Mankato line), Albert Lea, Mason City, Ames, Des
+Moines, Omaha / Council Bluffs, Lincoln, Grand Island, Kearney, North Platte, Denver airport (DEN),
+Denver Union Station; I-35 to Des Moines (Owatonna, Albert Lea, Mason City, Ames and Ankeny lie
+within a few km of the straight line), I-80 and the Platte valley, I-76 to Denver (via North Platte
+is 26 km longer than Kearney - Denver direct). Populations: 2020 Census via TIGERweb. Shares,
+bridges and urban km are planner estimates until GIS routes it; Minnesota land prices and climate
+zones stand in (RESEARCH 34). Result: 1,486 km, MSP - Denver 4 h 26 with 11 intermediate stops
+(MSP - Des Moines ~1 h 11 of running time, - Omaha ~1 h 44), $302.9 bn P50 (P10 258.6, P90 353.0),
+$204 M per km, 23 trains; the Albert Lea stop adds ~5 min and $2.4 bn P50. Timetable re-optimised for every phase with `--write` (the slice 5 and 6
+routes had run on stale offsets): 1-second peaks 67 / 134 / 236 / 390 MW, fusion fleet 3 / 6 / 9 /
+16 units (phase 4's seven new units are set by overnight ice warming of the long line, $8.2 bn).
+Spine with fusion $94.2 bn (3 units again), phase 2 $231.1 bn, phase 3 $447.8 bn, through phase 4
+$759.1 bn (P10 654.3, P90 880.9).
 
 Next slices, in order of how much they move the result: how hard to avoid 4(f) land (the
 placeholder avoidance moved ~$4.8 bn; RESEARCH 33), out-of-state land prices and parcels
 (Wisconsin's statewide parcel layer; RESEARCH 32), a price for what following a highway saves in
 permits and review, travel time in the route search (detours cost minutes it doesn't see), and the
-fusion fleet's sensitivity to the 1-second peak (it swings a unit, ~$1.7 bn, on small route
-changes). Also: small water crossings (<100 m, or cells under half water) aren't counted as bridges.
+fusion fleet's sensitivity to the 1-second peak (it swings a unit, ~$1.7 bn, when the timetable
+offsets aren't re-optimised after a re-route; `gis` should re-run the timetable, or warn). Routing
+the Denver line on GIS (~1,500 km, three states; the Chicago line's 556 km took 36-61 min) and
+out-of-state land prices for it. Also: small water crossings (<100 m, or cells under half water)
+aren't counted as bridges.
 
 Turn straight lines into real alignments and measure the segment shares instead of estimating them.
 

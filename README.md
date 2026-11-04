@@ -8,7 +8,8 @@ iron and copper you'd have to mine to build it.
 **Priority corridor:** Duluth - Twin Cities - Rochester (phase 1), with one Twin Cities hub in the
 Midway area between Minneapolis and St. Paul, fed by light rail and buses. Then the Iron Range, St. Cloud -
 Fargo/Moorhead and Mankato (phase 2). Later: Brainerd/Bemidji, a southern link, and Rochester - La Crosse -
-Madison - Milwaukee - Chicago (phase 3, needs partner states).
+Madison - Milwaukee - Chicago (phase 3, needs partner states), and Twin Cities - Des Moines - Omaha -
+Denver (phase 4, needs partner states).
 
 ## What it does today (phase 0)
 
@@ -45,9 +46,13 @@ After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 3 fusion units | 353 | 1 h 01 | $94.3 bn ($82 - 109 bn) |
-| Network through phase 2, all GIS-measured (5 fusion units) | 951 | | $230 bn ($199 - 266 bn) |
-| Everything incl. Chicago, all GIS-measured (9 fusion units) | 1,865 | | $446 bn ($385 - 516 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, staggered timetable and 3 fusion units | 359 | 1 h 02 | $94.2 bn ($82 - 109 bn) |
+| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $231 bn ($200 - 268 bn) |
+| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $448 bn ($387 - 518 bn) |
+| Through phase 4, incl. Denver via Des Moines and Omaha (planner estimates, 16 fusion units) | 3,364 | MSP - Denver 4 h 26 | $759 bn ($654 - 881 bn) |
+
+(2026-11-04: GIS slices 1-6, i.e. elevation, land cover, floods, suburbs and freeways, peat,
+buildings and parcels, public and tribal land; the Denver line isn't routed yet.)
 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
@@ -67,11 +72,12 @@ pays ~$2.3 M of production tax to the Range on the spine. `--local-supply off` s
 Helion / Zap Energy class), more than the trains need, instead of batteries. The model simulates
 every train on the timetable second by second (braking trains feed pulling ones) and sizes the
 fleet to cover the 1-second peak plus 10% and one spare unit: the spine averages 25 MW but peaks
-at 75 MW with staggered departures (95 MW if every train left on the hour), plus 16 MW of ice
-heating during storms: 99.8 MW with the 10% margin, just under the 100 MW two working units
-give, so it gets 3 units (150 MW, one spare) for ~$5.4 bn P50 (0.2 MW more and it takes 4), and
+at 67 MW with staggered departures (94 MW if every train left on the hour), plus 17 MW of ice
+heating during storms: 92 MW with the 10% margin, under the 100 MW two working units give, so it
+gets 3 units (150 MW, one spare) for ~$5.4 bn P50 (re-optimise the timetable after every re-route:
+on stale offsets the peak can jump past 100 MW and add a unit), and
 ~80% of their output (~0.9 TWh/yr) is surplus for neighbouring users (hydrogen steelmaking on the Range needs ~1 GW, data centres, the
-Midway hub district) or the grid. The full network gets 9 units (450 MW). At wholesale prices the
+Midway hub district) or the grid. Through phase 3 the network gets 9 units (450 MW), through phase 4 16. At wholesale prices the
 surplus and the grid power the trains no longer buy only just beat the plant's O&M, so the case is
 strategic (carbon-free, energy security, Range industry), not cost. Every fusion number is a target
 or projection: no fusion plant has made net electricity yet, a first Minnesota unit is ~2035 at the
