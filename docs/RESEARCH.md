@@ -30,6 +30,14 @@ which rose ~2x since 2007 and ~3x since 2003 (CPI rose ~1.6x and ~1.8x). Using C
 older benchmarks 25-40% lower; the parameter low ends allow for that. The index choice is itself
 one of the bigger judgment calls in the estimate.
 
+Research pass 3 (2026-11-04) did the elevated guideway again: 65 -> **75** (45-120), at grade
+52 -> **60** (36-95), urban viaduct anchors added (docs/PLAN.md, phase 1). Still open on it:
+Plotkin & Kim (1997) "Maglev Guideway Cost and Construction Schedule Assessment" (J. Transp. Eng.
+123(3), guideway-only costs for four US maglev designs), the Colorado AGS study (2014) Appendix F
+(guideway cost by column height), a guideway share of Shanghai's CNY 8.9-9.9 bn, and a vendor
+quote for Transrapid-class concrete beams (Max Bögl). The 1998 Chinese delegation's 20-32% maglev
+premium over HSR line works is one advocate's account.
+
 Next in this queue (by the new sensitivity table): the elevated guideway again (official sources),
 then the segment shares (elevated vs at grade, urban km), which are planner estimates not sampled
 by Monte Carlo: the GIS phase measures them. Then stations (`costs.stations.*`, placeholders),

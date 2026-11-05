@@ -42,15 +42,15 @@ uv run pytest
   and back to iron pellets, crude taconite (Mesabi Range) and copper ore (Duluth Complex grades).
 - **Map**: `out/map.html`, the network on OpenStreetMap with costs and times in the popups.
 
-After research passes 1-2 (2026-11-03; cost, Minnesota and Transrapid parameters sourced, see
+After research passes 1-3 (2026-11-03/04; cost, Minnesota and Transrapid parameters sourced, see
 `reference/benchmarks.yaml`; still concept-stage, see the report for the caveats):
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $94.3 bn ($82 - 109 bn) |
-| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $231 bn ($200 - 268 bn) |
-| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $448 bn ($387 - 518 bn) |
-| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $745 bn ($642 - 864 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $100.8 bn ($87 - 117 bn) |
+| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $248 bn ($213 - 289 bn) |
+| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $481 bn ($412 - 558 bn) |
+| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $803 bn ($686 - 933 bn) |
 
 (2026-11-04: GIS slices 1-6, i.e. elevation, land cover, floods, suburbs and freeways, peat,
 buildings and parcels, public and tribal land; out of state with Minnesota land prices.)

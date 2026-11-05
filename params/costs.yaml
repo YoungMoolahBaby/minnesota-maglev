@@ -9,23 +9,25 @@
 # construction index (`uv run mnmaglev benchmarks`). Each range covers its anchor benchmarks
 # (tests/test_benchmarks.py). Converting with CPI instead of a construction index would give
 # ~25-40% lower values for older figures; the low ends allow for that.
+# Research pass 3 (2026-11-04): guideway civil costs against conventional HSR viaducts (HS2, Texas
+# Central, CA HSR, China, India), US urban viaducts and Minnesota bridge unit costs.
 
 guideway:
   elevated:
-    value: 65
-    low: 42
-    high: 100
+    value: 75
+    low: 45
+    high: 120
     unit: MUSD/km
     conf: "low"
-    source: "benchmarks (2026 USD): FRA 2005 Report to Congress, Pittsburgh (100% elevated) guideway ~79; Transrapid Munich itemised ~60 (Vieregg-Rössler 2007, net of planning/contingency); SCMaglev DEIS viaduct ~76; Pittsburgh promoter 2001 ~81. Whether FRA unit costs carry contingency is not stated, so the value sits below their median"
+    source: "benchmarks (2026 USD; pass 3 2026-11-04): maglev: Transrapid Munich itemised ~60 (Vieregg-Rössler 2007, net of planning/contingency), FRA 2005 Pittsburgh guideway ~79, SCMaglev DEIS viaduct ~76, Pittsburgh promoter 2001 ~81; conventional HSR viaduct: HS2 target 65 / budget 90 (GBP 23-32 M/km, 2015), Texas Central civil ~64 per km averaged over a route half on viaduct (so its viaduct costs more); a 1998 Chinese delegation put maglev line works 20-32% above HSR in the plains (advocate's account, low confidence). Anchor median ~77; Minnesota bridges cost about half the US state average (FHWA 2025: $208 vs $393/ft2), so the value sits a little below it. Context, not US prices: China HSR viaduct ~23, India ~18; a plain Minnesota highway-type 12.5 m deck ~27 (maglev beams carry precision and stator mounts on top)"
     note: dual-track concrete or hybrid beams on piers, rural. The default for Minnesota (snow, drifting, farm and wildlife crossings).
   at_grade:
-    value: 52
-    low: 34
-    high: 82
+    value: 60
+    low: 36
+    high: 95
     unit: MUSD/km
     conf: "low"
-    source: "Transrapid Munich at-grade ~50 (2026 USD); elevated/at-grade superstructure ratio 1.22-1.26 (two German derivations) applied to the elevated value"
+    source: "Transrapid Munich at-grade ~50 (2026 USD); elevated/at-grade superstructure ratio 1.22-1.26 (two German derivations) applied to the elevated value (75 / 1.24; pass 3 2026-11-04)"
     note: beams on low piers or a slab; needs snow clearance under the vehicle skirt and fencing.
   urban_viaduct:
     value: 150
@@ -33,7 +35,7 @@ guideway:
     high: 280
     unit: MUSD/km
     conf: low
-    source: "Honolulu guideway contracts ~139 (2026 USD, suburban medians, light metro), CA HSR viaduct ~174 (city estimate); heavier maglev structure, utility relocation, traffic staging. Whole urban lines incl. stations run ~220-450"
+    source: "Honolulu guideway contracts ~139 (2026 USD, suburban medians, light metro), CA HSR viaduct ~174 (city estimate), CA HSR San Jose approach unit prices 157 (20 ft piers) and 176 (40 ft piers) with their 15% allocated contingency removed (Q4 2021, pass 3); heavier maglev structure, utility relocation, traffic staging. Whole urban lines incl. stations run ~210-450 (Sound Transit Lynnwood L300 ~211)"
   tunnel:
     value: 500
     low: 280

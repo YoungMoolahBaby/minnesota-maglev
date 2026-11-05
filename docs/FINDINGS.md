@@ -253,6 +253,17 @@ works), date, details. One section per tool.
   inherited the via segment's 0% tunnel instead of the 30% into downtown (+$1.4 bn once fixed).
   Pieces spanning planner segments now merge the chain, the one arriving at the end winning; the
   other seven lines came out identical, to the cent.
+- 2026-11-04, research pass 3 (guideway costs): three research agents in parallel (maglev, HSR
+  viaducts, US and Minnesota structures), each with a fixed report format (figure as published,
+  currency, price year, scope, URL, verbatim quote, confidence), then every figure used re-checked
+  against the source: the World Bank and CHSRA quotes in the PDFs the agents saved, HS2, Texas
+  Central and FHWA on the web, exchange rates from the Fed's G.5A releases. All checked out. Most
+  useful: CHSRA's SF-SJ capital cost appendix has viaduct unit prices by pier height, and FHWA's
+  bridge unit cost table puts Minnesota at about half the US state average. Maglev-specific civil
+  costs stay thin: no published guideway share of Shanghai, no viaduct-only Chuo figure. Friction:
+  the Fed's 2011 G.5A release URL 404s (the 2012 release has 2010), and CHSRA's site blocks
+  automated downloads (the CEQA copy of the same appendix works).
+  Result: elevated 65 -> 75, at grade 52 -> 60; through phase 4 $744.8 -> $802.7 bn.
 
 ## OSRD
 

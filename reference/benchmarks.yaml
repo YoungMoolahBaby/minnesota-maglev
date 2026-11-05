@@ -488,6 +488,129 @@ benchmarks:
     conf: high
     anchor: false
 
+  # ===== Research pass 3 (2026-11-04): guideway civil costs =====
+  # Conventional HSR viaducts as comparators (maglev data is thin), US urban viaducts, a Minnesota
+  # bottom-up check, and the maglev-specific figures pass 3 turned up. FX: Fed G.5A annual averages.
+  - id: hs2_viaduct_target
+    param: costs.guideway.elevated
+    value: 23
+    currency: GBP
+    year: 2015
+    unit: MUSD/km
+    scope: HS2 (UK) viaducts, benchmarked target cost per km in the Phase 2 savings plan, 2015 prices; double-track HSR viaduct, what is included (risk, design) not stated
+    source: Cabinet Secretary 2016 HS2 Phase 2 report, https://www.gov.uk/government/publications/cabinet-secretary-2016-hs2-phase-1-and-2-reports/cabinet-secretary-2016-hs2-phase-2-report-html
+    quote: "For viaducts this means building at £23m per km rather than the originally budgeted cost of £32m per km"
+    conf: medium
+    note: conventional HSR, a high-cost western country; the closest scope match to a rural viaduct found
+    anchor: true
+  - id: hs2_viaduct_budget
+    param: costs.guideway.elevated
+    value: 32
+    currency: GBP
+    year: 2015
+    unit: MUSD/km
+    scope: HS2 viaducts, the originally budgeted cost per km (as hs2_viaduct_target)
+    source: Cabinet Secretary 2016 HS2 Phase 2 report (as above)
+    quote: "the originally budgeted cost of £32m per km"
+    conf: medium
+    anchor: true
+  - id: texas_central_civil_route
+    param: costs.guideway.elevated
+    value: 42.13
+    currency: USD
+    year: 2021
+    unit: MUSD/km
+    scope: Texas Central (Dallas-Houston) Webuild design-build civil contract, $16 bn for 236 miles (379.8 km, derived per km), about half on viaduct, the rest embankment; design and track included, no systems, stations or land. Whole-route average, so the viaduct itself costs more than this
+    source: Community Impact (2021-06-15), https://communityimpact.com/cy-fair/transportation/texas-central-signs-16b-construction-contract-for-high-speed-rail-project/; ENR (2019) reported $14 bn
+    quote: "$16 billion contract with Webuild ... all 236 miles of the alignment, about half of which will be on a viaduct"
+    conf: low
+    note: the only US rural HSR civil contract with a viaduct share; contract value never officially published
+    anchor: false
+  - id: china_hsr_viaduct_wb2014
+    param: costs.guideway.elevated
+    value: 71
+    currency: CNY
+    year: 2010
+    unit: MUSD/km
+    scope: China 350 km/h HSR bridges/viaducts, weighted average civil cost per km double track (range 57-73), track separate; from feasibility studies 2008-2012 (2010 taken as price year); 24/32 m precast box beams
+    source: World Bank China Transport Topics No. 9 (2014), https://documents1.worldbank.org/curated/en/695111468024545450/pdf/892000BRI0Box3000china0transport09.pdf
+    quote: "the estimated cost of viaducts in China ranges from RMB 57 to 73 m/km for a double track line"
+    conf: high
+    note: Chinese cost level (labour, standardisation, scale); context, not a US price. Actual ShiZheng viaducts RMB 60-70 m/km
+    anchor: false
+  - id: mahsr_c6_viaduct
+    param: costs.guideway.elevated
+    value: 832.4
+    currency: INR
+    year: 2020
+    unit: MUSD/km
+    scope: Mumbai-Ahmedabad HSR package C6, INR 7,289 crore for 87.569 km of elevated viaduct (derived per km), incl. river and crossing bridges, one station and a depot; no track or systems; L&T, awarded Nov 2020
+    source: The Metro Rail Guy (2020-11-02), https://themetrorailguy.com/2020/11/02/lt-wins-mumbai-ahmedabad-hsrs-package-c6/
+    quote: "Rs 7,289.00 crore"
+    conf: medium
+    note: Indian cost level; context
+    anchor: false
+  - id: mn_bridge_deck_equivalent
+    param: costs.guideway.elevated
+    value: 27.99
+    currency: USD
+    year: 2025
+    unit: MUSD/km
+    scope: "bottom-up check (derived): FHWA Bridge Replacement Unit Costs, Minnesota NHS $208/ft2 (bridge items only, 3-year average of 2024-26 lettings) x 10.764 ft2/m2 x a 12.5 m-wide dual deck (our assumption) x 1,000 m. A plain highway-type concrete viaduct, not precision maglev beams with stator mounts"
+    source: FHWA Bridge Replacement Unit Costs 2025, https://www.fhwa.dot.gov/bridge/nbi/sd2025.cfm
+    quote: "Minnesota ... NHS 208 ... National Average of the costs collected to replace NHS bridges is $393/ft2"
+    conf: medium
+    note: Minnesota bridges cost about half the (unweighted) US state average and more than Wisconsin or Iowa ($141-152/ft2)
+    anchor: false
+  - id: berlin_hamburg_guideway_with_systems
+    param: guideway_with_systems_per_km
+    value: 29
+    currency: DEM
+    year: 1993
+    unit: MUSD/km
+    scope: Transrapid Berlin-Hamburg financing concept (Dec 1993), guideway DM 8.2 bn for 284 km incl. the levitation, guidance and propulsion parts built into it and the power supply (92% of the DM 8.9 bn total)
+    source: Friedrich-Ebert-Stiftung (2000), https://library.fes.de/fulltext/fo-wirtschaft/00321006.htm
+    quote: "Je Fahrwegkilometer bedeutet das bei einer Streckenlänge von 284 km einen Aufwand von 29 Mio. DM je Kilometer."
+    conf: medium
+    note: compare with costs.guideway.elevated + costs.systems.propulsion_power_control; a 1993 planning figure (later critics found the guideway underestimated)
+    anchor: false
+  - id: chsra_sj_viaduct_20ft
+    param: costs.guideway.urban_viaduct
+    value: 118.95
+    currency: USD
+    year: 2021
+    unit: MUSD/km
+    adjust: {factor: 0.8696, why: "allocated contingency (15% on viaduct) is included in CHSRA unit prices; removed (1/1.15)"}
+    scope: CA HSR San Francisco-San Jose, elevated structure 2 track, 20 ft average pier height, $191,434,989 per route mile (derived per km), Q4 2021 dollars, San Jose Diridon approach (urban); viaduct only, track separate
+    source: CHSRA SF-SJ Final EIR/EIS Appendix 6-A Capital Cost Estimate Report, https://files.ceqanet.lci.ca.gov/79771-4/attachment/Pj-V2AwRWboTpId488iZFt8iC4LRo6kCtIRWSR3pnHKfBso-r0ncbPXftWkvtvKoZEKfdVeV1puVkyOH0
+    quote: "Elevated Structure - 2 Track (20' Avg. Pier Ht) ... 191,434,989 /RM ... All costs are in Q4 2021$. Allocated contingency is included in all costs."
+    conf: medium
+    anchor: true
+  - id: chsra_sj_viaduct_40ft
+    param: costs.guideway.urban_viaduct
+    value: 132.71
+    currency: USD
+    year: 2021
+    unit: MUSD/km
+    adjust: {factor: 0.8696, why: "as chsra_sj_viaduct_20ft"}
+    scope: as chsra_sj_viaduct_20ft with 40 ft average pier height, $213,569,428 per route mile (derived per km); taller piers add ~12%
+    source: CHSRA SF-SJ Final EIR/EIS Appendix 6-A (as above)
+    quote: "Elevated Structure - 2 Track ... Avg. Pier Ht ... 213,569,428 /RM"
+    conf: medium
+    anchor: true
+  - id: sound_transit_lynnwood_l300
+    param: costs.guideway.urban_viaduct
+    value: 129.7
+    currency: USD
+    year: 2019
+    unit: MUSD/km
+    scope: Sound Transit Lynnwood Link L300, Skanska $778 M for ~6 km of guideway (3.5 km aerial) plus two elevated stations and a parking garage (derived per km); light rail
+    source: Skanska press release (2019-11), https://www.skanska.com/group/en/media/press-releases/2019/skanska-builds-light-rail-extension-in-the-state-of-washington-usa-for-usd-778-m-about-sek-7.3-billion
+    quote: "The contract is worth USD 778 M"
+    conf: high
+    note: includes stations and a garage; context
+    anchor: false
+
 # Soft costs and contingency (no conversion; shares):
 #   MnDOT MWRRI cost method (Quandel, 2011): soft costs 24% (design 10, insurance 2, program mgmt 4,
 #     CM 6, engineering during construction 2), contingency 30% of direct construction.

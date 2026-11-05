@@ -89,7 +89,7 @@ from the one before with measurements.
   phase 2 246 -> 137, all 485 -> 237. Fusion fleet 5/8/14 -> 4/6/10 units; the fleet must also cover
   overnight ice warming, which now sets the full network's size.
 
-## Phase 1: research pass (in progress; passes 1-2 done 2026-11-03)
+## Phase 1: research pass (in progress; passes 1-3 done 2026-11-04)
 
 Pass 1 sourced the top cost drivers (docs/RESEARCH.md items 1-5, reference/benchmarks.yaml,
 `mnmaglev benchmarks`); the spine went from $77 bn to $101 bn P50. The benchmarks file and
@@ -98,6 +98,21 @@ Pass 2 sourced the verify items (climate, frost, census, land, wetlands, power p
 geometry and materials, ore) and stations, depot, switch, vehicles, crews and O&M, incl. the FRA
 2005 Report to Congress tables; the spine is $101 bn P50. Of 112 parameters: 17 high, 28 medium,
 29 low confidence, 38 still placeholders (mostly adders, reserve and local-supply rates, service).
+Pass 3 (2026-11-04, guideway civil costs; three research agents in parallel, every figure used
+checked against its source): conventional HSR viaducts as comparators, US urban viaducts and
+Minnesota bridge unit costs. Elevated guideway 65 -> **75** MUSD/km (45-120): anchors now run 60-90
+(Transrapid Munich itemised 60, HS2 viaduct target 65 / budget 90, SCMaglev viaduct 76, FRA
+Pittsburgh 79, Pittsburgh promoter 81; median ~77), Texas Central's civil contract averages 64 per
+km over a route half on viaduct; Minnesota bridges cost about half the US state average (FHWA 2025:
+$208 vs $393/ft2), so the value sits a little below the median. At grade follows by the German
+ratio: 52 -> **60** (36-95). Urban viaduct stays 150 with CA HSR San Jose unit prices (157-176
+without their contingency) as new anchors. Context only (other cost levels): China HSR viaduct
+~23, India ~18, a plain Minnesota highway-type deck ~27 per km. Every line +6-9%: spine with fusion
+$100.8 bn (was $94.3), phase 2 $248.4 bn, phase 3 $480.7 bn, through phase 4 $802.7 bn (P10 685.6,
+P90 933.2). The elevated guideway is still the top driver (correlation 0.52 -> 0.60, the range is
+wider): the evidence moved it up, it didn't narrow it. Not found: a published guideway share of
+Shanghai's cost, Chuo Shinkansen viaduct-only costs, CA HSR construction packages split by
+structure, Brightline West's civil contract.
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
 sourced numbers, tighten ranges, add `params/benchmarks.yaml` (real projects as checks: Shanghai,
