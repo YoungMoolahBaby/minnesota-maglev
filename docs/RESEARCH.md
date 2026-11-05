@@ -260,3 +260,27 @@ costs sourced (CA HSR 2024 Basis of Estimate, Berlin-Hamburg planning, Union Dep
     (BNSF's dock-based program), FAA Part 108 (proposed 2025-08-07) and its final form, airspace
     near the MSP and DEN airport stations, who may counter hostile drones (federal agencies only),
     and the threat list the patrols answer (sabotage, metal theft, vandalism, debris, animals).
+
+## Demand and benefits (phase 7, first slice 2026-11-05)
+
+What would move the ridership and the benefit-cost ratio most (report: "Ridership and benefits",
+sensitivity table):
+- **The maglev premium** (`demand.mode_choice.maglev_premium`, 175 min, 0-350): riders 19-59 M on
+  the full network. Evidence wanted: stated-preference surveys for HSR vs conventional rail in the
+  US (CA HSR's SP work behind BPM-V3's constants; Brightline's own surveys), or a revealed-preference
+  case where a new fast service ran beside an old slow one (Acela vs Northeast Regional, Brightline
+  vs the Tri-Rail / Amtrak Silver Service).
+- **The trip-length rule** (`demand.market.min_trip_share`, placeholder): a better fix is to model
+  the trip ends inside each zone (county or tract) and their real access to the stations; the
+  NextGen county-level product or the NHTS long-distance trip file could support it.
+- **Air**: one fare for all markets ($203); a per-market fare (DOT Table 6 has them) and a calibrated
+  air time/frequency term. The air fit misses Tokyo - Hiroshima (0.46 vs 0.66).
+- **Second calibration point**: Borealis / Empire Builder St. Paul - Chicago O-D riders (FY25 by
+  station pair, Amtrak doesn't publish them; MnDOT / WisDOT might), the NLX forecast as a
+  cross-check (698 k at 90 mph, 4 trains/day, SDG 2015).
+- **Benefits USDOT doesn't count**: agglomeration and wider economic benefits (UK DfT TAG A2.4),
+  land value around stations, airport capacity at MSP and O'Hare. Report separately, not in the BCR.
+- **Values**: no CO2 value under current USDOT guidance. The previous edition's values ($246-357/t,
+  as reported by the research agent, not re-checked) on ~2.6 bn car-miles avoided at an assumed
+  ~0.35-0.40 kg CO2 per vehicle-mile (not checked) would be ~1 Mt/yr, ~$0.25-0.35 bn/yr on the full
+  network (our arithmetic, not in the model): small next to the capital.

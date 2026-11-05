@@ -21,6 +21,7 @@ from .security import operating as security_operating
 from .winter import heating_mwh
 from .kinematics import line_summary
 from .network import Line
+from .demand import network_demand
 from .params import Param, nominal, sample
 
 
@@ -88,6 +89,7 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         net_total = net_total + fusion_cum[max(fusion_cum)]
     return {
         "P0": P0, "results": results, "n": n, "seed": seed,
+        "demand": network_demand(results, params, P0),
         "sensitivity": sensitivity(params, PS, net_total),
         # the cost-growth draw swamps everything else, so also rank against the total with it divided out
         "sensitivity_base": sensitivity({k: p for k, p in params.items() if k != "costs.soft.contingency"}, PS,
@@ -132,6 +134,70 @@ def _hm(seconds: float) -> str:
 
 def _bn(musd: float) -> str:
     return f"${musd / 1000:,.1f} bn"
+
+
+def _demand_section(net: dict) -> list[str]:
+    d, P0 = net["demand"], net["P0"]
+    L = ["## Ridership and benefits\n"]
+    first = next(iter(d["phases"].values()))["res"]
+    L.append(
+        f"Forecast year {P0['demand.market.forecast_year']:.0f}, every parameter at its most likely value. The market is "
+        "observed travel: FHWA NextGen NHTS 2022 trips between the station markets (network/markets.yaml) by "
+        "distance band and mode, grown "
+        f"{P0['demand.market.growth']:.1%} a year. Today's drivers and today's flyers each choose between their mode "
+        "and the maglev (binary logits on generalized cost, California HSR model weights). The car-side constant "
+        f"is the conventional-rail constant fitted to the Hiawatha's actual FY25 riders ({first['asc'] - P0['demand.mode_choice.ivt_coefficient'] * P0['demand.mode_choice.maglev_premium']:+.2f}) "
+        f"plus a maglev premium of {P0['demand.mode_choice.maglev_premium']:.0f} minutes; the air side is fitted to "
+        f"observed HSR shares of the rail + air market (constant {first['asc_air']:+.2f}, scale {first['air_scale']:.2f}; "
+        "reference/demand_calibration.yaml). Benefits follow USDOT's BCA guidance (Dec 2025): consumer surplus, "
+        "fare revenue, car costs drivers don't weigh and car externalities avoided; 30 years of service at "
+        f"{P0['demand.benefits.discount_rate']:.0%} after {P0['demand.benefits.construction_years']:.0f} years of building, "
+        "with residual value. Capital is the lines' (fusion excluded: it is a separate investment, the "
+        "operating cost uses grid power); 2026 vs 2024 dollars are not converted (~2%).\n")
+    L.append("| Through phase | Riders / yr | Fare revenue / yr | O&M P50 / yr | Farebox | Benefits / yr | "
+             "Trains/h needed (assumed) | BCR at 7%, mean capital | BCR, P50 capital | BCR at "
+             f"{P0['demand.benefits.discount_rate_alt']:.1%} |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
+    for ph, x in d["phases"].items():
+        b = x["benefits"]
+        L.append(f"| {ph} | {b['riders'] / 1e6:,.1f} M | ${b['revenue_musd']:,.0f} M | ${x['opex']:,.0f} M "
+                 f"| {b['revenue_musd'] / x['opex']:.0%} | ${b['total_musd']:,.0f} M "
+                 f"| {x['trains_needed']:.1f} ({P0['system.service.trains_per_hour']:.0f}) "
+                 f"| **{x['bcr']['bcr']:.3f}** | {x['bcr_p50']['bcr']:.3f} | {x['bcr_alt']['bcr']:.3f} |")
+    last = d["phases"][max(d["phases"])]
+    b = last["benefits"]
+    L.append(f"\nFull network benefits per year: consumer surplus ${b['surplus_musd']:,.0f} M, fares "
+             f"${b['revenue_musd']:,.0f} M, unperceived car costs ${b['car_cost_musd']:,.0f} M, car externalities "
+             f"${b['external_musd']:,.0f} M; {b['car_vmt_avoided'] / 1e9:,.2f} bn car-miles avoided. Present values at "
+             f"7%: benefits {_bn(last['bcr']['pv_benefits'])} + residual {_bn(last['bcr']['pv_residual'])} vs capital "
+             f"{_bn(last['bcr']['pv_capital'])} + O&M {_bn(last['bcr']['pv_om'])}.\n")
+    L.append("Busiest market pairs (full network):\n")
+    L.append("| Pair | Stations | Maglev time | Fare | Market / yr | Riders / yr | Share | From air | Source |")
+    L.append("|---|---|---|---|---|---|---|---|---|")
+    for p in sorted(last["res"]["pairs"], key=lambda p: -p["riders"])[:15]:
+        L.append(f"| {p['a']} - {p['b']} | {p['stations'][0]} - {p['stations'][1]} | {_hm(p['minutes'] * 60)}"
+                 f"{' (' + str(p['changes']) + ' change' + ('s' if p['changes'] > 1 else '') + ')' if p['changes'] else ''} "
+                 f"| ${p['fare']:,.0f} | {p['market'] / 1e6:,.2f} M | {p['riders'] / 1e3:,.0f} k | {p['share']:.1%} "
+                 f"| {p['diverted']['air'] / 1e3:,.0f} k | {p['source']} |")
+    ph0, ph1 = min(d["phases"]), max(d["phases"])
+    L.append(f"\nSensitivity (one at a time, low / high end of the range): riders and BCR at 7%.\n")
+    L.append(f"| Parameter | Range | Through phase {ph0}: riders | BCR | Through phase {ph1}: riders | BCR |")
+    L.append("|---|---|---|---|---|---|")
+    for row in d["sensitivity"]:
+        lo0, hi0, lo1, hi1 = row[(ph0, "low")], row[(ph0, "high")], row[(ph1, "low")], row[(ph1, "high")]
+        L.append(f"| `{row['param']}` | {row['low']:g} - {row['high']:g} | {lo0[0] / 1e6:.1f} - {hi0[0] / 1e6:.1f} M "
+                 f"| {lo0[1]:.3f} - {hi0[1]:.3f} | {lo1[0] / 1e6:.1f} - {hi1[0] / 1e6:.1f} M | {lo1[1]:.3f} - {hi1[1]:.3f} |")
+    L.append("\nCaveats: the maglev premium (a constant above conventional rail, half of California HSR's "
+             "asserted gap) is the biggest single assumption. Only trips at least "
+             f"{P0['demand.market.min_trip_share']:.0%} as long as the road distance between the stations count "
+             "(a placeholder rule; the logit's weak time sensitivity would otherwise send ~8% of short car trips to a "
+             "much slower maglev trip). Station access time has no effect because the Hiawatha calibration uses the "
+             "same access time, so its constant absorbs it. Trips inside one NHTS zone (Duluth - Iron Range, "
+             "Rochester - Winona, Owatonna - Albert Lea, Brainerd - Bemidji) are a gravity estimate. Rail ridership "
+             "forecasts have historically come in at about half of forecast (Flyvbjerg 2005), which calibrating to "
+             "actual riders is meant to avoid. Trains per hour stays an input: the needed figure is reported, not "
+             "fed back into the fleet, energy or fusion sizing.\n")
+    return L
 
 
 def write_markdown(net: dict, path: Path) -> None:
@@ -203,6 +269,7 @@ def write_markdown(net: dict, path: Path) -> None:
     for k, rho, conf in net["sensitivity_base"]:
         L.append(f"| `{k}` | {rho:+.2f} | {conf} |")
     L.append("")
+    L += _demand_section(net)
     L.append("## Benchmarks\n")
     L.append("Sourced figures behind the cost parameters (reference/benchmarks.yaml), converted to 2026 USD "
              "with the FHWA construction index and adjusted to each parameter's scope. `allin_per_km` rows "

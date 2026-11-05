@@ -1,0 +1,286 @@
+# Ridership and benefits (phase 7). Sources checked 2026-11-05 against the documents saved in that
+# session (docs/PLAN.md, phase 7). Money in 2024 USD unless noted (USDOT BCA 2026 price base);
+# the model's capital is 2026 USD, the ~2% gap is noted in the report, not converted.
+
+mode_choice:
+  ivt_coefficient:
+    value: 0.005
+    low: 0.0035
+    high: 0.0078
+    unit: utility per minute of in-vehicle time (logit scale; generalized cost is in minutes)
+    conf: medium
+    source: "California HSR ridership model BPM-V3 (Cambridge Systematics 2016), Tables 5-2 and 5-4: in-vehicle time -0.0065/min business and commute, -0.0035 recreation/other; California Rail Ridership Model (Steer 2023) Table 7.3: -0.0053 leisure to -0.0078 business"
+  out_of_vehicle_weight:
+    value: 2.0
+    low: 1.5
+    high: 2.5
+    unit: minutes of in-vehicle time per minute waiting, transferring or at the terminal
+    conf: high
+    source: "BPM-V3: out-of-vehicle time 2.5x in-vehicle for business and commute, 2x for recreation/other; USDOT BCA 2026 Table A-2: waiting and transfer time valued at twice personal travel time"
+  value_of_time:
+    value: 28.2
+    low: 20.1
+    high: 53.5
+    unit: USD (2024) per person-hour, for converting fares and driving costs to minutes
+    conf: medium
+    source: "USDOT BCA guidance (Dec 2025) Table A-2: long-distance intercity personal $28.20, personal $20.10, business $34.60, HSR competitive with air $53.50 personal / $86.00 business; BPM-V3 2005 values in 2024 $ ~ $14-15 recreation, $27-37 business"
+  maglev_wait_terminal:
+    value: 25
+    low: 15
+    high: 35
+    unit: minutes at the station before boarding (terminal and buffer; the headway wait is added separately)
+    conf: medium
+    source: "BPM-V3 Table 6-22: HSR wait 15 + terminal 10 min built into its constants; conventional rail 15 + 3"
+  air_wait_terminal:
+    value: 75
+    low: 60
+    high: 90
+    unit: minutes at both airports (check-in, security, boarding, baggage)
+    conf: medium
+    source: "BPM-V3 Table 6-22: air wait 55 min + terminal 20-22 min"
+  maglev_access:
+    value: 25
+    low: 15
+    high: 40
+    unit: minutes from home to the station, and from the station to the destination (each end)
+    conf: placeholder
+    source: "our assumption for central stations in metros of 0.05-3.8 M people; BPM-V3 skims access by zone and weights it like in-vehicle time ('Access/egress time to main-mode time ratio 1.00')"
+  headway_scale:
+    value: 150
+    low: 100
+    high: 240
+    unit: minutes of in-vehicle time per unit of ln(1 + headway / 60 min) (frequency penalty)
+    conf: medium
+    source: "BPM-V3 Tables 5-2 and 5-4: headway term -0.9693 ln(1 + headway/60) for business and commute (-0.0065/min IVT -> 149 min), -0.8247 for recreation (-0.0035 -> 236 min)"
+  rail_wait_terminal:
+    value: 18
+    low: 10
+    high: 25
+    unit: minutes at a conventional (Amtrak) station before boarding
+    conf: medium
+    source: "BPM-V3 Table 6-22: conventional rail wait 15 + terminal 3 min"
+  maglev_premium:
+    value: 175
+    low: 0
+    high: 350
+    unit: minutes of in-vehicle time the maglev is worth over conventional rail at equal time and cost (comfort, reliability, image)
+    conf: low
+    source: "BPM-V3 Table 6-24 asserted HSR constants above conventional rail: business (-4.34 vs -6.56)/0.0065 = 341 min, recreation (-3.12 vs -4.42)/0.0035 = 371 min; we take half, range 0 to the BPM-V3 gap. The single biggest assumption in the ridership"
+  road_detour:
+    value: 1.2
+    low: 1.1
+    high: 1.35
+    unit: road miles per straight-line mile
+    conf: low
+    source: "commonly cited US road circuity ~1.2 (Ballou, Rahardja & Sakai 2002), not checked here"
+  car_speed:
+    value: 60
+    low: 52
+    high: 66
+    unit: mph door to door on intercity trips
+    conf: low
+    source: "our assumption: interstate cruising ~70 mph less urban ends and stops"
+  car_perceived_cost:
+    value: 0.24
+    low: 0.13
+    high: 0.56
+    unit: USD (2024) per vehicle-mile the driver weighs (fuel and wear), shared by the car's occupants
+    conf: medium
+    source: "AAA Your Driving Costs 2025: fuel 13 cents/mile, maintenance, repair and tires 11.04 cents/mile; full cost 66-100 cents; USDOT BCA Table A-4 $0.56 (resource cost)"
+  fare_boarding:
+    value: 34
+    low: 20
+    high: 50
+    unit: USD (2024) per trip
+    conf: medium
+    source: "California HSR 2024 Ridership and Revenue Forecasting Report Table 3.20: inter-region boarding fare $27.92 (2018 $), x1.23 to 2024 $ (USDOT BCA Table A-7 GDP deflator)"
+  fare_per_mile:
+    value: 0.28
+    low: 0.20
+    high: 0.89
+    unit: USD (2024) per straight-line mile x road detour
+    conf: medium
+    source: "California HSR 2024 report Table 3.20: express $0.23/mile (2018 $) -> ~$0.28 in 2024 $; Amtrak FY25 Table 8 ticket revenue per passenger-mile: Borealis $0.21, Hiawatha $0.35, Acela $0.89 (nominal)"
+  air_fare:
+    value: 203
+    low: 170
+    high: 290
+    unit: USD per one-way air trip (2025-26, nominal)
+    conf: high
+    source: "USDOT Consumer Airfare Report Table 6 (data.transportation.gov yj5y-b2ir), 2025Q2-2026Q1, passenger-weighted over the 29 city-pair markets among Minneapolis/St. Paul, Chicago, Denver, Des Moines, Omaha, Milwaukee, Madison, Fargo, Lincoln, Duluth and Rochester MN: $203 (Chicago-Denver $195, Denver-MSP $172, Chicago-MSP $206; small MSP spokes $287-291)"
+  induced_share:
+    value: 0.15
+    low: 0.10
+    high: 0.26
+    unit: share of maglev riders who would not have travelled at all
+    conf: medium
+    source: "OECD/ITF Round Table 155 (2014) Table 1.6: induced 29% Paris-Lyon, 50% Madrid-Seville, 20% Madrid-Barcelona, 11% Thalys, 20% Eurostar ('around 10-30%'); Texas Central assumed 12.5% (FRA DHHSR FEIS App. J); TEMS 10-16%"
+
+calibration:
+  # the rail constant is fitted to an existing service's actual ridership, not to a forecast
+  hiawatha_riders:
+    value: 632000
+    low: 632000
+    high: 632000
+    unit: riders per year (FY25)
+    conf: high
+    source: "Amtrak Monthly Performance Report Sept 2025, Table 8: Hiawathas ridership 632.0 thousand, gross ticket revenue $18.0 M, 51.1 M passenger-miles, 4,168 frequencies"
+  hiawatha_minutes:
+    value: 89
+    low: 89
+    high: 89
+    unit: minutes Chicago - Milwaukee, 86 miles
+    conf: high
+    source: "NLX Tier 2 EA Appendix C (2017), peer table: 'Hiawatha ... 86 1:29 58 MPH'"
+  hiawatha_round_trips:
+    value: 5.7
+    low: 5.7
+    high: 7
+    unit: round trips per day (average)
+    conf: high
+    source: "Amtrak MPR Sept 2025 Table 8: 4,168 frequencies a year = 5.7 round trips a day; 7 on weekdays (NLX App. C peer table)"
+  hiawatha_fare:
+    value: 28.48
+    low: 28.48
+    high: 28.48
+    unit: USD per trip (FY25)
+    conf: high
+    source: "Amtrak MPR Sept 2025 Table 8: $18.0 M gross ticket revenue / 632.0 thousand riders"
+
+market:
+  growth:
+    value: 0.008
+    low: 0.002
+    high: 0.015
+    unit: growth of intercity trips per year after 2022
+    conf: low
+    source: "Minnesota population 5.78 M (2024) -> 6.14 M (2050), ~0.2%/yr (State Demographic Center, May 2024); income elasticities of intercity travel 0.5 car, 1.2 rail, 1.8 short-haul air (FRA DHHSR FEIS App. J) on ~1%/yr real income growth"
+  forecast_year:
+    value: 2045
+    low: 2045
+    high: 2045
+    unit: year the ridership is reported for
+    conf: placeholder
+    source: "design choice: about when phase 1 could open"
+  min_trip_share:
+    value: 0.5
+    low: 0.3
+    high: 0.7
+    unit: shortest trip counted, as a share of the road distance between the two stations
+    conf: placeholder
+    source: "our assumption: a station-to-station service doesn't serve zone-edge trips much shorter than the line between its stations (Amtrak's Hiawatha averages 81 of 86 route miles per rider, MPR Sept 2025 Table 8: 51.1 M passenger-miles / 632.0 k riders). Without it the logit, whose time sensitivity is weak (California HSR 0.0035-0.0065 per minute), sends ~8% of 18-minute car trips to a 90-minute maglev trip"
+  peak_hour_share:
+    value: 0.10
+    low: 0.08
+    high: 0.12
+    unit: share of a day's riders on the busiest segment travelling in the peak hour and direction
+    conf: placeholder
+    source: "our assumption for intercity rail (no source checked)"
+  design_load_factor:
+    value: 0.8
+    low: 0.7
+    high: 0.9
+    unit: seats filled in the peak hour at design
+    conf: placeholder
+    source: "our assumption"
+
+benefits:
+  discount_rate:
+    value: 0.07
+    low: 0.07
+    high: 0.07
+    unit: real discount rate per year
+    conf: high
+    source: "USDOT Benefit-Cost Analysis Guidance for Discretionary Grant Programs (Dec 2025, 2026 update): 'real discount rate ... is 7 percent per annum' (OMB Circular A-94 reinstated); the Nov 2024 edition used 3.1%, and 2% for CO2"
+    note: fixed by policy, not sampled; the report also shows 3.1% (the Nov 2024 USDOT rate) because long-lived infrastructure is very sensitive to it
+  discount_rate_alt:
+    value: 0.031
+    low: 0.031
+    high: 0.031
+    unit: real discount rate per year, shown as a sensitivity
+    conf: high
+    source: "USDOT BCA guidance, Nov 2024 edition: 'a real discount rate ... of 3.1 percent per year' (OMB Circular A-4, 2023), replaced by 7% in Dec 2025"
+  analysis_years:
+    value: 30
+    low: 30
+    high: 30
+    unit: years of full operation counted
+    conf: high
+    source: "USDOT BCA (Dec 2025): 'avoid any analysis periods extending beyond 30 years of full operations'; residual value by linear depreciation over the service life ('60 years would thus retain half of its value after 30 years')"
+  service_life:
+    value: 60
+    low: 40
+    high: 80
+    unit: years, guideway and civil works (linear depreciation for the residual value)
+    conf: low
+    source: "USDOT BCA (Dec 2025) residual value example uses 60 years; Transrapid guideway design life (concrete beams) is quoted at 80+ years, systems and vehicles much less"
+  time_value_personal:
+    value: 53.5
+    low: 28.2
+    high: 53.5
+    unit: USD (2024) per person-hour saved, personal trips
+    conf: high
+    source: "USDOT BCA (Dec 2025) Table A-2 note: 'Travel on high-speed rail service that would be competitive with air travel should be valued at $53.50 per hour for personal travel and $86.00 for business travel'; long-distance intercity personal $28.20"
+  time_value_business:
+    value: 86.0
+    low: 34.6
+    high: 86.0
+    unit: USD (2024) per person-hour saved, business trips
+    conf: high
+    source: "USDOT BCA (Dec 2025) Table A-2: HSR competitive with air $86.00 business; general business $34.60"
+  business_share:
+    value: 0.214
+    low: 0.12
+    high: 0.40
+    unit: share of intercity trips made for business
+    conf: medium
+    source: "USDOT Revised Departmental Guidance on Valuation of Travel Time (2016), intercity surface modes 78.6% personal / 21.4% business, air 59.6 / 40.4"
+  car_operating_cost:
+    value: 0.56
+    low: 0.24
+    high: 0.56
+    unit: USD (2024) per vehicle-mile saved (resource cost for the BCA)
+    conf: high
+    source: "USDOT BCA (Dec 2025) Table A-4: light-duty vehicles $0.56 per mile (AAA 2024, fuel, maintenance, tires, depreciation); AAA Your Driving Costs 2025: fuel 13 + maintenance 11 cents/mile marginal"
+  car_external_cost:
+    value: 0.181
+    low: 0.149
+    high: 0.181
+    unit: USD (2024) per vehicle-mile removed (congestion + noise + external crash + emissions)
+    conf: high
+    source: "USDOT BCA (Dec 2025) Table A-14, light-duty vehicles, all locations: congestion 0.124 + noise 0.0011 + safety 0.043 + emissions 0.013; rural: 0.031 + 0.0002 + 0.105, plus the all-locations emissions 0.013 (no rural value given) = 0.149"
+  car_occupancy:
+    value: 1.52
+    low: 1.34
+    high: 1.81
+    unit: persons per car
+    conf: high
+    source: "USDOT BCA (Dec 2025) Table A-3: 1.52 all travel, 1.34 weekday peak, 1.81 weekend"
+  construction_years:
+    value: 8
+    low: 6
+    high: 12
+    unit: years of construction before service (capital spread evenly)
+    conf: placeholder
+    source: "our assumption; Shanghai was built in ~22 months for 30 km, Chuo has taken 10+ years"
+  air_access:
+    value: 30
+    low: 20
+    high: 45
+    unit: minutes to and from the airport (each end)
+    conf: placeholder
+    source: "our assumption"
+  air_speed:
+    value: 450
+    low: 400
+    high: 500
+    unit: mph block speed after a 30-minute taxi and climb allowance (air_taxi)
+    conf: placeholder
+    source: "our assumption"
+  air_taxi:
+    value: 30
+    low: 20
+    high: 40
+    unit: minutes per flight for taxiing, climb and descent beyond cruise
+    conf: placeholder
+    source: "our assumption"

@@ -184,6 +184,15 @@ contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Those are estimates 
 cost growth is what rail projects did after such estimates (research pass 5). The biggest single driver of the range is
 still the elevated guideway cost per km.
 
+**Ridership and benefits** (phase 7, first slice; `mnmaglev demand-data`, then the report's
+"Ridership and benefits"): the market is observed travel (FHWA NextGen NHTS 2022 trips between the
+station markets by distance band and mode), drivers and flyers each choose against the maglev, and
+the rail constant is fitted to the Hiawatha's actual riders, not to a forecast. In 2045 the spine
+carries ~2.6 M riders a year (fares cover ~56% of O&M) and the full network ~34 M (~115%). Under
+USDOT's benefit-cost rules (7%, Dec 2025) the benefit-cost ratio is **~0.1** (0.095 for the spine,
+0.14 for the full network; 0.25-0.33 at 3.1%; 0.07-0.21 across the sensitivity sweep): travel
+benefits of a few billion dollars a year against hundreds of billions of capital.
+
 ## How it fits together
 
 | Piece | Role | Status |

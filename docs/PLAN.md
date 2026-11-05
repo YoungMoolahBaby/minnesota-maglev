@@ -88,6 +88,11 @@ from the one before with measurements.
   starts at or passes the hub must connect within 5-12 minutes both ways). Peaks: spine 123 -> 75 MW,
   phase 2 246 -> 137, all 485 -> 237. Fusion fleet 5/8/14 -> 4/6/10 units; the fleet must also cover
   overnight ice warming, which now sets the full network's size.
+- **2026-11-05, demand from observed travel, calibrated to actual riders** (method ours, for Jon to
+  confirm; he chose to do the demand phase): the base market is FHWA NextGen NHTS 2022 (observed), not a gravity model, and the rail
+  constant is fitted to the Hiawatha's actual riders, not to any forecast, because rail ridership
+  forecasts have come in at about half of forecast (Flyvbjerg 2005, n=25: actual 51% below). The BCA
+  follows USDOT's December 2025 rules (7%, no CO2 value), with 3.1% shown alongside.
 - **2026-11-05, cost growth from the reference class** (Jon): contingency is no longer a flat 40%;
   `costs.soft.contingency` is sampled along the rail reference-class curve at the earliest business-
   case stage (median +19%, P80 +121%, mean ~+66%), plus a first-of-kind premium on the maglev-
@@ -397,11 +402,44 @@ shrinks the peak (and the fleet). Also: cfsem models the fusion units' pulsed ai
 - CortenForge + Bevy: the city-builder view. Lidar terrain, the alignment as guideway, piers,
   stations, trains moving on the OSRD timetable, overlays (land cost, floodplain, wetlands, snow).
 
-## Phase 7: demand and economics
+## Phase 7: demand and economics (first slice 2026-11-05)
 
-Ridership (gravity model on city populations and travel times vs driving and flying; benchmark
-NLX and Zip Rail studies), fares and revenue, benefit-cost analysis per the federal guidance,
-funding scenarios, phasing.
+Built (src/mnmaglev/demand.py, `mnmaglev demand-data`, report section "Ridership and benefits"):
+- **Times**: a station graph (station, line) from the kinematics' leg times, dwells, and the mean
+  planned hub connection for a change of line; checked against each line's run time.
+- **Market**: observed travel, not a gravity model: FHWA NextGen NHTS 2022 trips between the
+  station markets (network/markets.yaml; 27 markets, Twin Cities = Midway hub + MSP, Denver = DEN +
+  downtown) by distance band and mode, split to markets by 2025 population share of each NHTS zone.
+  Pairs inside one zone (Duluth - Iron Range, Rochester - Winona, Owatonna - Albert Lea, Brainerd -
+  Bemidji) get a gravity estimate fitted to the rest. Check against the 2010 State Rail Plan's 2005
+  table: Duluth 0.74x, St. Cloud 0.86x, Rochester 1.21x, but Chicago 0.46x, Milwaukee 0.17x, Madison
+  0.13x. The 2005 table's 21.3 M Twin Cities trips (all modes) to Chicago, Milwaukee, Madison and La
+  Crosse would need most of the traffic on the two roads they use: I-94 west of US-53 at Eau Claire
+  (23,600 vehicles/day, WisDOT 2024) and I-90 at Dresbach (20,806, MnDOT 2025) carry at most ~24.6 M
+  person-trips a year at 1.52 per car, trucks and local trips included. NHTS (~3.6 M by car) fits.
+- **Mode choice**, per distance band and current mode: drivers choose car or maglev, flyers air or
+  maglev (binary logits, California HSR BPM-V3 weights), avoiding the plain logit's raid on air in
+  proportion to car (it gave Chicago - Denver 30% at 5h55). Car side: the conventional-rail constant
+  fitted to the Hiawatha's actual FY25 riders (632 k) plus a maglev premium (half of CA HSR's
+  asserted HSR-over-rail gap, 175 min; the biggest assumption). Air side: constant and scale fitted
+  to nine observed HSR shares of the rail + air market (Paris - Lyon 91% at 2 h ... Tokyo - Fukuoka
+  11% at 4.9 h). Only trips at least half the station-to-station distance count (placeholder rule).
+- **Benefits** (USDOT BCA guidance, Dec 2025): consumer surplus (logsum gain), fare revenue, car
+  costs drivers don't weigh, car externalities; 30 years at 7% after 8 years of building, residual
+  value; transport only (the fusion fleet is a separate investment).
+
+First run (forecast year 2045, most likely values): phase 1 **2.6 M riders**/yr, $175 M fares vs
+$312 M O&M (56% farebox); full network **33.9 M**, $3.3 bn fares, 115% farebox, 3.9 trains/h needed
+on the busiest hop (2 assumed). **Benefit-cost ratio 0.095 (phase 1) to 0.139 (full network)** at 7%
+on the expected capital; 0.25-0.33 at 3.1%; 0.07-0.21 across the sensitivity sweep (maglev premium
+0-350 min moves riders 19-59 M). Present values, full network at 7%: benefits $64 bn + residual
+$35 bn vs capital $700 bn + O&M $22 bn. The busiest pairs are short and dense (Omaha - Lincoln,
+Milwaukee - Chicago, Ames - Des Moines, St. Cloud) plus Twin Cities - Chicago (2h11, 54% of the
+market, 1.6 M from air).
+
+Next: feed trains per hour back into fleet, energy and fusion sizing; per-line ridership and
+incremental BCR (which lines pay least badly); demand Monte Carlo; funding scenarios; the
+wider-economy benefits USDOT doesn't count (agglomeration) as a separate, clearly-labelled view.
 
 ## Phase 8: materials supply chain
 

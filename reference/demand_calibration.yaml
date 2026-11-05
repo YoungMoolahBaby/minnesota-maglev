@@ -1,0 +1,28 @@
+# Observed high-speed rail share of the rail + air market against rail travel time, used to fit the
+# maglev-vs-air constant (src/mnmaglev/demand.py, air_constant). Checked 2026-11-05 against the
+# saved documents. Coordinates are city centres for the straight-line distance (fares, flight time).
+# hours: fastest scheduled rail time as stated by the source; where marked (ours) it is our
+# approximation of the fastest Nozomi time, the source gives the share only.
+
+air_rail_shares:
+  - {pair: Paris - Lyon, hours: 2.0, share: 0.91, a: [48.857, 2.352], b: [45.764, 4.836],
+     source: "Börjesson (2012), CTS Working Paper 2012:12, citing COST318 (1998)",
+     quote: "The air-rail split in Paris-Lyon (2h) is 9-91 percent"}
+  - {pair: Madrid - Seville, hours: 2.25, share: 0.80, a: [40.417, -3.704], b: [37.389, -5.984],
+     source: "Börjesson (2012)", quote: "The air-rail mode split in the Madrid-Seville corridor (2h 15m) is 20-80 percent"}
+  - {pair: London - Paris, hours: 2.25, share: 0.80, a: [51.507, -0.128], b: [48.857, 2.352],
+     source: "Börjesson (2012), citing Eurostar (2011)", quote: "as is the airrail split in the London-Paris corridor with the same HSR travel time (2h 15m)"}
+  - {pair: Tokyo - Osaka, hours: 2.42, share: 0.85, a: [35.681, 139.767], b: [34.733, 135.500],
+     source: "CRS R42584 (2013)", quote: "rail has captured 85% of the air/rail market between Tokyo and Osaka (a distance of 320 miles, with a fastest scheduled rail travel time of 2 hours 25 minutes)"}
+  - {pair: Rome - Bologna, hours: 2.73, share: 0.74, a: [41.902, 12.496], b: [44.494, 11.343],
+     source: "CRS R42584 (2013)", quote: "74% of the air/rail market between Rome and Bologna (a distance of 222 miles, with a fastest scheduled rail travel time of 2 hours 44 minutes)"}
+  - {pair: Madrid - Barcelona (2024), hours: 2.63, share: 0.815, a: [40.417, -3.704], b: [41.385, 2.173],
+     source: "CNMC Informe anual del sector ferroviario 2024 (rail 8,944,328 vs air 2,036,313); time from Börjesson (2012): 'Madrid-Barcelona (2h 38m)'",
+     quote: "Madrid-Barcelona 2.036.313 8.944.328 81,5%"}
+  - {pair: Tokyo - Okayama, hours: 3.2, share: 0.71, a: [35.681, 139.767], b: [34.666, 133.918],
+     source: "JR Central Integrated Report 2025 p. 4, from MLIT Inter-Regional Passenger Mobility Survey FY2023; hours (ours)",
+     quote: "Market share (against airlines) ... Tokyo area - Okayama 71% 29%"}
+  - {pair: Tokyo - Hiroshima, hours: 3.9, share: 0.66, a: [35.681, 139.767], b: [34.397, 132.475],
+     source: "JR Central Integrated Report 2025 p. 4 (MLIT FY2023); hours (ours)", quote: "Tokyo area - Hiroshima 66% 34%"}
+  - {pair: Tokyo - Fukuoka, hours: 4.9, share: 0.11, a: [35.681, 139.767], b: [33.590, 130.421],
+     source: "JR Central Integrated Report 2025 p. 4 (MLIT FY2023); hours (ours)", quote: "Tokyo area - Fukuoka 11% 89%"}

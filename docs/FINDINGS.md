@@ -293,6 +293,24 @@ works), date, details. One section per tool.
   `mnmaglev report` after editing it, not just the tests.
   Result: through phase 4 P50 $779.7 -> $706.3 bn, mean $932.5 bn, P80 $1,284.9 bn.
 
+- 2026-11-05, demand (phase 7): three research agents (travel data, Midwest calibration, model
+  parameters), the figures used re-checked in the saved files (one chart read from a rendered PDF
+  page: JR Central's rail-vs-air shares are an image). The best find was FHWA's NextGen NHTS
+  passenger OD (2022): observed trips between zones by distance band and mode, 24 MB, keyless (URLs
+  only in the portal's JavaScript). It disagreed 2-8x with the 2010 State Rail Plan's 2005 market
+  table for Wisconsin and Chicago; traffic counts favour NHTS. Three modelling lessons: a plain logit
+  pivoted on car shares sent 30% of Chicago - Denver to a 5h55 maglev, taking air travellers in
+  proportion (IIA), so drivers and flyers now choose separately; valuing only time savings made
+  benefits negative on short pairs where the maglev is slower door to door but chosen anyway, so
+  benefits are consumer surplus (logsum) plus fares; and the California HSR time sensitivity is weak
+  enough that ~8% of 18-minute car trips went to a 90-minute maglev trip, so short zone-edge trips
+  are left out (a placeholder rule). Friction: api.census.gov now needs a key (the www2 CSVs don't);
+  transit.dot.gov, gao.gov, railroads.dot.gov and amtrak.com block scripts (Wayback copies work);
+  hsr.ca.gov blocked this time; the JR Central PDF's text layer is garbled (rendered with pymupdf);
+  heredoc edits turned "
+" into real line breaks twice (write edit scripts to files instead).
+  Result: phase 1 2.6 M riders, BCR 0.095 at 7%; full network 33.9 M riders, BCR 0.139.
+
 ## OSRD
 
 ## Calliope

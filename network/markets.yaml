@@ -1,0 +1,35 @@
+# Ridership markets: who each station serves (phase 7, 2026-11-05).
+# zones: FHWA NextGen NHTS passenger OD zones (state-split MSAs, older delineation, plus rest-of-state
+#        "R" zones), whose 2022 trips are the base market (`mnmaglev demand-data`).
+# cbsa:  Census CBSA code whose Vintage 2025 population is the market's (metro or micro area);
+#        places: alternatively a list of incorporated places summed (Census sub-county estimates).
+# A market that is only part of its zone gets the share (its population / the zone's population) of
+# the zone's trips; several markets can share one zone (Duluth and the Iron Range, Rochester and
+# Winona, the rest-of-state zones). `less` removes another market's people from this one.
+twin_cities:  {stations: [midway_hub, msp], zones: [33460_MN, 33460_WI], cbsa: "33460"}
+duluth:       {stations: [duluth], zones: [20260_MN, 20260_WI], cbsa: "20260", less: [iron_range]}
+iron_range:   {stations: [virginia, hibbing], zones: [20260_MN, 20260_WI], state: "27",
+               places: [Hibbing, Virginia, Chisholm, Eveleth, Mountain Iron, Gilbert, Aurora, Hoyt Lakes, Biwabik, Buhl]}
+rochester:    {stations: [rochester], zones: [40340_MN], cbsa: "40340"}
+winona:       {stations: [winona], zones: [40340_MN], cbsa: "49100"}   # NHTS codes Winona County into the Rochester zone
+st_cloud:     {stations: [st_cloud], zones: [41060_MN], cbsa: "41060"}
+alexandria:   {stations: [alexandria], zones: [RMN1_MN], cbsa: "10820"}
+fargo:        {stations: [moorhead], zones: [22020_ND, 22020_MN], cbsa: "22020"}
+mankato:      {stations: [mankato], zones: [31860_MN], cbsa: "31860"}
+brainerd:     {stations: [brainerd], zones: [RMN3_MN], cbsa: "14660"}
+bemidji:      {stations: [bemidji], zones: [RMN3_MN], cbsa: "13420"}
+owatonna:     {stations: [owatonna], zones: [RMN1_MN], cbsa: "36940"}
+albert_lea:   {stations: [albert_lea], zones: [RMN1_MN], cbsa: "10660"}
+la_crosse:    {stations: [la_crosse], zones: [29100_WI, 29100_MN], cbsa: "29100"}
+madison:      {stations: [madison], zones: [31540_WI], cbsa: "31540"}
+milwaukee:    {stations: [milwaukee], zones: [33340_WI], cbsa: "33340"}
+chicago:      {stations: [chicago], zones: [16980_IL, 16980_IN, 16980_WI], cbsa: "16980"}
+mason_city:   {stations: [mason_city], zones: [RIA1_IA], cbsa: "32380"}
+ames:         {stations: [ames], zones: [11180_IA], cbsa: "11180"}
+des_moines:   {stations: [des_moines], zones: [19780_IA], cbsa: "19780"}
+omaha:        {stations: [omaha], zones: [36540_NE, 36540_IA], cbsa: "36540"}
+lincoln:      {stations: [lincoln], zones: [30700_NE], cbsa: "30700"}
+grand_island: {stations: [grand_island], zones: [24260_NE], cbsa: "24260"}
+kearney:      {stations: [kearney], zones: [RNE2_NE], cbsa: "28260"}
+north_platte: {stations: [north_platte], zones: [RNE3_NE], cbsa: "35820"}
+denver:       {stations: [den, denver], zones: [19740_CO], cbsa: "19740"}

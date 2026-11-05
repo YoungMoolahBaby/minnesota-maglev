@@ -117,3 +117,17 @@ All are cached in data/raw/gis (gitignored); the alignment and measurements are 
   https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest
 - Histosols = soils with >= 40 cm of organic material (peat, mucky peat, muck): USDA Keys to Soil
   Taxonomy, https://www.nrcs.usda.gov/resources/guides-and-instructions/keys-to-soil-taxonomy
+
+## Demand (phase 7, `mnmaglev demand-data`, src/mnmaglev/demand.py)
+
+Raw files in `data/raw/demand/` (gitignored); `network/demand_base.yaml` (committed) holds only
+derived market totals. All US government works, public domain.
+
+| Data | Source | Notes |
+|---|---|---|
+| Intercity trips by zone pair, mode, purpose and distance band, 2022 | [FHWA NextGen NHTS National Passenger OD](https://nhts.ornl.gov/od/) (ORNL / UMD), `2022_Passenger_OD_Annual.zip` (24 MB) | passive location data, 583 zones (state-split MSAs, older delineation, plus rest-of-state zones); air is airport-to-airport, bus is inside "vehicle"; latest year 2022 |
+| County -> OD zone | [FHWA Revised_County_fhwa583_UMD.zip](https://www.fhwa.dot.gov/policyinformation/analysisframework/zip/Revised_County_fhwa583_UMD.zip) | read as dBASE, no GIS needed |
+| Population, Vintage 2025 | Census [CBSA](https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/metro/totals/cbsa-est2025-alldata.csv), [county](https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/counties/totals/co-est2025-alldata.csv) and [MN place](https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/cities/totals/sub-est2025_27.csv) estimates | keyless CSVs; api.census.gov now needs a key |
+| Air fares, 2025Q2-2026Q1 | [USDOT Consumer Airfare Report Table 6](https://data.transportation.gov/resource/yj5y-b2ir) (Socrata) | `demand.mode_choice.air_fare` |
+| Calibration | Amtrak Monthly Performance Report Sept 2025 (Table 8), NLX Tier 2 EA App. C (2017), JR Central Integrated Report 2025, CNMC rail report 2024, CRS R42584, Börjesson (2012) | `reference/demand_calibration.yaml`, `params/demand.yaml` |
+| Model weights and BCA values | California HSR BPM-V3 model documentation (Cambridge Systematics 2016), CA HSR 2024 Ridership and Revenue report, USDOT Benefit-Cost Analysis Guidance (Dec 2025), OECD/ITF Round Table 155 | quotes in `params/demand.yaml` |

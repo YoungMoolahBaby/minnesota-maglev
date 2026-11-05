@@ -128,6 +128,14 @@ def cmd_gis(args) -> int:
     return 0
 
 
+def cmd_demand_data(args) -> int:
+    from .demand_data import build
+
+    path = build(min_miles=args.min_miles)
+    print(f"wrote {path}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="mnmaglev")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -164,6 +172,9 @@ def main(argv: list[str] | None = None) -> int:
     tp.add_argument("--no-transfers", action="store_true", help="ignore connections at the Midway hub")
     tp.add_argument("--seed", type=int, default=1)
     tp.set_defaults(fn=cmd_timetable)
+    dp = sub.add_parser("demand-data", help="build network/demand_base.yaml from NHTS OD 2022 and Census 2025 (~40 MB download)")
+    dp.add_argument("--min-miles", type=float, default=10.0, help="lowest distance band kept (NHTS bands start at 0, 10, 25, 50 ...)")
+    dp.set_defaults(fn=cmd_demand_data)
     args = ap.parse_args(argv)
     return args.fn(args)
 
