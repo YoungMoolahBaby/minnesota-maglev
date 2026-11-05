@@ -600,6 +600,38 @@ Open (docs/RESEARCH.md): a newer MSP passenger survey (2011 is the latest found,
 Line), the outstate origins by city rather than by population, and the transit times from Metro
 Transit's trip planner.
 
+### What it would take: break-even cost (2026-11-05, Jon: "how much would it take to get to that value threshold?")
+
+`uv run python scripts/breakeven.py` (the `mnmaglev compare` run: 2000 samples, seed 1, no fusion).
+Break-even capital is the cost at which PV benefits + residual value = PV capital + PV O&M (both
+capital terms are linear in it). Today's cost is the expected value (mean) with cost growth.
+
+| Build-out | Today, mean (P50) | Break-even at 7% | Cut | Break-even at 3.1% | Cut |
+|---|---|---|---|---|---|
+| Spine, 359 km | $115 bn ($90 bn), $320 M/km | $2.8 bn, $8 M/km | 98% | $6.0 bn, $17 M/km | 95% |
+| Full network, 3,318 km | $903 bn ($698 bn), $272 M/km | $55 bn, $17 M/km | 94% | $118 bn, $35 M/km | 87% |
+| Spine, high demand | | $19.5 bn, $54 M/km | 83% | $42 bn, $118 M/km | 63% |
+| Full network, high demand | | $256 bn, $77 M/km | 72% | $553 bn, $167 M/km | 39% (21% of P50) |
+
+High demand = maglev premium (350 min), value of time ($53.50/h) and market growth (1.5%/yr) all at
+their high ends at once: benefits $1.9 bn a year on the spine instead of $0.54 bn.
+
+The spine's capital (mean): guideway $32.1 bn ($89 M/km), propulsion, power and control $8.5 bn,
+stations, depot, vehicles, land and the rest ~$6 bn, engineering and management $11.9 bn, cost
+growth $39.0 bn, first-of-kind premium $8.0 bn, second-system reserve $9.1 bn. So:
+- The guideway alone is 11x the spine's break-even at 7%. No cheaper beam, pier or construction
+  method closes that.
+- Without any cost growth, first-of-kind premium or reserve, the spine still costs $164 M/km, 20x
+  its break-even.
+- At 7% the market pays for ~$8-17 M/km: about what upgrading freight track costs ($5 M/km all-in,
+  params/technology.yaml), not a new elevated line of any technology.
+- The only way to ~1: the full network, at 3.1%, with every demand assumption at its high end, built
+  for its bare estimate ($167 M/km, about the spine's cost before cost growth) with no overruns.
+
+The lever is demand, not cost: at 7% the spine's benefits ($539 M a year) barely clear its O&M
+($312 M), leaving little to pay back capital. Breaking even takes several times the market, which
+is what the corridor screen's Texas, Northeast and LA - Las Vegas corridors have.
+
 ## Phase 8: materials supply chain
 
 From taconite to guideway: Mesabi pellets -> which steel mills (rebar, strand, plate, electrical
