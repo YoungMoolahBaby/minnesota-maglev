@@ -431,14 +431,16 @@ Built (src/mnmaglev/demand.py, `mnmaglev demand-data`, report section "Ridership
   costs drivers don't weigh, car externalities; 30 years at 7% after 8 years of building, residual
   value; transport only (the fusion fleet is a separate investment).
 
-First run (forecast year 2045, most likely values): phase 1 **2.6 M riders**/yr, $175 M fares vs
-$312 M O&M (56% farebox); full network **30.7 M**, $3.2 bn fares, 110% farebox, 3.9 trains/h needed
-on the busiest hop (2 assumed). **Benefit-cost ratio 0.095 (phase 1) to 0.134 (full network)** at 7%
-on the expected capital; 0.25-0.32 at 3.1%; 0.07-0.19 across the sensitivity sweep (maglev premium
-0-350 min moves riders 17-52 M). Present values, full network at 7%: benefits $62 bn + residual
-$35 bn vs capital $700 bn + O&M $22 bn. The busiest pairs are short and dense (Omaha - Lincoln,
-Milwaukee - Chicago, St. Cloud, Rochester) plus Twin Cities - Chicago (2h11, 54% of the market,
-1.6 M from air). (Before the 50-mile intercity rule: 33.9 M riders, BCR 0.139; phase 1 unchanged.)
+First run (forecast year 2045, most likely values; with the MSP airport access market below):
+phase 1 **2.8 M riders**/yr, $177 M fares vs $312 M O&M (57% farebox); full network **30.9 M**,
+$3.2 bn fares, 111% farebox, 3.9 trains/h needed on the busiest hop (2 assumed). **Benefit-cost
+ratio 0.096 (phase 1) to 0.134 (full network)** at 7% on the expected capital; 0.25-0.32 at 3.1%;
+0.07-0.19 across the sensitivity sweep (maglev premium 0-350 min moves riders 18-53 M). Present
+values, full network at 7%: benefits $62 bn + residual $35 bn vs capital $700 bn + O&M $22 bn. The
+busiest pairs are short and dense (Omaha - Lincoln, Milwaukee - Chicago, St. Cloud, Rochester) plus
+Twin Cities - Chicago (2h11, 54% of the market, 1.6 M from air). (Before the 50-mile intercity rule:
+33.9 M riders, BCR 0.139; phase 1 unchanged. Before the airport market: 2.6 M / 30.7 M riders, BCR
+0.095 / 0.134.)
 
 Next: feed trains per hour back into fleet, energy and fusion sizing; per-line ridership and
 incremental BCR (which lines pay least badly); demand Monte Carlo; funding scenarios; the
@@ -462,10 +464,10 @@ runs one). Two research agents sourced them; every figure used re-checked.
 - Checks: upgraded rail gives Twin Cities - Duluth 2h31 (NLX plan ~2.5 h) and Twin Cities - Chicago
   7h30 (Borealis today 7h31).
 
-Result, through phase 4 (2000 samples; capital mean, 7%; re-run with the 50-mile intercity rule):
-maglev $903 bn, 30.7 M riders, **BCR 0.134**; HSR $439 bn, 28.4 M riders, **0.198**; upgraded rail
-$37 bn, 5.4 M riders, **0.241**. Phase 1 (spine): 0.095 / 0.132 / 0.250. At 3.1%: 0.32 / 0.42 /
-0.46. HSR keeps ~92% of maglev's riders for ~49% of its capital (25-35% slower trips); upgraded rail
+Result, through phase 4 (2000 samples; capital mean, 7%; re-run with the 50-mile intercity rule
+and the airport market): maglev $903 bn, 30.9 M riders, **BCR 0.134**; HSR $439 bn, 28.6 M riders,
+**0.198**; upgraded rail $37 bn, 5.4 M riders, **0.242**. Phase 1 (spine): 0.096 / 0.134 / 0.254.
+At 3.1%: 0.32 / 0.42 / 0.47. HSR keeps ~92% of maglev's riders for ~49% of its capital (25-35% slower trips); upgraded rail
 costs ~4% of maglev but is 3-4x slower and carries ~18% of the riders, and Amtrak-level O&M
 ($48/train-km) eats its benefits (farebox 34-45%).
 None reaches 1 on these corridors: the problem is the market (one 3.8 M metro, mid-size cities
@@ -562,6 +564,41 @@ Next, if Jon wants:
 - a GIS alignment for the best corridor;
 - the existing NEC service as the base case;
 - a proper upgraded-rail costing on real freight lines.
+
+### MSP airport access market (2026-11-05, Jon: "let's do the airport access market")
+
+The spine stops at MSP Terminal 1, but the model only counted trips between markets, so air
+travellers riding to the airport got no special treatment. Now `network/airport.yaml` and
+`demand.airport.*` add them (in `mnmaglev report` and `compare`; not in the corridor screen, so its
+Minnesota row stays comparable with the other corridors):
+- **Outstate air travellers.** MSP had 36.1 M passengers in 2025, 69% of them starting or ending
+  their trip there: 24.9 M ground trips (MAC). The Met Council's 2011 airport survey (TBI special
+  generator survey, Cambridge Systematics 2012) put 77 of 537 geocoded origins in the rest of
+  Minnesota (14%), 81% in the 19-county region. Spread over the rest of Minnesota's 2.04 M people
+  that is 1.75 airport ground trips per person a year, given to the eleven outstate Minnesota
+  markets on the network by population (Fargo - Moorhead left out: it has FAR). Rochester gets
+  0.47 M a year in 2045, Duluth 0.49 M.
+- **No double counting.** NHTS records zero air trips for Rochester or St. Cloud: it sees the drive
+  to MSP as a car trip to the Twin Cities. So the airport trips are taken out of those pairs' car
+  trips and given their own mode choice: the same car-vs-maglev logit, but the maglev's far end is
+  an 8-minute walk to the terminal instead of 25 minutes to a city address, and the car pays $25
+  per traveller per trip (parking at $19-30 a day) plus 10 minutes from the ramp. None are induced.
+- **Metro.** Transit riders to the airport from the Midway hub's catchment (St. Paul, Roseville,
+  Falcon Heights, Lauderdale: 350 k people) save the difference between today's ~40-minute transit
+  trip (A Line + Blue Line) and half a headway + the 4-minute ride + the walk: 13 minutes. 6% of
+  their airport trips are by transit (4% light rail in 2011, before the Green Line and A Line).
+  Time saved only: no new fare, no car trips removed.
+
+Result (2045): phase 1 carries 368 k airport riders a year (243 k outstate at 21-28% of their
+market, 125 k metro), worth $55 M a year. Most of it was already in the model as Twin Cities trips, so
+the net gain is small: phase 1 riders 2.62 -> 2.77 M, benefits $529 -> $539 M a year, **BCR 0.095 ->
+0.096**; full network 30.7 -> 30.9 M riders, BCR 0.134 either way. The outstate share (10-20%) and the
+parking cost ($8-45) each move the BCR by 0.002 at most. The airport is a convenience for the spine's
+riders, not a market that changes the case.
+
+Open (docs/RESEARCH.md): a newer MSP passenger survey (2011 is the latest found, before the Green
+Line), the outstate origins by city rather than by population, and the transit times from Metro
+Transit's trip planner.
 
 ## Phase 8: materials supply chain
 

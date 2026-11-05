@@ -1,0 +1,26 @@
+# MSP airport access market (2026-11-05, Jon: "let's do the airport access market").
+# The spine stops at MSP (Terminal 1), so the maglev can carry air passengers between the airport and
+# (1) the outstate markets it serves, and (2) the part of the metro whose transit trip to the airport
+# gets faster through a metro station. Numbers are in params/demand.yaml (airport.*); this file says
+# which stations and markets take part. Populations are built by `mnmaglev demand-data`
+# (network/demand_base.yaml, `airport` block).
+station: msp
+metro_market: twin_cities
+
+# Outstate Minnesota markets on the network whose air travellers use MSP. They get the survey's
+# outstate share of MSP's ground trips in proportion to population. Fargo - Moorhead is left out: it
+# has its own airport (FAR) and lies 235 road miles from MSP.
+feeders: [duluth, iron_range, rochester, winona, st_cloud, alexandria, mankato, brainerd, bemidji, owatonna, albert_lea]
+
+# The Met Council Travel Behavior Inventory survey region (19 counties, 2010-11): the 7-county metro,
+# 9 Minnesota collar counties and 3 in Wisconsin. "Outstate" in the survey means outside these.
+survey_region_counties:
+  ["27003", "27019", "27037", "27053", "27123", "27139", "27163",  # Anoka Carver Dakota Hennepin Ramsey Scott Washington
+   "27025", "27049", "27059", "27079", "27085", "27131", "27141", "27143", "27171",  # Chisago Goodhue Isanti Le Sueur McLeod Rice Sherburne Sibley Wright
+   "55093", "55095", "55109"]  # Pierce Polk St. Croix (WI)
+
+# Metro stations whose catchment would ride the maglev to the airport instead of today's transit, and
+# the Minnesota places (Census incorporated places) in that catchment. Only the Midway hub: from
+# downtown Minneapolis (the downtown variant) the Blue Line already runs direct to the terminals.
+metro_hubs:
+  midway_hub: [St. Paul, Roseville, Falcon Heights, Lauderdale]

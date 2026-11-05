@@ -132,6 +132,17 @@ derived market totals. All US government works, public domain.
 | Calibration | Amtrak Monthly Performance Report Sept 2025 (Table 8), NLX Tier 2 EA App. C (2017), JR Central Integrated Report 2025, CNMC rail report 2024, CRS R42584, Börjesson (2012) | `reference/demand_calibration.yaml`, `params/demand.yaml` |
 | Model weights and BCA values | California HSR BPM-V3 model documentation (Cambridge Systematics 2016), CA HSR 2024 Ridership and Revenue report, USDOT Benefit-Cost Analysis Guidance (Dec 2025), OECD/ITF Round Table 155 | quotes in `params/demand.yaml` |
 
+## MSP airport access (network/airport.yaml, `demand.airport.*`)
+
+Raw PDFs in `data/raw/airport/` (gitignored).
+
+| Data | Source | Notes |
+|---|---|---|
+| MSP passengers 2025 | [MAC, MSP 2025 Passengers and Operations Summary](https://metroairports.org/sites/default/files/2026-01/MSP%202025%20%20Passengers%20and%20Operations%20Summary_0.pdf) (Jan 2026) | 36,071,627 passengers; 69% originating / 31% connecting |
+| Passenger origins, access modes | [Met Council TBI MSP Airport Special Generator Survey](https://metrocouncil.org/Transportation/Publications-And-Resources/Planning/Travel-Behavior-Inventory/TBI-Airport-Survey-Final-Report.aspx) (Cambridge Systematics, Apr 2012; fielded June 2011) | section 5.1 origins, Table 5.2 access modes |
+| Parking rates | [mspairport.com/parking](https://www.mspairport.com/parking) (checked Nov 2026, via search results) | Terminal 1 ramps $30/day max, Quick Ride $19/day |
+| Populations | Census Vintage 2025 counties and Minnesota places (above) | rest of Minnesota, survey region, hub catchment |
+
 ## Technology comparison (params/technology.yaml)
 
 | Data | Source | Notes |

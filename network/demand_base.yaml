@@ -1952,3 +1952,7 @@ trips_2022:
     air: [0, 0, 0, 0, 5555, 5156, 0]
     rail: [0, 0, 0, 0, 2, 1234, 202]
     vehicle: [0, 0, 0, 0, 998, 53978, 10221]
+airport:
+  region_population: 3978466
+  rest_of_mn_population: 2039537
+  hub_catchments: {midway_hub: 349746}

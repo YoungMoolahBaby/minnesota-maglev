@@ -188,16 +188,17 @@ still the elevated guideway cost per km.
 "Ridership and benefits"): the market is observed travel (FHWA NextGen NHTS 2022 trips between the
 station markets by distance band and mode), drivers and flyers each choose against the maglev, and
 the rail constant is fitted to the Hiawatha's actual riders, not to a forecast. In 2045 the spine
-carries ~2.6 M riders a year (fares cover ~56% of O&M) and the full network ~31 M (~110%; market
-pairs under 50 miles apart, commuter markets, are left out). Under USDOT's benefit-cost rules (7%,
-Dec 2025) the benefit-cost ratio is **~0.1** (0.095 for the spine, 0.13 for the full network;
+carries ~2.8 M riders a year (fares cover ~57% of O&M) and the full network ~31 M (~111%; market
+pairs under 50 miles apart, commuter markets, are left out; air travellers riding to MSP are a
+market of their own). Under USDOT's benefit-cost rules (7%,
+Dec 2025) the benefit-cost ratio is **~0.1** (0.096 for the spine, 0.13 for the full network;
 0.25-0.32 at 3.1%; 0.07-0.19 across the sensitivity sweep): travel benefits of a few billion dollars
 a year against hundreds of billions of capital.
 
 **Technology comparison** (`mnmaglev compare`, params/technology.yaml): the same corridors and
 demand model as dedicated high-speed rail (320 km/h, mostly at grade) and as upgraded 110-mph rail
 on freight track. Full network at 7%: maglev BCR 0.13 ($903 bn, 31 M riders), HSR 0.20 ($439 bn,
-28 M riders), upgraded rail 0.24 ($37 bn, 5 M riders, at the 84-96 km/h real Midwest services
+29 M riders), upgraded rail 0.24 ($37 bn, 5 M riders, at the 84-96 km/h real Midwest services
 deliver). None is close to 1 on these corridors: the market is thin, whatever runs on it.
 
 **US corridor screen** (`mnmaglev screen-data`, `mnmaglev screen`; docs/PLAN.md): the same model on

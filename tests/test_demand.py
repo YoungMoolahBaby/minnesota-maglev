@@ -116,6 +116,33 @@ def test_benefit_cost_matches_annuity_closed_form(world):
     assert out["pv_residual"] == pytest.approx(1000.0 * (1 - n / life) * (1 + r) ** -(1 + n))
 
 
+def test_airport_market_moves_trips_without_adding_them(world):
+    """The MSP airport market takes the outstate air travellers out of NHTS's car trips to the Twin
+    Cities: the two markets together hold the trips the pair had before; without the spine's MSP
+    stop there is no airport market; metro riders only save time."""
+    P, cities, lines, markets, base = world
+    ap = D.load_airport()
+    spine = [l for l in lines if l.id == "spine"]
+    before = {p["b"]: p for p in D.ridership(spine, cities, P, markets, base)["pairs"] if p["a"] == "twin_cities"}
+    res = D.ridership(spine, cities, P, markets, base, airport=ap)
+    after = {p["b"]: p for p in res["pairs"] if p["a"] == "twin_cities"}
+    air = {p["a"]: p for p in res["pairs"] if p["source"] == "airport"}
+    trips = D.airport_trips(ap, base, P)
+    for m in ("duluth", "rochester"):
+        assert air[m]["market"] == pytest.approx(trips[m])
+        assert after[m]["market"] + air[m]["market"] == pytest.approx(before[m]["market"], rel=1e-9)
+        assert 0 < air[m]["riders"] < air[m]["market"] and air[m]["induced"] == 0
+    # per-person rate: outstate share of MSP's ground trips over the rest of Minnesota
+    rate = P["demand.airport.od_ground_trips"] * P["demand.airport.outstate_share"] / base["airport"]["rest_of_mn_population"]
+    grow = (1 + P["demand.market.growth"]) ** (P["demand.market.forecast_year"] - 2025)
+    assert trips["rochester"] == pytest.approx(rate * base["markets"]["rochester"]["population"] * grow)
+    metro = [p for p in air.values() if p["stations"][0] == "midway_hub"]
+    assert len(metro) == 1 and metro[0]["fare"] == 0 and metro[0]["car_vmt"] == 0 and metro[0]["hours_saved"] > 0
+    southwest = [l for l in lines if l.id == "southwest"]  # serves MSP, but no feeder or hub on it but Mankato
+    assert {p["a"] for p in D.ridership(southwest, cities, P, markets, base, airport=ap)["pairs"]
+            if p["source"] == "airport"} <= {"mankato"}
+
+
 def test_commuter_pairs_are_left_out(world):
     """Market pairs whose stations are closer than demand.market.min_pair_miles are not served
     (Ames - Des Moines, ~30 miles); with the cutoff at 0 they come back."""

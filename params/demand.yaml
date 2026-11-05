@@ -191,6 +191,66 @@ market:
     conf: placeholder
     source: "our assumption"
 
+airport:
+  # MSP airport access market (network/airport.yaml): outstate air travellers riding to the airport
+  # station, and metro transit riders whose trip to the airport gets faster through the Midway hub.
+  od_ground_trips:
+    value: 24890000
+    low: 24890000
+    high: 24890000
+    unit: ground trips to or from MSP a year (originating + terminating passengers, 2025)
+    conf: high
+    source: "MAC, MSP 2025 Passengers and Operations Summary (Jan 2026): 36,071,627 passengers, enplanements 69% originating / 31% connecting -> 0.69 x 36.07 M = 24.9 M passengers who reach or leave the airport by ground"
+  outstate_share:
+    value: 0.143
+    low: 0.10
+    high: 0.20
+    unit: share of MSP's originating passengers who come from Minnesota outside the survey region
+    conf: low
+    source: "Met Council TBI MSP Airport Special Generator Survey (Cambridge Systematics, 17 Apr 2012; fielded June 2011), section 5.1: of 537 geocoded origins, 428 in the Minnesota part of the 19-county region, 9 in its Wisconsin part, 77 in the rest of Minnesota, 17 the rest of Wisconsin, 6 other states (unweighted) -> 77/537 = 14.3%; range for the small, unweighted sample and 14 years of change"
+  region_share:
+    value: 0.814
+    low: 0.75
+    high: 0.87
+    unit: share of MSP's originating passengers who come from the 19-county survey region
+    conf: low
+    source: "same survey, section 5.1: 437/537 = 81.4% (unweighted)"
+  car_extra_cost:
+    value: 25
+    low: 8
+    high: 45
+    unit: USD per air traveller per one-way ground trip, beyond driving costs (parking, or a rental car's or shuttle's premium)
+    conf: placeholder
+    source: "our assumption from MSP parking (mspairport.com/parking, Nov 2026: Terminal 1 ramps $30/day maximum, Quick Ride $19/day): ~4 days x $25 = $100 a round trip, over 2 ground trips and ~2 travellers in the party; low = dropped off (the driver's extra round trip, no parking), high = a rental car's daily rate. Survey Table 5.2: 52% private vehicle, 23% rental, 14% taxi/limousine, 7% shuttle"
+  car_extra_minutes:
+    value: 10
+    low: 5
+    high: 20
+    unit: minutes from parking the car to the terminal door (ramp walk or lot shuttle)
+    conf: placeholder
+    source: "our assumption"
+  maglev_egress:
+    value: 8
+    low: 4
+    high: 15
+    unit: minutes from the maglev platform at MSP to the terminal (Terminal 1; Terminal 2 needs the Blue Line shuttle)
+    conf: placeholder
+    source: "our assumption: a station under or beside Terminal 1 like the Blue Line's; Terminal 2 (~1/4 of passengers, survey Table 4.2: 18% of DB1B originating) adds a train ride"
+  metro_transit_share:
+    value: 0.06
+    low: 0.04
+    high: 0.10
+    unit: share of the hub catchment's airport ground trips made by transit today
+    conf: placeholder
+    source: "TBI airport survey Table 5.2: light rail 4%, Metro bus 0.2% of originating passengers in 2011, before the Green Line (2014) and A Line (2016) reached the Midway; we take a little more"
+  metro_transit_minutes:
+    value: 40
+    low: 30
+    high: 50
+    unit: minutes by transit from the Midway hub (Snelling & University) to MSP Terminal 1 today, waits included
+    conf: placeholder
+    source: "our reading of the routes (A Line to 46th St, Blue Line to Terminal 1), not checked against Metro Transit's trip planner"
+
 benefits:
   discount_rate:
     value: 0.07

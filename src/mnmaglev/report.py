@@ -21,7 +21,7 @@ from .security import operating as security_operating
 from .winter import heating_mwh
 from .kinematics import line_summary
 from .network import Line
-from .demand import network_demand
+from .demand import annual_benefits, network_demand
 from .params import Param, nominal, sample
 
 
@@ -173,6 +173,20 @@ def _demand_section(net: dict) -> list[str]:
              f"${b['external_musd']:,.0f} M; {b['car_vmt_avoided'] / 1e9:,.2f} bn car-miles avoided. Present values at "
              f"7%: benefits {_bn(last['bcr']['pv_benefits'])} + residual {_bn(last['bcr']['pv_residual'])} vs capital "
              f"{_bn(last['bcr']['pv_capital'])} + O&M {_bn(last['bcr']['pv_om'])}.\n")
+    first = d["phases"][min(d["phases"])]
+    for label, x in (("phase 1", first), ("full network", last)):
+        air = [p for p in x["res"]["pairs"] if p["source"] == "airport"]
+        if air:
+            ab = annual_benefits({"pairs": air}, P0)
+            metro = sum(p["riders"] for p in air if p["a"].startswith("twin_cities"))
+            no = x["no_airport"]
+            L.append(f"MSP airport access ({label}; network/airport.yaml): {ab['riders'] / 1e3:,.0f} k riders a year "
+                     f"({(ab['riders'] - metro) / 1e3:,.0f} k outstate air travellers, {metro / 1e3:,.0f} k metro transit "
+                     f"riders via the Midway hub), benefits ${ab['total_musd']:,.0f} M a year. The outstate trips were "
+                     "already in the market as NHTS car trips to the Twin Cities, so the net gain is smaller: riders "
+                     f"{no['benefits']['riders'] / 1e6:,.2f} -> {x['benefits']['riders'] / 1e6:,.2f} M, benefits "
+                     f"${no['benefits']['total_musd']:,.0f} -> ${x['benefits']['total_musd']:,.0f} M a year, BCR "
+                     f"{no['bcr']['bcr']:.3f} -> {x['bcr']['bcr']:.3f}.\n")
     L.append("Busiest market pairs (full network):\n")
     L.append("| Pair | Stations | Maglev time | Fare | Market / yr | Riders / yr | Share | From air | Source |")
     L.append("|---|---|---|---|---|---|---|---|---|")

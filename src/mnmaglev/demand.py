@@ -105,6 +105,21 @@ def load_market() -> tuple[dict, dict]:
     return markets, base
 
 
+def load_airport() -> dict:
+    """The MSP airport access market's stations and markets (network/airport.yaml)."""
+    return yaml.safe_load((NETWORK_DIR / "airport.yaml").read_text(encoding="utf-8"))
+
+
+def airport_trips(airport: dict, base: dict, P) -> dict[str, float]:
+    """Ground trips a year between MSP and each outstate feeder market in the forecast year: the
+    survey's outstate share of MSP's originating passengers, spread over the rest of Minnesota by
+    population (residents flying out and visitors flying in alike)."""
+    ap = "demand.airport."
+    grow = (1 + P["demand.market.growth"]) ** (P["demand.market.forecast_year"] - 2025)
+    per_person = P[ap + "od_ground_trips"] * P[ap + "outstate_share"] / base["airport"]["rest_of_mn_population"]
+    return {m: per_person * base["markets"][m]["population"] * grow for m in airport["feeders"]}
+
+
 def _miles(a: City, b: City) -> float:
     return haversine_km(a.lat, a.lon, b.lat, b.lon) / KM_PER_MILE
 
@@ -253,10 +268,12 @@ def rail_constant(markets: dict, base: dict, cities: dict[str, City], P) -> floa
     return (lo + hi) / 2
 
 
-def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=None, calib=None) -> dict:
+def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=None, calib=None,
+              airport=None) -> dict:
     """Riders, diversion, revenue and benefits per market pair for the lines given, in the forecast year.
     calib: (markets, base, cities) to calibrate the rail constant and gravity model on (default: the
-    market itself; the corridor screen calibrates on Minnesota's, which has the Hiawatha)."""
+    market itself; the corridor screen calibrates on Minnesota's, which has the Hiawatha).
+    airport: network/airport.yaml to add the MSP airport access market (Minnesota only)."""
     if markets is None:
         markets, base = load_market()
     cal_m, cal_b, cal_c = calib or (markets, base, cities)
@@ -269,6 +286,11 @@ def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=
     served = {s for (s, _) in od}
     grow = (1 + P["demand.market.growth"]) ** (P["demand.market.forecast_year"] - 2022)
     induced = P[mc + "induced_share"]
+    # airport trips between MSP and the outstate markets are part of NHTS's car trips between those
+    # markets and the Twin Cities: they come out of that pair and get their own mode choice below
+    air_trips = {}
+    if airport and airport["station"] in served:
+        air_trips = airport_trips(airport, base, P)
     pairs = []
     for a, b in itertools.combinations(markets, 2):
         sa = [s for s in markets[a]["stations"] if s in served]
@@ -283,6 +305,8 @@ def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=
         centre = straight * P[mc + "road_detour"]
         gc_mag, door_mag, fare = maglev_gc(trip["minutes"], trip["changes"], centre, P)
         t = pair_bands(a, b, markets, base, cities, fit)
+        if air_trips and airport["metro_market"] in (a, b):
+            t = _carve(t, air_trips.get(b if a == airport["metro_market"] else a, 0.0) / grow, base, centre, P)
         div = {"car": 0.0, "air": 0.0, "rail": 0.0, "other": 0.0}
         hours_saved = 0.0
         car_vmt = 0.0
@@ -330,8 +354,83 @@ def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=
             "cs_minutes": cs_minutes,
             "source": t["source"],
         })
+    if air_trips:
+        pairs += airport_pairs(airport, air_trips, od, served, markets, base, cities, P, asc)
     return {"pairs": pairs, "asc": asc, "asc_air": asc_air, "air_scale": air_scale, "gravity": fit,
             "lines": [l.id for l in lines]}
+
+
+def _carve(t: dict, trips: float, base: dict, centre: float, P) -> dict:
+    """Take trips (2022 terms) out of a pair's car trips in the bands the model counts, in proportion."""
+    keep = [all_ > 0 and band_miles(lo, hi, centre) >= P["demand.market.min_trip_share"] * centre
+            for (lo, hi), all_ in zip(base["bands_miles"], t["all"])]
+    counted = sum(v for v, k in zip(t["vehicle"], keep) if k)
+    if trips <= 0 or counted <= 0:
+        return t
+    f = min(trips / counted, 1.0)
+    cut = [v * f if k else 0.0 for v, k in zip(t["vehicle"], keep)]
+    return {**t, "all": [x - c for x, c in zip(t["all"], cut)], "vehicle": [v - c for v, c in zip(t["vehicle"], cut)],
+            "work": [w * (1 - c / x) if x > 0 else w for w, c, x in zip(t["work"], cut, t["all"])]}
+
+
+def airport_pairs(airport: dict, air_trips: dict, od: dict, served: set, markets: dict, base: dict,
+                  cities: dict[str, City], P, asc: float) -> list[dict]:
+    """The MSP airport access market. Outstate air travellers choose between driving (with parking
+    and the walk from the ramp) and the maglev to the airport station (access at home, egress to the
+    terminal instead of to a city centre), with the intercity car-vs-maglev logit; none are induced
+    (the flight is made either way). Metro: today's transit riders to the airport from a hub's
+    catchment switch to the maglev where it is faster (time saved only: their transit fare and car
+    use don't change, and car users who might switch are left out)."""
+    mc, ap, bn = "demand.mode_choice.", "demand.airport.", "demand.benefits."
+    theta = P[mc + "ivt_coefficient"]
+    stn = airport["station"]
+    out = []
+
+    def record(a, s, trip, door, fare, market, riders, car, hours, vmt, cs):
+        return {"a": a, "b": "msp_air_passengers", "stations": (s, stn), "path": trip["path"],
+                "minutes": trip["minutes"], "changes": trip["changes"], "door_minutes": door, "fare": fare,
+                "miles": _miles(cities[s], cities[stn]), "market": market, "riders": riders,
+                "share": riders / market if market else 0.0,
+                "diverted": {"car": car, "air": 0.0, "rail": 0.0, "other": riders - car}, "induced": 0.0,
+                "hours_saved": hours, "car_vmt": vmt, "cs_minutes": cs, "source": "airport"}
+
+    for m, trips in air_trips.items():
+        sts = [s for s in markets[m]["stations"] if s in served and (s, stn) in od]
+        if not sts or trips <= 0:
+            continue
+        s = min(sts, key=lambda x: od[(x, stn)]["minutes"])
+        trip = od[(s, stn)]
+        road = _miles(cities[s], cities[stn]) * P[mc + "road_detour"]
+        gc_mag, door_mag, fare = maglev_gc(trip["minutes"], trip["changes"], road, P)
+        gc_mag += P[ap + "maglev_egress"] - P[mc + "maglev_access"]
+        door_mag += P[ap + "maglev_egress"] - P[mc + "maglev_access"]
+        gc_car, door_car = car_gc(road, P)
+        gc_car += P[ap + "car_extra_minutes"] + P[ap + "car_extra_cost"] / _vot(P)
+        door_car += P[ap + "car_extra_minutes"]
+        gap = asc - theta * (gc_mag - gc_car)
+        riders = trips * _binary(gap)
+        out.append(record(m, s, trip, door_mag, fare, trips, riders, riders,
+                          riders * (door_car - door_mag) / 60.0, riders * road / P[bn + "car_occupancy"],
+                          trips * math.log1p(math.exp(gap)) / theta))
+
+    metro = P[ap + "od_ground_trips"] * P[ap + "region_share"] / base["airport"]["region_population"]
+    grow = (1 + P["demand.market.growth"]) ** (P["demand.market.forecast_year"] - 2025)
+    for hub, pop in base["airport"]["hub_catchments"].items():
+        if hub not in served or (hub, stn) not in od:
+            continue
+        trip = od[(hub, stn)]
+        wait = 60.0 / P["system.service.trains_per_hour"] / 2.0
+        door = wait + trip["minutes"] + P[ap + "maglev_egress"]
+        saved = P[ap + "metro_transit_minutes"] - door
+        if saved <= 0:
+            continue
+        market = metro * pop * grow
+        riders = market * P[ap + "metro_transit_share"]
+        out.append(record("twin_cities (" + hub + ")", hub, trip, door, 0.0, market, riders, 0.0,
+                          riders * saved / 60.0, 0.0, riders * saved))
+    return out
+
+
 
 
 # ---------------------------------------------------------------- loads and service
@@ -397,7 +496,7 @@ def benefit_cost(benefits_musd: float, capital_musd: float, opex_musd: float, P,
 SENSITIVITY = ("demand.mode_choice.maglev_premium", "demand.mode_choice.fare_per_mile",
                "demand.mode_choice.maglev_access", "demand.mode_choice.value_of_time",
                "demand.mode_choice.induced_share", "demand.market.growth", "demand.market.min_trip_share",
-               "demand.market.min_pair_miles")
+               "demand.market.min_pair_miles", "demand.airport.outstate_share", "demand.airport.car_extra_cost")
 
 
 def network_demand(results: list[dict], params: dict, P0, market=None, sweep: bool = True) -> dict:
@@ -412,12 +511,13 @@ def network_demand(results: list[dict], params: dict, P0, market=None, sweep: bo
     mn_markets, mn_base = load_market()
     cities, markets, base = market or (mn_cities, mn_markets, mn_base)
     calib = (mn_markets, mn_base, mn_cities)
+    airport = None if market else load_airport()
     bn = "demand.benefits."
     out: dict = {"phases": {}, "sensitivity": []}
 
-    def evaluate(P, ph):
+    def evaluate(P, ph, airport=airport):
         sub = [r for r in results if r["line"].phase <= ph]
-        res = ridership([r["line"] for r in sub], cities, P, markets, base, calib)
+        res = ridership([r["line"] for r in sub], cities, P, markets, base, calib, airport)
         ab = annual_benefits(res, P)
         cap = sum(r["capS"]["total"] for r in sub)
         cap_mean, cap_p50 = float(np.mean(cap)), float(np.percentile(cap, 50))
@@ -434,6 +534,10 @@ def network_demand(results: list[dict], params: dict, P0, market=None, sweep: bo
             "bcr_p50": benefit_cost(ab["total_musd"], cap_p50, opex, P0),
             "bcr_alt": benefit_cost(ab["total_musd"], cap_mean, opex, P0, rate=P0[bn + "discount_rate_alt"]),
         }
+        if airport:  # the same build-out without the airport access market, to report its net effect
+            _, ab0, *_ = evaluate(P0, ph, None)
+            out["phases"][ph]["no_airport"] = {"benefits": ab0,
+                                               "bcr": benefit_cost(ab0["total_musd"], cap_mean, opex, P0)}
     for name in SENSITIVITY if sweep else ():
         p = params[name]
         row = {"param": name, "low": p.low, "high": p.high, "value": p.value}

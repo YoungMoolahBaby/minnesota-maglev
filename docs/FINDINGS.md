@@ -335,6 +335,15 @@ works), date, details. One section per tool.
   0.10, HSR 0.15). The best corridors (Texas, NEC, LA - Las Vegas) reach maglev 0.31-0.48 and HSR
   0.59-0.72 at 7%; HSR beats maglev everywhere; nothing high-speed reaches 1 at 7%.
 
+- 2026-11-05, MSP airport access market: NHTS's "air" trips sit at airport zones only (zero for
+  Rochester and St. Cloud), so outstate air travellers were already in the model as car trips to the
+  Twin Cities; the airport market carves them out and gives them their own mode choice instead of
+  adding them. The only MSP passenger-origin data found is the Met Council's 2011 survey. WebFetch
+  returns PDFs as compressed bytes (no text), and the Read tool can't render PDFs without poppler;
+  pypdf via `uv run --with pypdf` extracted the text. The Bash tool turned "\n" in a heredoc Python
+  string into a real newline again (the edit failed its assertion, nothing was written). Result:
+  368 k airport riders on the spine, but BCR only 0.095 -> 0.096.
+
 ## OSRD
 
 ## Calliope

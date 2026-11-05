@@ -316,3 +316,14 @@ sensitivity table):
   crosswalk), Vancouver BC (not in NHTS), CA HSR's Merced and Anaheim branches, a Texas Triangle network.
 - **Mountain tunnels**: costed at the maglev tunnel rate ($500 M/km, anchored on CA HSR's Palmdale -
   Burbank ceiling); a 10%-grade maglev might need fewer of them than CA HSR plans.
+
+## MSP airport access (2026-11-05)
+
+`network/airport.yaml`, `demand.airport.*`. It moves the BCR by ~0.001, so these are low priority:
+- **A newer MSP passenger survey**: the latest found is the Met Council's 2011 survey (77 of 537
+  origins outstate, 4% light rail). MAC may have newer ground-access surveys (the 2040 long-term
+  plan); the Green Line (2014) and A Line (2016) have opened since.
+- **Outstate origins by city**: the survey only says "rest of Minnesota"; the model spreads it by
+  population, so Bemidji gets the same rate as Owatonna. Closer cities probably drive to MSP more.
+- **Transit times**: the 40-minute Midway - MSP trip today (A Line + Blue Line) is our reading of
+  the routes, not Metro Transit's trip planner.
