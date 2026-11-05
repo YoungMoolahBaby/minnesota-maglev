@@ -89,7 +89,7 @@ from the one before with measurements.
   phase 2 246 -> 137, all 485 -> 237. Fusion fleet 5/8/14 -> 4/6/10 units; the fleet must also cover
   overnight ice warming, which now sets the full network's size.
 
-## Phase 1: research pass (in progress; passes 1-3 done 2026-11-04)
+## Phase 1: research pass (in progress; passes 1-4 done 2026-11-05)
 
 Pass 1 sourced the top cost drivers (docs/RESEARCH.md items 1-5, reference/benchmarks.yaml,
 `mnmaglev benchmarks`); the spine went from $77 bn to $101 bn P50. The benchmarks file and
@@ -113,6 +113,24 @@ P90 933.2). The elevated guideway is still the top driver (correlation 0.52 -> 0
 wider): the evidence moved it up, it didn't narrow it. Not found: a published guideway share of
 Shanghai's cost, Chuo Shinkansen viaduct-only costs, CA HSR construction packages split by
 structure, Brightline West's civil contract.
+Pass 4 (2026-11-05, propulsion, power supply and control; three research agents again: maglev
+sources, conventional HSR systems, long-stator components bottom-up; every figure used checked
+against its source). `costs.systems.propulsion_power_control` 27 -> **21** MUSD/km (10-40), low ->
+medium confidence. New anchors: the Berlin-Hamburg planning company's itemisation (stator carrier,
+winding, power plant, operations control; 1993) 20.7, Transrapid International's unit prices for
+Pittsburgh (1991) 19.6, FRA Anaheim-Ontario 19.1; anchor median 20.2. Two corrections to what we
+held: Vieregg-Rössler's Munich power line was their own doubling of the ICE electrification cost
+(27.0 -> 20.2 halved back), and FRA Table A-3 states a 10-30% contingency for Baltimore-Washington
+and Pittsburgh, now removed as for CA HSR (BW 32.1 -> 26.7; Pittsburgh guideway 78.8 -> 65.7, which
+moves the elevated-guideway anchor median 77 -> 71 while the value stays 75). Context: Shanghai
+(Siemens share, no stator) ~31, Chuo electrical lines ~30 (SCMaglev, mostly tunnel), conventional
+HSR systems 3.5-9 per km (China, HS2 contracts, CA HSR). Bottom-up from Shanghai's scope of supply
+(~4,170 stator packs and ~32 km of winding cable per route-km, 2 switch stations per km, substations
+10-50 km apart): ~11 hardware, 15-19 with installation. Every line -2-3%: spine with fusion
+$98.3 bn, phase 2 $241.9 bn, phase 3 $467.7 bn, through phase 4 $779.7 bn (P10 667.9, P90 906.7).
+Open: older electrical anchors are inflated with the highway construction index (~3.2x since 2002);
+BLS producer prices rose 3.2x for transformers, 2.2x for motors and generators, 1.4x for electrical
+machinery as a whole, so an electrical blend would put them ~15-25% lower (docs/RESEARCH.md).
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
 sourced numbers, tighten ranges, add `params/benchmarks.yaml` (real projects as checks: Shanghai,

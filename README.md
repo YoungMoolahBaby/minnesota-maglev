@@ -42,15 +42,15 @@ uv run pytest
   and back to iron pellets, crude taconite (Mesabi Range) and copper ore (Duluth Complex grades).
 - **Map**: `out/map.html`, the network on OpenStreetMap with costs and times in the popups.
 
-After research passes 1-3 (2026-11-03/04; cost, Minnesota and Transrapid parameters sourced, see
+After research passes 1-4 (2026-11-03/05; cost, Minnesota and Transrapid parameters sourced, see
 `reference/benchmarks.yaml`; still concept-stage, see the report for the caveats):
 
 | | Route km | End to end | Capital P50 (P10 - P90) |
 |---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $100.8 bn ($87 - 117 bn) |
-| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $248 bn ($213 - 289 bn) |
-| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $481 bn ($412 - 558 bn) |
-| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $803 bn ($686 - 933 bn) |
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $98.3 bn ($85 - 114 bn) |
+| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $242 bn ($208 - 282 bn) |
+| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $468 bn ($402 - 543 bn) |
+| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $780 bn ($668 - 907 bn) |
 
 (2026-11-04: GIS slices 1-6, i.e. elevation, land cover, floods, suburbs and freeways, peat,
 buildings and parcels, public and tribal land; out of state with Minnesota land prices.)
@@ -58,13 +58,13 @@ buildings and parcels, public and tribal land; out of state with Minnesota land 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
 construction separation), far enough that work on one needs no slow orders on the other; the
-shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $9.0 bn of the spine. The
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $7.8 bn of the spine. The
 land is cheap (~$1.3 bn with contingency); most of it is building city structures and stations
 for two from day one. Every other line shows what its reserve would cost in the report.
 
 **Local supply** (on by default): Minnesota-made guideway beams and stator packs, taconite aggregate
 near the Range, and long-term supply contracts with Minnesota mines and mills. It saves the spine
-~$1.5 bn P50 (~1.6%), mostly from the price hedge of supply contracts (1 contingency point) and one
+~$1.7 bn P50 (~1.7%), mostly from the price hedge of supply contracts (1 contingency point) and one
 beam plant serving the whole network; taconite aggregate saves little. Materials are only ~4% of
 construction (the report's materials bill), so cheap ore can't move the total much; the ore
 pays ~$2.3 M of production tax to the Range on the spine. `--local-supply off` shows it without.

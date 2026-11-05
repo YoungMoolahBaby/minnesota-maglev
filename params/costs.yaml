@@ -77,13 +77,13 @@ guideway:
 
 systems:
   propulsion_power_control:
-    value: 27
+    value: 21
     low: 10
-    high: 45
+    high: 40
     unit: MUSD/km
-    conf: "low"
-    source: "FRA 2005 (2026 USD, propulsion/control/comms + power distribution): Baltimore-Washington ~32, Munich ~34, Pittsburgh ~14 (adjusted for 38% single track); Transrapid Munich itemised ~27 (Vieregg-Rössler)"
-    note: the long stator lives in the guideway, so this scales with km, not with trains.
+    conf: "medium"
+    source: "research pass 4 (2026-11-05), reference/benchmarks.yaml, 2026 USD per route-km of dual guideway, contingency removed where stated: Berlin-Hamburg planning company itemised 20.7, Transrapid International unit prices (Pittsburgh 1991) 19.6, FRA 2005 Anaheim-Ontario 19.1, Baltimore-Washington 26.7, Munich 33.8, Pittsburgh 11.3; Vieregg-Rössler Munich 20.2 with their doubled power line halved back. Median ~20; set a little above it because the one built line (Shanghai, Siemens share without the stator ~31) ran higher. Conventional HSR systems 3.5-9 (floor). Bottom-up: ~11 hardware, 15-19 with installation"
+    note: the long stator lives in the guideway, so this scales with km, not with trains. Short airport links (Munich, Baltimore-Washington, Shanghai) carry the fixed items over few km; the Minnesota lines are 100-1,400 km.
 
 adders:
   highway_corridor:

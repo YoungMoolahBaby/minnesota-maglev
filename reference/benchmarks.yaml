@@ -63,16 +63,16 @@ benchmarks:
   # --- propulsion, power, control (costs.systems.propulsion_power_control) ---
   - id: vr_munich_systems
     param: costs.systems.propulsion_power_control
-    value: 13.1
+    value: 9.83
     currency: EUR
     year: 2007
     unit: MUSD/km
     adjust: {factor: 0.74, why: "as vr_munich_elevated"}
-    scope: stator carrier 1.69 + stator winding 0.92 + power supply 6.55 + operations control ~3.94 EUR M/km (derived); critic doubled the feasibility study's power cost (study ~11 vs critic ~13 EUR M/km)
+    scope: stator carrier 1.69 + stator winding 0.92 + power supply 3.28 + operations control ~3.94 EUR M/km (derived). VR's power line (6.55) is their own doubling of the ICE electrification cost, not a study figure, so it is halved back here (pass 4, 2026-11-05); VR's total as published was 13.1
     source: Vieregg-Rössler (2007), http://www.vr-transport.de/vr/tr_kosten2007.html
-    quote: "Stator carrier 1.69, winding 0.92, power 6.55 (EUR M/km); operations control 80.10 + 67.61 M EUR"
+    quote: "wird im folgenden für die Anlagen der Energieversorgung des Transrapid der doppelte Kostenansatz verglichen mit der Elektrifizierung von ICE-Strecken verwendet"
     conf: medium
-    note: official Berlin-Hamburg planning (MPG, 1993 prices) puts systems at ~0.57x civil guideway (DM 8.6 vs 15.1 M/km, derived); NMI 1992 power/guideway ~0.6
+    note: the Machbarkeitsstudie 2002 (p. 207) put power supply "in derselben Größenordnung ... wie sie sonst bei der Elektrifizierung von Bahnstrecken anfallen"; stator carrier and winding come from the Berlin-Hamburg planning, operations control from the Machbarkeitsstudie
     anchor: true
 
   # --- urban viaduct (costs.guideway.urban_viaduct) ---
@@ -228,7 +228,8 @@ benchmarks:
     currency: USD
     year: 2003
     unit: MUSD/km
-    scope: Pittsburgh full line (100% elevated), guideway $20.5 M per track-mile, x2 tracks / 1.609 = per dual km (derived); whether it carries contingency is not stated
+    adjust: {factor: 0.8333, why: "Table A-3 states a 10-30% contingency for Pittsburgh; ~20% removed (1/1.2), the model adds its own (pass 4, 2026-11-05)"}
+    scope: Pittsburgh full line (100% elevated), guideway $20.5 M per track-mile, x2 tracks / 1.609 = per dual km (derived)
     source: FRA 2005 Report to Congress, Annex A Table A-3, https://rosap.ntl.bts.gov/view/dot/83590
     quote: "Guideway, $M/track-mi ... Pittsburgh full 20.5"
     conf: high
@@ -250,7 +251,8 @@ benchmarks:
     currency: USD
     year: 2002
     unit: MUSD/km
-    scope: Baltimore-Washington propulsion/control/comms 15.1 + power distribution 1.2 $M per route-mile (derived per km)
+    adjust: {factor: 0.8333, why: "Table A-3 states a 10-30% contingency for Baltimore-Washington; ~20% removed (1/1.2)"}
+    scope: Baltimore-Washington propulsion/control/comms 15.1 + power distribution 1.2 $M per route-mile (derived per km), 100% dual guideway, 39.1 route-mi
     source: FRA 2005 Report to Congress, Annex A Table A-3
     quote: "Propulsion/control/comms, $M/route-mi 15.1; Power distribution 1.2"
     conf: high
@@ -261,7 +263,7 @@ benchmarks:
     currency: USD
     year: 2002
     unit: MUSD/km
-    scope: Munich airport link propulsion/control/comms 15.7 + power 1.5 $M per route-mile (derived per km)
+    scope: Munich airport link propulsion/control/comms 15.7 + power 1.5 $M per route-mile (derived per km), 22.9 route-mi; Table A-3 lists no contingency for Munich, so none is removed. A short line, so fixed items (control centre, end substations) weigh more per km
     source: FRA 2005 Report to Congress, Annex A Table A-3
     quote: "Propulsion/control/comms 15.7; Power distribution 1.5 (Munich, 2002$)"
     conf: high
@@ -272,7 +274,7 @@ benchmarks:
     currency: USD
     year: 2003
     unit: MUSD/km
-    adjust: {factor: 1.235, why: "Pittsburgh is only 61.9% dual track; scaled to all-dual (1/0.81, single track ~half)"}
+    adjust: {factor: 1.029, why: "Pittsburgh is only 61.9% dual track; scaled to all-dual (1/0.81, single track ~half) = 1.235, and the stated 10-30% contingency removed (1/1.2)"}
     scope: Pittsburgh full line propulsion/control/comms 4.5 + power 1.2 $M per route-mile (derived per km)
     source: FRA 2005 Report to Congress, Annex A Table A-3
     quote: "Propulsion/control/comms 4.5; Power distribution 1.2 (Pittsburgh full, 2003$)"
@@ -610,6 +612,139 @@ benchmarks:
     conf: high
     note: includes stations and a garage; context
     anchor: false
+
+  # ===== Research pass 4 (2026-11-05): propulsion, power supply and control =====
+  # Scope of costs.systems.propulsion_power_control: long stator (packs, carrier, winding), propulsion
+  # substations with converters and transformers, feeders and section switching stations, operations
+  # control and comms; per route-km of dual guideway, before soft costs and contingency.
+  - id: mpg_berlin_hamburg_systems
+    param: costs.systems.propulsion_power_control
+    value: 8.606
+    currency: DEM
+    year: 1993
+    unit: MUSD/km
+    scope: Transrapid Berlin-Hamburg, planning company (MPG) itemisation, "bislang veranschlagt" column, 1993 prices. Stator carrier rail 616 + stator cable winding 345 + Energieanlagen (HV lines, substations, feeders) 1270 + operations control 282 = 2,513 M DM over 292 km of open route (derived per km); project management (2 x 245) and vehicles separate
+    source: Vieregg-Rössler, Transrapid Berlin-Hamburg cost review, Tab. 4 and 5 (MPG column reprinted unchanged), http://www.vr-transport.de/transrapid-wirtsch/n004t.html
+    quote: "(6) Kabelwicklung Langstator 345 345 (7) Energieanlagen 1270 2375 ... (9) Betriebsleittechnik 282 282 / (2) Tragschiene für Langstator 616 616"
+    conf: medium
+    note: official figures via a critic, who doubled the power plant (1270 -> 2375) in their own update. MPG put power at 4.3 M DM/km, below new rail lines (4.7), and operations control at ~1 M DM/km (rail signalling 2.8). Bundestag Drs. 12/6964 confirms the 8.9 bn DM total at 1993 prices
+    anchor: true
+  - id: tri_pittsburgh_unit_prices
+    param: costs.systems.propulsion_power_control
+    value: 4.574
+    currency: USD
+    year: 1991
+    unit: MUSD/km
+    scope: Transrapid International unit prices (Dec 1990, escalated to 1991 $) used for the Pittsburgh regional network. Stator packs and cable windings $548 + power supply $724 + signal/communication $122 per linear foot of double guideway = $1,394/ft (derived per km); stator price includes making, transporting, weaving and fastening. Control centre ($21.27 M each), switches and substations at stations extra; no contingency
+    source: Maglev Demonstration Design and Development Plan, final report (Carnegie Mellon / Maglev Inc. for FTA, FTA-PA-08-7006-94-1, Aug 1994), p. VI-50, https://libraryarchives.metro.net/DPGTL/usdot/1994-maglev-demonstration-design-and-development-plan-final-report.pdf
+    quote: "Stator packs & cable windings $548 per linear foot of dbl. guideway ... Power supply ... Signal/Communication ... $724 per linear foot of dbl. guideway $122 per linear foot of dbl. guideway"
+    conf: medium
+    note: a supplier quote, so no overrun experience in it
+    anchor: true
+  - id: fra2005_anaheim_ontario_systems
+    param: costs.systems.propulsion_power_control
+    value: 6.587
+    currency: USD
+    year: 2000
+    unit: MUSD/km
+    adjust: {factor: 0.8696, why: "Table A-3 states a 10-20% contingency for Anaheim-Ontario; ~15% removed (1/1.15)"}
+    scope: Anaheim-Ontario (California-Nevada maglev, first segment), propulsion/control/comms 9.8 + power distribution 0.8 $M per route-mile (derived per km); 31.7 route-mi, 100% dual guideway, 81.6% elevated
+    source: FRA 2005 Report to Congress, Annex A Tables A-2 and A-3, https://rosap.ntl.bts.gov/view/dot/83590
+    quote: "Propul., Control and Comm. ($M/route-mi) $15.1 $4.5 $5.0 $9.8 $7.0 $15.7 / Power Distrib. Cost, ($M/route-mi) $1.2 $1.2 $1.8 $0.8 $1.0 $1.5"
+    conf: high
+    anchor: true
+  - id: fra2005_lv_primm_systems
+    param: costs.systems.propulsion_power_control
+    value: 4.971
+    currency: USD
+    year: 2000
+    unit: MUSD/km
+    adjust: {factor: 1.308, why: "only 33% dual; scaled to all-dual with single track ~half (1/0.665 = 1.504) and the stated 10-20% contingency removed (1/1.15)"}
+    scope: Las Vegas-Primm, propulsion/control/comms 7.0 + power 1.0 $M per route-mile (derived per km); 34.8 route-mi, 67% single guideway
+    source: FRA 2005 Report to Congress, Annex A Tables A-2 and A-3
+    quote: "Propul., Control and Comm. ($M/route-mi) ... $7.0 / Power Distrib. Cost ... $1.0"
+    conf: high
+    note: the single-to-dual scaling is crude (substations serve both guideways); context
+    anchor: false
+  - id: shanghai_siemens_share
+    param: costs.systems.propulsion_power_control
+    value: 20.69
+    currency: DEM
+    year: 2001
+    unit: MUSD/km
+    scope: Shanghai maglev German supply contract DM 1.293 bn (Jan 2001); Siemens' 48% covered operations control, power supply and propulsion, power rails and communications = ~621 M DM over the 30 km double-track line (derived per km). Stator packs and windings were ThyssenKrupp's (45%, with vehicles and switches), so the stator is NOT in this; the Chinese side built and installed. Shares may be work shares rather than price
+    source: D. Hoffmann (Siemens), Transrapid Project Shanghai, Maglev 2004, http://www.maglev.ir/eng/documents/papers/conferences/maglev2004/topic1/IMT_CP_M2004_T1_15.pdf; contract value SMTDC chronicle, http://www.smtdc.com/en/gycf2.html
+    quote: "SAG was in charge of the Operation Control System (OCS), the Power Supply and the Propulsion System (PPP) as well as the Power Rails and Information/Communication Systems (ADS) / The share of the Consortium was 7 % for Transrapid International 48 % for Siemens AG and 45 % for ThyssenKrupp / at value of DM1.293 billion"
+    conf: medium
+    note: the only built Transrapid line; a 30 km line carries the fixed items (control system, two substations) over few km. Scope of supply - 2 substations, 7 wayside transformer stations, 60 switch stations, ~125,000 stator packs, ~950 km of winding cable. context
+    anchor: false
+  - id: chuo_electrical_2023
+    param: costs.systems.propulsion_power_control
+    value: 3979.3
+    currency: JPY
+    year: 2023
+    unit: MUSD/km
+    scope: Chuo Shinkansen (SCMaglev) Shinagawa-Nagoya 285.6 km, JR Central construction budget, five electrical lines (lighting and power lines 392.4, communication lines 67.9, train protection 69.3, feeder lines 171.46, power plants and substations 435.43 bn yen) = 1,136.5 bn yen (derived per km, in M JPY). Excl. consumption tax. Whether the ground coils sit in track (813.5) or feeder lines isn't stated; mostly tunnel, so lighting and power lines are tunnel-heavy
+    source: JR Central, 工事実施計画（その3）及び変更 工事費予算書 (2023-12-14), https://jr-central.co.jp/news/release/_pdf/000043112.pdf
+    quote: "電灯・電力線路費 ３９２，４００，０００ ... 電車線路費 １７１，４６０，０００ 発電所・変電所費 ４３５，４３０，０００"
+    conf: high
+    note: different technology (superconducting, ground coils) and mostly tunnel; context. MLIT (2010) put SCMaglev ~2 trillion yen above a conventional Shinkansen on the 438 km Southern Alps route for magnets, ground coils and operations control (~4.4 bn yen/km)
+    anchor: false
+  - id: colorado_ags_maglev_systems
+    param: costs.systems.propulsion_power_control
+    value: 5.797
+    currency: USD
+    year: 2014
+    unit: MUSD/km
+    scope: Colorado I-70 AGS study, high-speed maglev option, direct costs propulsion 748.3 + energy supply 235.0 + operation control 114.7 + communication/control 7.7 $M = 1,105.7 $M over ~118.5 mi (total / cost per mile, derived per km). The stator is under guideway equipment, so NOT in this; price year not stated (study Aug 2014)
+    source: Colorado DOT, AGS Feasibility Study (2014), Chapter 4, Table 4-1, http://web.archive.org/web/2018id_/https://www.codot.gov/projects/AGSstudy/final-ags-feasibility-study/chapter-4-cost-estimation.pdf
+    quote: "Propulsion System 156,000,000 748,300,000 748,300,000 0 / Cost Per Mile 90,217,640 110,684,635 213,587,862 297,454,557"
+    conf: medium
+    note: context (no stator)
+    anchor: false
+  # Conventional high-speed rail systems (traction power, catenary, signalling, comms): no motor in
+  # the track, so a floor for the power and control parts. Not a model parameter.
+  - id: chsra_boe2024_systems
+    param: hsr_systems_per_km
+    value: 8.97
+    currency: USD
+    year: 2024
+    unit: MUSD/km
+    scope: CA HSR Merced-Bakersfield 171 route-mi, 2024 Basis of Estimate Appendix E, SCC 50.01/.04/.05/.07 + 60.02/.03/.04 = $2,468.8 M (derived per route-km); P65, year of expenditure, before contingency and soft costs (separate lines)
+    source: CHSRA 2024 Business Plan Basis of Estimate, Appendix E, https://hsr.ca.gov/wp-content/uploads/2024/05/2024_Business_Plan_Basis_of_Estimate-FINAL.pdf
+    quote: "50.01 Wayside signaling equipment 463,593,877 ... 60.02 Traction power supply: substations 921,350,345"
+    conf: high
+    note: year of expenditure dollars, taken as 2024
+    anchor: false
+  - id: hs2_rail_systems
+    param: hsr_systems_per_km
+    value: 3.855
+    currency: GBP
+    year: 2024
+    unit: MUSD/km
+    scope: HS2 Phase One rail systems contract awards (Dec 2024 - Jan 2025), overhead catenary 206.9 + HV power 328.2 + signalling and control (ETCS L2, ATO, TMS) 179.4 + telecoms and security 189.5 = 904.1 M GBP over 469 single-track km / 2 (derived per route-km); excl. track, grid connections, client costs and risk
+    source: Find a Tender notices 004057-2025, 006031-2025, 001951-2025, 001950-2025, https://www.find-tender.service.gov.uk/Notice/004057-2025
+    quote: "Value excluding VAT: £206,910,125.20 / The Overhead Catenary Systems covers 469 single track kms"
+    conf: high
+    anchor: false
+  - id: worldbank_china_hsr_systems
+    param: hsr_systems_per_km
+    value: 11
+    currency: CNY
+    year: 2010
+    unit: MUSD/km
+    scope: China 350 km/h lines, signalling and communications 5 + electrification 6 RMB M per km of double track (average unit costs from feasibility reports and appraisal documents, ~2008-2012)
+    source: "World Bank (2014), High-Speed Railways in China: A Look at Construction Costs, Table 3, https://openknowledge.worldbank.org/entities/publication/4240552f-3424-51ef-94a9-f297011a1fe4/full"
+    quote: "Signaling and Communications 5 3 3-4; Electrification 6 4-5 4"
+    conf: high
+    note: Chinese cost level; price year as china_hsr_viaduct_wb2014
+    anchor: false
+
+# Bottom-up check (pass 4, quantities from Hoffmann 2004 and Dorer & Hathaway 1990, prices from
+# MISO MTEP24, converter plants, PricePedia, USGS, ECA 2017): stator ~4,170 packs and ~32 km of
+# winding cable per route-km; substations 10-50 km apart, 14-32 MVA converters; ~2 switch stations per
+# route-km. Hardware ~4 / 11 / 26 MUSD per route-km (low / mid / high), ~15-19 with installation,
+# integration and testing. Thin on prices: no published stator-pack or switch-station price.
 
 # Soft costs and contingency (no conversion; shares):
 #   MnDOT MWRRI cost method (Quandel, 2011): soft costs 24% (design 10, insurance 2, program mgmt 4,

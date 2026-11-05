@@ -18,6 +18,7 @@ reference/indices.yaml, checked by tests/test_benchmarks.py. Spine P50 went $77.
    rail overruns average 44.7% (Flyvbjerg 2003). Open: FRA's own contingency table; P65 vs P50.
 3. [x] `costs.systems.propulsion_power_control`: 18 -> **27** (17-45). Munich itemised ~27; official
    Berlin-Hamburg planning ~0.57x civil. Cross-check with the cfsem stator sizing (phase 6).
+   Pass 4 (2026-11-05): 27 -> **21** (10-40), see below.
 4. [x] `costs.guideway.urban_viaduct` 110 -> **150** (90-280): Honolulu guideway contracts ~139,
    CA HSR viaduct ~174. `costs.guideway.tunnel` 450 -> **500** (280-1000): Hudson tunnel 1C ~584,
    CA HSR Palmdale-Burbank structures <= ~545. `costs.guideway.bridge_per_m` 0.16 -> **0.40**
@@ -37,6 +38,25 @@ Plotkin & Kim (1997) "Maglev Guideway Cost and Construction Schedule Assessment"
 (guideway cost by column height), a guideway share of Shanghai's CNY 8.9-9.9 bn, and a vendor
 quote for Transrapid-class concrete beams (Max Bögl). The 1998 Chinese delegation's 20-32% maglev
 premium over HSR line works is one advocate's account.
+
+Research pass 4 (2026-11-05) did item 3 again: `costs.systems.propulsion_power_control` 27 ->
+**21** (10-40), medium (docs/PLAN.md, phase 1; anchors and comparators in reference/benchmarks.yaml).
+Still open on it:
+- **Price index for electrical items.** The anchors are inflated with the FHWA highway index like
+  everything else (2002 -> 2026 ~3.17x). BLS PPI, 2002 -> 2026 (Jan-Sep): transformers and power
+  regulators (WPU1174) 131.7 -> 422.5, 3.21x; motors and generators (WPU1173) 146.8 -> 328.0, 2.23x;
+  electrical machinery and equipment (WPU117) 116.3 -> 158.5, 1.36x. Weighted by the bottom-up split
+  (stator 42% on motors, power 39% on transformers, control 19% on machinery) that is 2.45x, ~23%
+  below the highway index; ~16% if 30% installation labour stays on the highway index. A per-
+  parameter index in reference/indices.yaml would do it; it would move the systems value ~21 -> ~16-18.
+- Unit prices for a stator pack, a section switch station and the Transrapid operations control
+  system: none published. A vendor quote (ThyssenKrupp / Max Bögl / CRRC) or the Munich
+  Machbarkeitsstudie 2002 itself (only quoted second-hand) would settle the stator share.
+- The 1993 MPG figures came through a critic's table; the Berlin-Hamburg ROV documents are the
+  primary. The NMI 1993 TR07 cost tables are images (no OCR here).
+- Cross-check the substation count and rating with the timetable demand in power.py (Shanghai: 2
+  substations for 30 km; FRA/Volpe: 10-30 km spacing, 29 MVA each on the Florida design), and the
+  stator with the cfsem sizing (phase 6).
 
 Next in this queue (by the new sensitivity table): the elevated guideway again (official sources),
 then the segment shares (elevated vs at grade, urban km), which are planner estimates not sampled

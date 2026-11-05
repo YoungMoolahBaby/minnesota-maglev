@@ -264,6 +264,19 @@ works), date, details. One section per tool.
   the Fed's 2011 G.5A release URL 404s (the 2012 release has 2010), and CHSRA's site blocks
   automated downloads (the CEQA copy of the same appendix works).
   Result: elevated 65 -> 75, at grade 52 -> 60; through phase 4 $744.8 -> $802.7 bn.
+- 2026-11-05, research pass 4 (propulsion, power, control): the same three-agent pattern (maglev
+  sources, HSR systems, components bottom-up), then every figure used re-checked in the saved files.
+  Re-reading sources caught two things we held wrong: a critic's deliberate doubling taken as an
+  estimate (Vieregg-Rössler Munich power), and FRA Table A-3's stated 10-30% contingency, which our
+  entries called "not stated". Checking the quote, not just the number, is what found both.
+  Friction: railroads.dot.gov and rosap.ntl.bts.gov block curl (ROSAP works through WebFetch for
+  small files); WebFetch can't read PDF text and fails vr-transport.de's TLS (plain-HTTP curl works);
+  `pdftotext -layout` scrambles the FRA and CHSRA tables (`-raw` reads them); no OCR or pdftoppm, so
+  image-only tables (NMI 1993, the Nevada maglev pie chart) stay unread; CDOT's AGS study URLs 404
+  (Wayback has them); the thyssenkrupp 2001 press release is gone. BLS's keyless API v1 ignores the
+  year range on GET (last 3 years only) but takes it on POST. YAML: a colon-space or two quoted
+  strings in an unquoted value break the whole benchmarks file; the loader error points at it.
+  Result: systems 27 -> 21; through phase 4 $802.7 -> $779.7 bn.
 
 ## OSRD
 
