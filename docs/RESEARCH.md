@@ -327,3 +327,29 @@ sensitivity table):
   population, so Bemidji gets the same rate as Owatonna. Closer cities probably drive to MSP more.
 - **Transit times**: the 40-minute Midway - MSP trip today (A Line + Blue Line) is our reading of
   the routes, not Metro Transit's trip planner.
+
+## India (2026-11-05, Jon: "wouldnt india benefit from a maglev?")
+
+Not modelled; notes from a chat, sources checked by web search only (press, not primary documents
+unless noted). The reading: India would gain from fast rail far more than Minnesota (density), but
+maglev specifically is a hard sell against HSR and conventional upgrades.
+- **For**: dense corridors (Mumbai - Ahmedabad, Mumbai - Pune, Delhi - Agra - Lucknow) and a
+  capacity-short network; cheap civil works. Mumbai - Ahmedabad HSR (Shinkansen, 508 km, mostly
+  elevated) was approved at ~INR 1.1 lakh crore (~$13 bn); the railway ministry is to absorb a
+  ~INR 90,000 crore escalation (Swarajya, Mar 2026), and one outlet puts the total near INR 2 lakh
+  crore (OneIndia, unconfirmed): ~$45 M/km if so, against our model's ~$166 M/km for HSR in
+  Minnesota. JICA lends ~81% of the original cost at 0.1% over 50 years; full opening Dec 2029
+  (Gujarat stretch Dec 2027).
+- **Against maglev**: benefits scale with the value of time, i.e. income, a small fraction of the
+  US's; few can pay a premium fare; maglev's propulsion, power, control and vehicles are imported
+  high-tech (~$24 M/km of systems in our spine, about half India's all-in HSR cost per km) that
+  cheap labour doesn't discount; 500 vs 320 km/h saves time only above ~500 km, where cheap domestic
+  airlines compete; capital is scarce (IEG study for NITI Aayog, 2018: social discount rate 8% for
+  projects up to 50 years; the railways use a 12% return benchmark per a parliamentary panel).
+- **Better value**: conventional upgrades, the dedicated freight corridors (freeing passenger
+  paths), 160 km/h Vande Bharat trains.
+- **If studied**: one long, dense corridor where maglev would beat air (Delhi - Mumbai, ~1,400 km)
+  against HSR + air. Needs Indian OD data (Indian Railways, DGCA air traffic), Indian values of time,
+  fares and construction costs: no NHTS equivalent, a much bigger data job than the US screen.
+  Unverified, to check: MAHSR ridership forecast, the INR 2 lakh crore figure, the World Bank's
+  ~$17-21 M/km for Chinese HSR (2019) as a cheap-HSR benchmark.
