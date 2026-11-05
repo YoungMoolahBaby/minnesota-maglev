@@ -297,5 +297,22 @@ sensitivity table):
   dedicated-track option (Brightline Florida class) between upgraded rail and HSR.
 - **Frequency**: 2 trains/h for maglev and HSR, 4 round trips a day for upgraded rail are inputs; the
   ridership each would carry at other frequencies (the demand model has the headway term).
-- **Other corridors**: a US corridor screen on NextGen NHTS (Texas Triangle, Atlanta - Charlotte, the
-  Northeast Corridor, California, Chicago hub) with the same model, ranking break-even cost per km.
+- **Other corridors**: done as the US corridor screen (below).
+
+## US corridor screen (2026-11-05)
+
+`mnmaglev screen`; corridors in network/screen/corridors.yaml, factors in params/screen.yaml. Open:
+- **Built-up factor**: calibrated on one corridor (Minnesota's spine, 0.25). Calibrate it on a second
+  GIS-routed corridor (Dallas - Houston would be cheap: the GIS code needs only the station list),
+  and decide whether dense corridors (NEC) can dodge built-up land as well as Minnesota's route does.
+- **NEC tunnels and base case**: NEC FUTURE's new spine ($267-308 bn, 2014 $) has far more tunnel than
+  our 43 km; read its alignment's tunnel km. Model today's Acela / Regional service as the base the
+  new line must beat (the screen counts current rail riders as part of the ground market).
+- **Upgraded rail per corridor**: the all-in $5 M/km and 92 km/h schedule speed are Midwest figures;
+  Texas has no Dallas - Houston passenger service and congested freight lines, the NEC already has it.
+- **Land and O&M by region**: Minnesota's land prices and wages everywhere (land is ~1% of capital in
+  Minnesota; California and NEC land and buildings would be more).
+- **Missing markets**: Connecticut (planning regions vs the NHTS county lookup; Census publishes a
+  crosswalk), Vancouver BC (not in NHTS), CA HSR's Merced and Anaheim branches, a Texas Triangle network.
+- **Mountain tunnels**: costed at the maglev tunnel rate ($500 M/km, anchored on CA HSR's Palmdale -
+  Burbank ceiling); a 10%-grade maglev might need fewer of them than CA HSR plans.

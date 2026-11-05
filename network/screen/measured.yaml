@@ -1,0 +1,160 @@
+# Built-up share of each screen segment (Census TIGER/Line 2023 urban areas, 2020 criteria), outside
+# the stations' approach km, sampled every 250 m on the straight line. Written by `mnmaglev screen-data`.
+mn_spine:
+  duluth-hinckley:
+    built_up_share: 0.103
+    crow_km: 107.8
+  hinckley-midway_hub:
+    built_up_share: 0.2009
+    crow_km: 118.6
+  midway_hub-msp:
+    built_up_share: 1.0
+    crow_km: 9.0
+  msp-rochester:
+    built_up_share: 0.1773
+    crow_km: 113.5
+dallas_houston:
+  dallas-brazos_valley:
+    built_up_share: 0.0936
+    crow_km: 253.2
+  brazos_valley-houston:
+    built_up_share: 0.3418
+    crow_km: 102.6
+i35:
+  san_antonio-austin:
+    built_up_share: 0.3563
+    crow_km: 118.4
+  austin-waco:
+    built_up_share: 0.4017
+    crow_km: 153.5
+  waco-dallas:
+    built_up_share: 0.2425
+    crow_km: 139.5
+ca_hsr:
+  san_francisco-redwood_city:
+    built_up_share: 0.4179
+    crow_km: 36.7
+  redwood_city-san_jose:
+    built_up_share: 1.0
+    crow_km: 34.2
+  san_jose-gilroy:
+    built_up_share: 0.4195
+    crow_km: 46.6
+  gilroy-chowchilla:
+    built_up_share: 0.0814
+    crow_km: 116.8
+  chowchilla-fresno:
+    built_up_share: 0.4459
+    crow_km: 59.8
+  fresno-bakersfield:
+    built_up_share: 0.1169
+    crow_km: 166.7
+  bakersfield-tehachapi:
+    built_up_share: 0.1778
+    crow_km: 58.3
+  tehachapi-palmdale:
+    built_up_share: 0.206
+    crow_km: 68.4
+  palmdale-los_angeles:
+    built_up_share: 0.3178
+    crow_km: 59.2
+la_vegas:
+  los_angeles-rancho_cucamonga:
+    built_up_share: 1.0
+    crow_km: 59.7
+  rancho_cucamonga-victorville:
+    built_up_share: 0.3781
+    crow_km: 51.8
+  victorville-barstow:
+    built_up_share: 0.1225
+    crow_km: 51.0
+  barstow-las_vegas:
+    built_up_share: 0.0663
+    crow_km: 213.3
+nec:
+  washington-baltimore:
+    built_up_share: 0.8814
+    crow_km: 56.7
+  baltimore-philadelphia:
+    built_up_share: 0.8194
+    crow_km: 142.4
+  philadelphia-new_york:
+    built_up_share: 0.9818
+    crow_km: 134.0
+  new_york-stamford:
+    built_up_share: 0.5198
+    crow_km: 50.3
+  stamford-new_haven:
+    built_up_share: 0.9957
+    crow_km: 58.5
+  new_haven-providence:
+    built_up_share: 0.1861
+    crow_km: 139.1
+  providence-boston:
+    built_up_share: 0.9237
+    crow_km: 65.2
+atl_clt:
+  atlanta-greenville:
+    built_up_share: 0.3586
+    crow_km: 220.5
+  greenville-spartanburg:
+    built_up_share: 0.9202
+    crow_km: 43.5
+  spartanburg-charlotte:
+    built_up_share: 0.1955
+    crow_km: 103.8
+fl:
+  miami-west_palm:
+    built_up_share: 1.0
+    crow_km: 104.8
+  west_palm-cocoa:
+    built_up_share: 0.5812
+    crow_km: 198.6
+  cocoa-orlando:
+    built_up_share: 0.2475
+    crow_km: 51.0
+  orlando-lakeland:
+    built_up_share: 0.5085
+    crow_km: 76.5
+  lakeland-tampa:
+    built_up_share: 0.8325
+    crow_km: 50.8
+sea_pdx:
+  seattle-federal_way:
+    built_up_share: 0.9911
+    crow_km: 32.1
+  federal_way-dupont:
+    built_up_share: 1.0
+    crow_km: 34.2
+  dupont-olympia:
+    built_up_share: 0.7722
+    crow_km: 20.9
+  olympia-portland:
+    built_up_share: 0.1809
+    crow_km: 168.7
+chi_det:
+  chicago-hammond:
+    built_up_share: 1.0
+    crow_km: 31.1
+  hammond-porter:
+    built_up_share: 0.7006
+    crow_km: 41.8
+  porter-kalamazoo:
+    built_up_share: 0.0694
+    crow_km: 141.5
+  kalamazoo-ann_arbor:
+    built_up_share: 0.2194
+    crow_km: 151.5
+  ann_arbor-detroit:
+    built_up_share: 0.8178
+    crow_km: 57.6
+chi_stl:
+  chicago-bloomington:
+    built_up_share: 0.3056
+    crow_km: 189.3
+  bloomington-springfield:
+    built_up_share: 0.1323
+    crow_km: 96.6
+  springfield-st_louis:
+    built_up_share: 0.2473
+    crow_km: 139.6

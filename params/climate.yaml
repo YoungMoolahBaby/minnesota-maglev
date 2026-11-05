@@ -141,3 +141,377 @@ south:
     unit: nights per year (18:00-06:00) with icing conditions
     conf: medium
     source: "Rochester (RST), same data; low = freezing rain or drizzle nights only (4.8/yr)"
+
+# ---- US corridor screen zones (docs/PLAN.md, corridor screen): one zone per corridor, station normals averaged.
+# Texas
+texas:
+  winter_mean_temp:
+    value: 12.9
+    low: 11.1
+    high: 14.7
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of DFW (USW00003927), IAH (USW00012960), AUS (USW00013904) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 25.5
+    low: 25.0
+    high: 26.1
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of DFW (USW00003927), IAH (USW00012960), AUS (USW00013904) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 2
+    low: 0
+    high: 4
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of DFW (USW00003927), IAH (USW00012960), AUS (USW00013904) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 12.4
+    low: 7.8
+    high: 28.5
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of DFW, IAH, AUS (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation
+      only, high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 1.6
+    low: 1.1
+    high: 3.4
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of DFW, IAH, AUS (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing
+      rain or drizzle only
+# California (Bay Area, Central Valley, Los Angeles)
+california:
+  winter_mean_temp:
+    value: 12.6
+    low: 11.1
+    high: 15.0
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SJC (USW00023293), FAT (USW00093193), LAX (USW00023174) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 20.6
+    low: 18.9
+    high: 23.5
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SJC (USW00023293), FAT (USW00093193), LAX (USW00023174) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 0
+    low: 0
+    high: 0
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SJC (USW00023293), FAT (USW00093193), LAX (USW00023174) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range;
+      SJC, LAX publish no snowfall normal, counted as 0
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 0.2
+    low: 0.0
+    high: 0.4
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of SJC, FAT, LAX (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation
+      only, high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 0.0
+    low: 0.0
+    high: 0.3
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of SJC, FAT, LAX (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing
+      rain or drizzle only
+# Mojave Desert (Las Vegas, Barstow-Daggett)
+mojave:
+  winter_mean_temp:
+    value: 11.8
+    low: 11.6
+    high: 12.1
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of LAS (USW00023169), DAG (USW00023161) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 26.8
+    low: 26.0
+    high: 27.6
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of LAS (USW00023169), DAG (USW00023161) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 1
+    low: 1
+    high: 1
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of LAS (USW00023169), DAG (USW00023161) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 0.7
+    low: 0.0
+    high: 1.1
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of LAS, DAG (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation only,
+      high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 0.1
+    low: 0.0
+    high: 0.5
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of LAS, DAG (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing rain
+      or drizzle only
+# Northeast Corridor
+northeast:
+  winter_mean_temp:
+    value: 4.0
+    low: 2.3
+    high: 4.8
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of BWI (USW00093721), PHL (USW00013739), LGA (USW00014732), BOS (USW00014739) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high
+      = the stations' range
+  summer_mean_temp:
+    value: 19.3
+    low: 17.3
+    high: 20.2
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of BWI (USW00093721), PHL (USW00013739), LGA (USW00014732), BOS (USW00014739) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high
+      = the stations' range
+  snowfall:
+    value: 77
+    low: 49
+    high: 125
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of BWI (USW00093721), PHL (USW00013739), LGA (USW00014732), BOS (USW00014739) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high
+      = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 70.9
+    low: 11.7
+    high: 102.6
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of BWI, PHL, LGA, BOS (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation
+      only, high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 9.2
+    low: 1.9
+    high: 13.8
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of BWI, PHL, LGA, BOS (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing
+      rain or drizzle only
+# Piedmont (Atlanta - Charlotte)
+piedmont:
+  winter_mean_temp:
+    value: 9.0
+    low: 8.5
+    high: 10.0
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ATL (USW00013874), GSP (USW00003870), CLT (USW00013881) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 22.2
+    low: 21.8
+    high: 22.9
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ATL (USW00013874), GSP (USW00003870), CLT (USW00013881) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 8
+    low: 6
+    high: 10
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ATL (USW00013874), GSP (USW00003870), CLT (USW00013881) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 14.1
+    low: 4.4
+    high: 29.4
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of ATL, GSP, CLT (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation
+      only, high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 2.0
+    low: 0.6
+    high: 4.0
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of ATL, GSP, CLT (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing
+      rain or drizzle only
+# Florida
+florida:
+  winter_mean_temp:
+    value: 19.7
+    low: 18.1
+    high: 22.0
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of MIA (USW00012839), MCO (USW00012815), TPA (USW00012842) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 26.9
+    low: 26.1
+    high: 27.5
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of MIA (USW00012839), MCO (USW00012815), TPA (USW00012842) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 0
+    low: 0
+    high: 0
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of MIA (USW00012839), MCO (USW00012815), TPA (USW00012842) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 0.0
+    low: 0.0
+    high: 0.0
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of MIA, MCO, TPA (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation
+      only, high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 0.0
+    low: 0.0
+    high: 0.0
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of MIA, MCO, TPA (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing
+      rain or drizzle only
+# Cascadia (Seattle - Portland)
+cascadia:
+  winter_mean_temp:
+    value: 7.0
+    low: 6.9
+    high: 7.0
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SEA (USW00024233), PDX (USW00024229) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 16.4
+    low: 15.7
+    high: 17.0
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SEA (USW00024233), PDX (USW00024229) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 14
+    low: 11
+    high: 16
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of SEA (USW00024233), PDX (USW00024229) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 33.0
+    low: 6.0
+    high: 57.6
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of SEA, PDX (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation only,
+      high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 5.5
+    low: 0.7
+    high: 10.1
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of SEA, PDX (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing rain
+      or drizzle only
+# Chicago hub (Chicago, Detroit)
+great_lakes:
+  winter_mean_temp:
+    value: 0.5
+    low: 0.4
+    high: 0.5
+    unit: degC (Nov-Mar)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ORD (USW00094846), DTW (USW00094847) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  summer_mean_temp:
+    value: 17.7
+    low: 17.4
+    high: 18.0
+    unit: degC (Apr-Oct)
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ORD (USW00094846), DTW (USW00094847) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  snowfall:
+    value: 106
+    low: 98
+    high: 114
+    unit: cm/year
+    conf: high
+    source: NOAA NCEI 1991-2020 monthly normals, mean of ORD (USW00094846), DTW (USW00094847) (scripts/climate_normals.py -> reference/climate_screen.yaml); low/high = the stations' range
+  frost:
+    value: 0
+    low: 0
+    high: 0
+    unit: 1 = north frost zone
+    conf: medium
+    source: not Minnesota's Zone I (5 ft footings); the model's milder frost adder (frost_south) applies, an overstatement where the ground doesn't freeze
+  icing_hours:
+    value: 133.8
+    low: 15.2
+    high: 180.1
+    unit: hours per year with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of ORD, DTW (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = freezing precipitation only,
+      high = the stations' mean 90th-percentile year
+  icing_nights:
+    value: 19.4
+    low: 3.1
+    high: 24.2
+    unit: nights per year (18:00-06:00) with icing conditions
+    conf: medium
+    source: hourly ASOS reports 2006-2025 (NWS/FAA, via Iowa Environmental Mesonet), mean of ORD, DTW (scripts/icing_hours.py --set screen -> reference/icing_screen.yaml); low = nights with freezing rain
+      or drizzle only

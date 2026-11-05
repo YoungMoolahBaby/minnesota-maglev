@@ -1,0 +1,4953 @@
+# Icing hours and nights per year from hourly ASOS reports (NWS/FAA; via the Iowa Environmental
+# Mesonet archive), written by scripts/icing_hours.py. Local time. Categories in the script's
+# docstring. 'icing' = any icing condition in the hour; icing_nights = 18:00-06:00 windows with one.
+DFW:
+  zone: texas
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 11.4
+      p10: 0.0
+      p90: 27.9
+      max: 42
+    ice_pellets:
+      mean: 4.5
+      p10: 0.0
+      p90: 15.0
+      max: 22
+    freezing_fog:
+      mean: 0.7
+      p10: 0.0
+      p90: 2.0
+      max: 5
+    unknown_precip:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.0
+      max: 1
+    wet_snow:
+      mean: 5.0
+      p10: 0.0
+      p90: 10.4
+      max: 37
+    icing:
+      mean: 20.2
+      p10: 3.6
+      p90: 40.5
+      max: 58
+    icing_nights:
+      mean: 2.7
+      p10: 0.9
+      p90: 6.0
+      max: 7
+    fz_nights:
+      mean: 1.6
+      p10: 0.0
+      p90: 4.0
+      max: 6
+  per_year:
+    2006:
+      freezing_precip: 18
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 5
+      icing: 23
+      icing_nights: 3
+      fz_nights: 3
+    2007:
+      freezing_precip: 16
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 20
+      icing_nights: 3
+      fz_nights: 2
+    2008:
+      freezing_precip: 2
+      ice_pellets: 1
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 4
+      icing_nights: 2
+      fz_nights: 1
+    2009:
+      freezing_precip: 9
+      ice_pellets: 1
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 21
+      icing_nights: 3
+      fz_nights: 1
+    2010:
+      freezing_precip: 3
+      ice_pellets: 0
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 37
+      icing: 45
+      icing_nights: 6
+      fz_nights: 1
+    2011:
+      freezing_precip: 1
+      ice_pellets: 3
+      freezing_fog: 1
+      unknown_precip: 1
+      wet_snow: 8
+      icing: 14
+      icing_nights: 3
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 6
+      icing: 9
+      icing_nights: 2
+      fz_nights: 0
+    2013:
+      freezing_precip: 21
+      ice_pellets: 22
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 35
+      icing_nights: 6
+      fz_nights: 4
+    2014:
+      freezing_precip: 14
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 19
+      icing_nights: 2
+      fz_nights: 1
+    2015:
+      freezing_precip: 42
+      ice_pellets: 15
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 58
+      icing_nights: 7
+      fz_nights: 6
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 7
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 7
+      icing_nights: 1
+      fz_nights: 1
+    2018:
+      freezing_precip: 8
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 12
+      icing_nights: 3
+      fz_nights: 2
+    2019:
+      freezing_precip: 8
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 8
+      icing_nights: 1
+      fz_nights: 1
+    2020:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 4
+      icing_nights: 1
+      fz_nights: 0
+    2021:
+      freezing_precip: 13
+      ice_pellets: 8
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 24
+      icing_nights: 4
+      fz_nights: 4
+    2022:
+      freezing_precip: 27
+      ice_pellets: 15
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 40
+      icing_nights: 4
+      fz_nights: 3
+    2023:
+      freezing_precip: 36
+      ice_pellets: 5
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 39
+      icing_nights: 2
+      fz_nights: 2
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 4
+      ice_pellets: 9
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 14
+      icing: 23
+      icing_nights: 1
+      fz_nights: 0
+IAH:
+  zone: texas
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 2.8
+      p10: 0.0
+      p90: 8.4
+      max: 20
+    ice_pellets:
+      mean: 0.8
+      p10: 0.0
+      p90: 3.2
+      max: 8
+    freezing_fog:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.1
+      max: 1
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 1.1
+      p10: 0.0
+      p90: 4.0
+      max: 8
+    icing:
+      mean: 4.4
+      p10: 0.0
+      p90: 11.1
+      max: 20
+    icing_nights:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 2
+    fz_nights:
+      mean: 0.3
+      p10: 0.0
+      p90: 1.1
+      max: 2
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 12
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 12
+      icing_nights: 1
+      fz_nights: 1
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 4
+      icing_nights: 1
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 2
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 8
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 8
+      icing_nights: 1
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 20
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 20
+      icing_nights: 2
+      fz_nights: 2
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 4
+      icing_nights: 1
+      fz_nights: 0
+    2018:
+      freezing_precip: 4
+      ice_pellets: 8
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 11
+      icing_nights: 1
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 6
+      ice_pellets: 3
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 9
+      icing_nights: 2
+      fz_nights: 2
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 6
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 6
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 5
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 8
+      icing: 11
+      icing_nights: 1
+      fz_nights: 0
+AUS:
+  zone: texas
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 9.3
+      p10: 0.0
+      p90: 30.2
+      max: 32
+    ice_pellets:
+      mean: 3.0
+      p10: 0.0
+      p90: 10.2
+      max: 13
+    freezing_fog:
+      mean: 0.2
+      p10: 0.0
+      p90: 1.0
+      max: 1
+    unknown_precip:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.1
+      max: 1
+    wet_snow:
+      mean: 0.6
+      p10: 0.0
+      p90: 1.2
+      max: 5
+    icing:
+      mean: 12.7
+      p10: 1.9
+      p90: 33.8
+      max: 43
+    icing_nights:
+      mean: 1.7
+      p10: 0.0
+      p90: 3.1
+      max: 4
+    fz_nights:
+      mean: 1.4
+      p10: 0.0
+      p90: 3.0
+      max: 3
+  per_year:
+    2006:
+      freezing_precip: 11
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 11
+      icing_nights: 1
+      fz_nights: 1
+    2007:
+      freezing_precip: 30
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 5
+      icing: 41
+      icing_nights: 2
+      fz_nights: 2
+    2008:
+      freezing_precip: 2
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 3
+      icing_nights: 2
+      fz_nights: 1
+    2009:
+      freezing_precip: 2
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 3
+      icing_nights: 1
+      fz_nights: 1
+    2010:
+      freezing_precip: 0
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 7
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 1
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 2
+      icing_nights: 1
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 5
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 5
+      icing_nights: 2
+      fz_nights: 2
+    2014:
+      freezing_precip: 22
+      ice_pellets: 12
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 29
+      icing_nights: 4
+      fz_nights: 3
+    2015:
+      freezing_precip: 13
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 1
+      wet_snow: 1
+      icing: 16
+      icing_nights: 3
+      fz_nights: 3
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 3
+      ice_pellets: 2
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 8
+      icing_nights: 2
+      fz_nights: 1
+    2018:
+      freezing_precip: 9
+      ice_pellets: 2
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 11
+      icing_nights: 1
+      fz_nights: 1
+    2019:
+      freezing_precip: 0
+      ice_pellets: 2
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 3
+      icing_nights: 1
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 2
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 2
+      icing_nights: 1
+      fz_nights: 0
+    2021:
+      freezing_precip: 32
+      ice_pellets: 13
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 43
+      icing_nights: 4
+      fz_nights: 3
+    2022:
+      freezing_precip: 16
+      ice_pellets: 10
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 21
+      icing_nights: 3
+      fz_nights: 3
+    2023:
+      freezing_precip: 32
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 33
+      icing_nights: 3
+      fz_nights: 3
+    2024:
+      freezing_precip: 5
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 5
+      icing_nights: 1
+      fz_nights: 1
+    2025:
+      freezing_precip: 4
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 1
+      wet_snow: 1
+      icing: 9
+      icing_nights: 2
+      fz_nights: 1
+SJC:
+  zone: california
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+FAT:
+  zone: california
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 5
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 5
+    icing_nights:
+      mean: 0.1
+      p10: 0.0
+      p90: 1.0
+      max: 1
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 1
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 2
+      icing_nights: 1
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 5
+      icing_nights: 1
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+LAX:
+  zone: california
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+LAS:
+  zone: mojave
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.8
+      p10: 0.0
+      p90: 2.1
+      max: 10
+    icing:
+      mean: 0.8
+      p10: 0.0
+      p90: 2.1
+      max: 10
+    icing_nights:
+      mean: 0.1
+      p10: 0.0
+      p90: 1.0
+      max: 1
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 2
+      icing_nights: 1
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 10
+      icing_nights: 1
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 3
+      icing_nights: 1
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+DAG:
+  zone: mojave
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.5
+      p10: 0.0
+      p90: 0.1
+      max: 8
+    icing:
+      mean: 0.5
+      p10: 0.0
+      p90: 0.1
+      max: 8
+    icing_nights:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.0
+      max: 1
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 8
+      icing: 8
+      icing_nights: 1
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+BWI:
+  zone: northeast
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 16.6
+      p10: 3.6
+      p90: 26.2
+      max: 58
+    ice_pellets:
+      mean: 10.5
+      p10: 3.0
+      p90: 21.1
+      max: 28
+    freezing_fog:
+      mean: 8.2
+      p10: 0.0
+      p90: 19.1
+      max: 23
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 33.4
+      p10: 14.0
+      p90: 49.1
+      max: 76
+    icing:
+      mean: 61.0
+      p10: 19.0
+      p90: 90.1
+      max: 125
+    icing_nights:
+      mean: 7.3
+      p10: 2.0
+      p90: 11.0
+      max: 12
+    fz_nights:
+      mean: 2.2
+      p10: 0.9
+      p90: 4.0
+      max: 5
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 16
+      icing: 19
+      icing_nights: 1
+      fz_nights: 0
+    2007:
+      freezing_precip: 17
+      ice_pellets: 28
+      freezing_fog: 7
+      unknown_precip: 0
+      wet_snow: 29
+      icing: 72
+      icing_nights: 7
+      fz_nights: 2
+    2008:
+      freezing_precip: 20
+      ice_pellets: 9
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 14
+      icing: 40
+      icing_nights: 6
+      fz_nights: 3
+    2009:
+      freezing_precip: 24
+      ice_pellets: 21
+      freezing_fog: 20
+      unknown_precip: 0
+      wet_snow: 40
+      icing: 91
+      icing_nights: 10
+      fz_nights: 3
+    2010:
+      freezing_precip: 4
+      ice_pellets: 3
+      freezing_fog: 23
+      unknown_precip: 0
+      wet_snow: 76
+      icing: 88
+      icing_nights: 10
+      fz_nights: 1
+    2011:
+      freezing_precip: 18
+      ice_pellets: 10
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 34
+      icing: 58
+      icing_nights: 11
+      fz_nights: 3
+    2012:
+      freezing_precip: 13
+      ice_pellets: 4
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 17
+      icing: 32
+      icing_nights: 4
+      fz_nights: 2
+    2013:
+      freezing_precip: 20
+      ice_pellets: 14
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 31
+      icing: 62
+      icing_nights: 11
+      fz_nights: 2
+    2014:
+      freezing_precip: 19
+      ice_pellets: 9
+      freezing_fog: 14
+      unknown_precip: 0
+      wet_snow: 46
+      icing: 82
+      icing_nights: 11
+      fz_nights: 4
+    2015:
+      freezing_precip: 23
+      ice_pellets: 21
+      freezing_fog: 17
+      unknown_precip: 0
+      wet_snow: 45
+      icing: 90
+      icing_nights: 12
+      fz_nights: 4
+    2016:
+      freezing_precip: 17
+      ice_pellets: 6
+      freezing_fog: 19
+      unknown_precip: 0
+      wet_snow: 20
+      icing: 59
+      icing_nights: 5
+      fz_nights: 2
+    2017:
+      freezing_precip: 6
+      ice_pellets: 10
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 38
+      icing: 51
+      icing_nights: 7
+      fz_nights: 1
+    2018:
+      freezing_precip: 25
+      ice_pellets: 22
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 44
+      icing: 80
+      icing_nights: 7
+      fz_nights: 3
+    2019:
+      freezing_precip: 37
+      ice_pellets: 7
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 48
+      icing: 90
+      icing_nights: 11
+      fz_nights: 3
+    2020:
+      freezing_precip: 4
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 14
+      icing: 19
+      icing_nights: 2
+      fz_nights: 1
+    2021:
+      freezing_precip: 58
+      ice_pellets: 15
+      freezing_fog: 7
+      unknown_precip: 0
+      wet_snow: 59
+      icing: 125
+      icing_nights: 10
+      fz_nights: 5
+    2022:
+      freezing_precip: 8
+      ice_pellets: 3
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 33
+      icing: 46
+      icing_nights: 6
+      fz_nights: 2
+    2023:
+      freezing_precip: 0
+      ice_pellets: 4
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 5
+      icing_nights: 2
+      fz_nights: 0
+    2024:
+      freezing_precip: 5
+      ice_pellets: 8
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 21
+      icing: 38
+      icing_nights: 4
+      fz_nights: 1
+    2025:
+      freezing_precip: 15
+      ice_pellets: 13
+      freezing_fog: 11
+      unknown_precip: 0
+      wet_snow: 42
+      icing: 73
+      icing_nights: 9
+      fz_nights: 3
+PHL:
+  zone: northeast
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 12.8
+      p10: 4.5
+      p90: 27.3
+      max: 41
+    ice_pellets:
+      mean: 7.3
+      p10: 2.8
+      p90: 16.0
+      max: 28
+    freezing_fog:
+      mean: 4.0
+      p10: 0.0
+      p90: 9.4
+      max: 22
+    unknown_precip:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.1
+      max: 1
+    wet_snow:
+      mean: 38.6
+      p10: 14.4
+      p90: 62.1
+      max: 75
+    icing:
+      mean: 57.9
+      p10: 19.7
+      p90: 93.3
+      max: 106
+    icing_nights:
+      mean: 7.5
+      p10: 2.9
+      p90: 13.0
+      max: 13
+    fz_nights:
+      mean: 1.9
+      p10: 0.0
+      p90: 3.1
+      max: 4
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 20
+      icing: 20
+      icing_nights: 3
+      fz_nights: 0
+    2007:
+      freezing_precip: 27
+      ice_pellets: 28
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 51
+      icing: 96
+      icing_nights: 13
+      fz_nights: 3
+    2008:
+      freezing_precip: 20
+      ice_pellets: 11
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 15
+      icing: 44
+      icing_nights: 7
+      fz_nights: 3
+    2009:
+      freezing_precip: 9
+      ice_pellets: 4
+      freezing_fog: 22
+      unknown_precip: 0
+      wet_snow: 50
+      icing: 80
+      icing_nights: 13
+      fz_nights: 2
+    2010:
+      freezing_precip: 7
+      ice_pellets: 5
+      freezing_fog: 13
+      unknown_precip: 0
+      wet_snow: 72
+      icing: 85
+      icing_nights: 12
+      fz_nights: 2
+    2011:
+      freezing_precip: 17
+      ice_pellets: 5
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 45
+      icing: 70
+      icing_nights: 13
+      fz_nights: 3
+    2012:
+      freezing_precip: 7
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 23
+      icing: 35
+      icing_nights: 7
+      fz_nights: 0
+    2013:
+      freezing_precip: 10
+      ice_pellets: 3
+      freezing_fog: 4
+      unknown_precip: 1
+      wet_snow: 53
+      icing: 69
+      icing_nights: 10
+      fz_nights: 2
+    2014:
+      freezing_precip: 14
+      ice_pellets: 9
+      freezing_fog: 7
+      unknown_precip: 0
+      wet_snow: 31
+      icing: 59
+      icing_nights: 11
+      fz_nights: 2
+    2015:
+      freezing_precip: 30
+      ice_pellets: 9
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 46
+      icing: 85
+      icing_nights: 12
+      fz_nights: 4
+    2016:
+      freezing_precip: 10
+      ice_pellets: 4
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 39
+      icing: 52
+      icing_nights: 5
+      fz_nights: 2
+    2017:
+      freezing_precip: 6
+      ice_pellets: 7
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 42
+      icing: 52
+      icing_nights: 4
+      fz_nights: 1
+    2018:
+      freezing_precip: 14
+      ice_pellets: 16
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 75
+      icing: 93
+      icing_nights: 7
+      fz_nights: 2
+    2019:
+      freezing_precip: 8
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 48
+      icing: 61
+      icing_nights: 6
+      fz_nights: 2
+    2020:
+      freezing_precip: 6
+      ice_pellets: 6
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 9
+      icing: 17
+      icing_nights: 1
+      fz_nights: 1
+    2021:
+      freezing_precip: 41
+      ice_pellets: 16
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 61
+      icing: 106
+      icing_nights: 6
+      fz_nights: 3
+    2022:
+      freezing_precip: 5
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 1
+      wet_snow: 33
+      icing: 42
+      icing_nights: 6
+      fz_nights: 3
+    2023:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 5
+      icing_nights: 2
+      fz_nights: 0
+    2024:
+      freezing_precip: 7
+      ice_pellets: 4
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 18
+      icing: 28
+      icing_nights: 4
+      fz_nights: 0
+    2025:
+      freezing_precip: 18
+      ice_pellets: 8
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 38
+      icing: 59
+      icing_nights: 7
+      fz_nights: 4
+LGA:
+  zone: northeast
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 10.7
+      p10: 0.0
+      p90: 23.4
+      max: 31
+    ice_pellets:
+      mean: 10.2
+      p10: 1.9
+      p90: 16.2
+      max: 47
+    freezing_fog:
+      mean: 7.9
+      p10: 0.0
+      p90: 17.1
+      max: 23
+    unknown_precip:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.1
+      max: 1
+    wet_snow:
+      mean: 46.3
+      p10: 16.9
+      p90: 65.1
+      max: 98
+    icing:
+      mean: 67.5
+      p10: 26.0
+      p90: 95.2
+      max: 110
+    icing_nights:
+      mean: 8.9
+      p10: 3.0
+      p90: 13.1
+      max: 14
+    fz_nights:
+      mean: 1.9
+      p10: 0.0
+      p90: 4.0
+      max: 6
+  per_year:
+    2006:
+      freezing_precip: 3
+      ice_pellets: 12
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 34
+      icing_nights: 2
+      fz_nights: 0
+    2007:
+      freezing_precip: 23
+      ice_pellets: 47
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 40
+      icing: 86
+      icing_nights: 14
+      fz_nights: 4
+    2008:
+      freezing_precip: 7
+      ice_pellets: 10
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 44
+      icing: 56
+      icing_nights: 8
+      fz_nights: 2
+    2009:
+      freezing_precip: 15
+      ice_pellets: 2
+      freezing_fog: 15
+      unknown_precip: 0
+      wet_snow: 47
+      icing: 78
+      icing_nights: 10
+      fz_nights: 2
+    2010:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 17
+      unknown_precip: 0
+      wet_snow: 98
+      icing: 106
+      icing_nights: 13
+      fz_nights: 0
+    2011:
+      freezing_precip: 31
+      ice_pellets: 3
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 58
+      icing: 94
+      icing_nights: 13
+      fz_nights: 4
+    2012:
+      freezing_precip: 3
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 1
+      wet_snow: 17
+      icing: 26
+      icing_nights: 6
+      fz_nights: 0
+    2013:
+      freezing_precip: 8
+      ice_pellets: 12
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 66
+      icing: 85
+      icing_nights: 11
+      fz_nights: 3
+    2014:
+      freezing_precip: 17
+      ice_pellets: 11
+      freezing_fog: 12
+      unknown_precip: 1
+      wet_snow: 52
+      icing: 81
+      icing_nights: 10
+      fz_nights: 1
+    2015:
+      freezing_precip: 27
+      ice_pellets: 16
+      freezing_fog: 23
+      unknown_precip: 0
+      wet_snow: 62
+      icing: 110
+      icing_nights: 14
+      fz_nights: 6
+    2016:
+      freezing_precip: 5
+      ice_pellets: 1
+      freezing_fog: 18
+      unknown_precip: 0
+      wet_snow: 37
+      icing: 60
+      icing_nights: 10
+      fz_nights: 3
+    2017:
+      freezing_precip: 5
+      ice_pellets: 13
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 55
+      icing: 67
+      icing_nights: 6
+      fz_nights: 0
+    2018:
+      freezing_precip: 6
+      ice_pellets: 9
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 42
+      icing: 61
+      icing_nights: 6
+      fz_nights: 1
+    2019:
+      freezing_precip: 18
+      ice_pellets: 18
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 40
+      icing: 68
+      icing_nights: 12
+      fz_nights: 3
+    2020:
+      freezing_precip: 0
+      ice_pellets: 8
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 21
+      icing: 26
+      icing_nights: 3
+      fz_nights: 0
+    2021:
+      freezing_precip: 18
+      ice_pellets: 4
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 60
+      icing: 86
+      icing_nights: 9
+      fz_nights: 2
+    2022:
+      freezing_precip: 14
+      ice_pellets: 9
+      freezing_fog: 11
+      unknown_precip: 0
+      wet_snow: 54
+      icing: 82
+      icing_nights: 11
+      fz_nights: 2
+    2023:
+      freezing_precip: 0
+      ice_pellets: 10
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 16
+      icing: 25
+      icing_nights: 6
+      fz_nights: 0
+    2024:
+      freezing_precip: 6
+      ice_pellets: 5
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 39
+      icing: 46
+      icing_nights: 3
+      fz_nights: 0
+    2025:
+      freezing_precip: 8
+      ice_pellets: 8
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 65
+      icing: 74
+      icing_nights: 12
+      fz_nights: 4
+BOS:
+  zone: northeast
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 6.7
+      p10: 0.9
+      p90: 16.6
+      max: 25
+    ice_pellets:
+      mean: 8.8
+      p10: 1.8
+      p90: 17.4
+      max: 25
+    freezing_fog:
+      mean: 15.5
+      p10: 2.8
+      p90: 24.0
+      max: 50
+    unknown_precip:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.0
+      max: 3
+    wet_snow:
+      mean: 74.0
+      p10: 49.2
+      p90: 101.3
+      max: 118
+    icing:
+      mean: 97.2
+      p10: 58.6
+      p90: 131.9
+      max: 157
+    icing_nights:
+      mean: 13.3
+      p10: 9.9
+      p90: 18.0
+      max: 19
+    fz_nights:
+      mean: 1.6
+      p10: 0.0
+      p90: 3.1
+      max: 5
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 6
+      freezing_fog: 12
+      unknown_precip: 1
+      wet_snow: 42
+      icing: 59
+      icing_nights: 11
+      fz_nights: 0
+    2007:
+      freezing_precip: 22
+      ice_pellets: 25
+      freezing_fog: 16
+      unknown_precip: 0
+      wet_snow: 77
+      icing: 127
+      icing_nights: 19
+      fz_nights: 5
+    2008:
+      freezing_precip: 3
+      ice_pellets: 8
+      freezing_fog: 21
+      unknown_precip: 3
+      wet_snow: 76
+      icing: 96
+      icing_nights: 17
+      fz_nights: 2
+    2009:
+      freezing_precip: 8
+      ice_pellets: 10
+      freezing_fog: 19
+      unknown_precip: 0
+      wet_snow: 50
+      icing: 77
+      icing_nights: 13
+      fz_nights: 2
+    2010:
+      freezing_precip: 4
+      ice_pellets: 4
+      freezing_fog: 16
+      unknown_precip: 0
+      wet_snow: 93
+      icing: 106
+      icing_nights: 11
+      fz_nights: 0
+    2011:
+      freezing_precip: 5
+      ice_pellets: 5
+      freezing_fog: 20
+      unknown_precip: 1
+      wet_snow: 79
+      icing: 103
+      icing_nights: 12
+      fz_nights: 0
+    2012:
+      freezing_precip: 1
+      ice_pellets: 0
+      freezing_fog: 3
+      unknown_precip: 1
+      wet_snow: 51
+      icing: 55
+      icing_nights: 9
+      fz_nights: 1
+    2013:
+      freezing_precip: 4
+      ice_pellets: 17
+      freezing_fog: 33
+      unknown_precip: 0
+      wet_snow: 118
+      icing: 157
+      icing_nights: 18
+      fz_nights: 1
+    2014:
+      freezing_precip: 2
+      ice_pellets: 9
+      freezing_fog: 22
+      unknown_precip: 0
+      wet_snow: 104
+      icing: 131
+      icing_nights: 18
+      fz_nights: 1
+    2015:
+      freezing_precip: 10
+      ice_pellets: 14
+      freezing_fog: 50
+      unknown_precip: 1
+      wet_snow: 77
+      icing: 140
+      icing_nights: 18
+      fz_nights: 2
+    2016:
+      freezing_precip: 1
+      ice_pellets: 0
+      freezing_fog: 17
+      unknown_precip: 1
+      wet_snow: 72
+      icing: 81
+      icing_nights: 11
+      fz_nights: 1
+    2017:
+      freezing_precip: 11
+      ice_pellets: 2
+      freezing_fog: 14
+      unknown_precip: 1
+      wet_snow: 78
+      icing: 102
+      icing_nights: 10
+      fz_nights: 2
+    2018:
+      freezing_precip: 0
+      ice_pellets: 6
+      freezing_fog: 18
+      unknown_precip: 0
+      wet_snow: 101
+      icing: 114
+      icing_nights: 13
+      fz_nights: 0
+    2019:
+      freezing_precip: 16
+      ice_pellets: 21
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 86
+      icing: 113
+      icing_nights: 11
+      fz_nights: 4
+    2020:
+      freezing_precip: 3
+      ice_pellets: 7
+      freezing_fog: 11
+      unknown_precip: 0
+      wet_snow: 31
+      icing: 45
+      icing_nights: 7
+      fz_nights: 2
+    2021:
+      freezing_precip: 25
+      ice_pellets: 3
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 81
+      icing: 112
+      icing_nights: 14
+      fz_nights: 3
+    2022:
+      freezing_precip: 6
+      ice_pellets: 12
+      freezing_fog: 23
+      unknown_precip: 0
+      wet_snow: 57
+      icing: 86
+      icing_nights: 11
+      fz_nights: 1
+    2023:
+      freezing_precip: 6
+      ice_pellets: 12
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 92
+      icing: 104
+      icing_nights: 15
+      fz_nights: 2
+    2024:
+      freezing_precip: 3
+      ice_pellets: 10
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 50
+      icing: 64
+      icing_nights: 13
+      fz_nights: 2
+    2025:
+      freezing_precip: 3
+      ice_pellets: 6
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 65
+      icing: 72
+      icing_nights: 15
+      fz_nights: 0
+ATL:
+  zone: piedmont
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 3.7
+      p10: 0.0
+      p90: 8.9
+      max: 25
+    ice_pellets:
+      mean: 3.2
+      p10: 0.0
+      p90: 7.2
+      max: 14
+    freezing_fog:
+      mean: 0.2
+      p10: 0.0
+      p90: 1.0
+      max: 2
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 5.0
+      p10: 0.0
+      p90: 12.1
+      max: 27
+    icing:
+      mean: 10.9
+      p10: 0.0
+      p90: 30.5
+      max: 42
+    icing_nights:
+      mean: 1.4
+      p10: 0.0
+      p90: 3.0
+      max: 4
+    fz_nights:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 2
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 2
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 4
+      ice_pellets: 7
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 12
+      icing_nights: 2
+      fz_nights: 1
+    2008:
+      freezing_precip: 3
+      ice_pellets: 7
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 16
+      icing_nights: 2
+      fz_nights: 1
+    2009:
+      freezing_precip: 0
+      ice_pellets: 5
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 5
+      icing: 10
+      icing_nights: 2
+      fz_nights: 0
+    2010:
+      freezing_precip: 5
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 27
+      icing: 35
+      icing_nights: 4
+      fz_nights: 1
+    2011:
+      freezing_precip: 25
+      ice_pellets: 9
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 7
+      icing: 42
+      icing_nights: 3
+      fz_nights: 2
+    2012:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 1
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 6
+      icing: 7
+      icing_nights: 2
+      fz_nights: 0
+    2014:
+      freezing_precip: 17
+      ice_pellets: 14
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 12
+      icing: 30
+      icing_nights: 2
+      fz_nights: 2
+    2015:
+      freezing_precip: 2
+      ice_pellets: 4
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 5
+      icing_nights: 1
+      fz_nights: 1
+    2016:
+      freezing_precip: 0
+      ice_pellets: 2
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 7
+      icing: 9
+      icing_nights: 1
+      fz_nights: 0
+    2017:
+      freezing_precip: 8
+      ice_pellets: 6
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 26
+      icing_nights: 2
+      fz_nights: 1
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 4
+      icing_nights: 1
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 5
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 9
+      icing_nights: 3
+      fz_nights: 1
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 5
+      ice_pellets: 4
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 11
+      icing_nights: 1
+      fz_nights: 0
+GSP:
+  zone: piedmont
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 4.4
+      p10: 0.0
+      p90: 12.1
+      max: 14
+    ice_pellets:
+      mean: 0.6
+      p10: 0.0
+      p90: 2.1
+      max: 5
+    freezing_fog:
+      mean: 1.1
+      p10: 0.0
+      p90: 3.0
+      max: 4
+    unknown_precip:
+      mean: 1.9
+      p10: 0.0
+      p90: 4.2
+      max: 7
+    wet_snow:
+      mean: 6.7
+      p10: 0.0
+      p90: 13.9
+      max: 35
+    icing:
+      mean: 14.3
+      p10: 0.0
+      p90: 24.4
+      max: 54
+    icing_nights:
+      mean: 2.4
+      p10: 0.0
+      p90: 5.0
+      max: 6
+    fz_nights:
+      mean: 0.7
+      p10: 0.0
+      p90: 2.0
+      max: 3
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 12
+      ice_pellets: 2
+      freezing_fog: 0
+      unknown_precip: 1
+      wet_snow: 5
+      icing: 19
+      icing_nights: 4
+      fz_nights: 0
+    2008:
+      freezing_precip: 3
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 7
+      icing_nights: 1
+      fz_nights: 1
+    2009:
+      freezing_precip: 6
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 1
+      wet_snow: 7
+      icing: 19
+      icing_nights: 4
+      fz_nights: 1
+    2010:
+      freezing_precip: 13
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 6
+      wet_snow: 35
+      icing: 54
+      icing_nights: 6
+      fz_nights: 1
+    2011:
+      freezing_precip: 9
+      ice_pellets: 1
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 13
+      icing_nights: 3
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 7
+      ice_pellets: 0
+      freezing_fog: 3
+      unknown_precip: 4
+      wet_snow: 1
+      icing: 15
+      icing_nights: 3
+      fz_nights: 2
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 1
+      wet_snow: 13
+      icing: 16
+      icing_nights: 1
+      fz_nights: 0
+    2015:
+      freezing_precip: 4
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 7
+      wet_snow: 7
+      icing: 24
+      icing_nights: 5
+      fz_nights: 1
+    2016:
+      freezing_precip: 11
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 4
+      wet_snow: 3
+      icing: 18
+      icing_nights: 3
+      fz_nights: 3
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 1
+      wet_snow: 22
+      icing: 23
+      icing_nights: 3
+      fz_nights: 0
+    2018:
+      freezing_precip: 14
+      ice_pellets: 0
+      freezing_fog: 4
+      unknown_precip: 2
+      wet_snow: 10
+      icing: 28
+      icing_nights: 5
+      fz_nights: 2
+    2019:
+      freezing_precip: 2
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 4
+      wet_snow: 0
+      icing: 6
+      icing_nights: 1
+      fz_nights: 1
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 6
+      icing: 8
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 3
+      wet_snow: 4
+      icing: 8
+      icing_nights: 3
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 4
+      wet_snow: 10
+      icing: 15
+      icing_nights: 4
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 7
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 1
+      wet_snow: 6
+      icing: 14
+      icing_nights: 1
+      fz_nights: 1
+CLT:
+  zone: piedmont
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 5.0
+      p10: 0.0
+      p90: 10.7
+      max: 22
+    ice_pellets:
+      mean: 6.3
+      p10: 0.0
+      p90: 14.1
+      max: 19
+    freezing_fog:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 2
+    unknown_precip:
+      mean: 0.1
+      p10: 0.0
+      p90: 0.0
+      max: 1
+    wet_snow:
+      mean: 7.3
+      p10: 0.0
+      p90: 13.2
+      max: 45
+    icing:
+      mean: 17.2
+      p10: 0.0
+      p90: 33.3
+      max: 62
+    icing_nights:
+      mean: 2.2
+      p10: 0.0
+      p90: 4.1
+      max: 7
+    fz_nights:
+      mean: 0.7
+      p10: 0.0
+      p90: 2.0
+      max: 4
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 1
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 9
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 5
+      icing: 14
+      icing_nights: 1
+      fz_nights: 0
+    2008:
+      freezing_precip: 3
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 6
+      icing: 9
+      icing_nights: 2
+      fz_nights: 1
+    2009:
+      freezing_precip: 0
+      ice_pellets: 4
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 17
+      icing_nights: 3
+      fz_nights: 0
+    2010:
+      freezing_precip: 9
+      ice_pellets: 14
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 45
+      icing: 62
+      icing_nights: 7
+      fz_nights: 2
+    2011:
+      freezing_precip: 17
+      ice_pellets: 8
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 24
+      icing_nights: 5
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 2
+      ice_pellets: 1
+      freezing_fog: 1
+      unknown_precip: 1
+      wet_snow: 4
+      icing: 8
+      icing_nights: 1
+      fz_nights: 0
+    2014:
+      freezing_precip: 6
+      ice_pellets: 9
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 30
+      icing_nights: 2
+      fz_nights: 2
+    2015:
+      freezing_precip: 10
+      ice_pellets: 11
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 22
+      icing_nights: 4
+      fz_nights: 2
+    2016:
+      freezing_precip: 22
+      ice_pellets: 10
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 6
+      icing: 36
+      icing_nights: 4
+      fz_nights: 4
+    2017:
+      freezing_precip: 0
+      ice_pellets: 15
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 15
+      icing: 26
+      icing_nights: 3
+      fz_nights: 0
+    2018:
+      freezing_precip: 9
+      ice_pellets: 19
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 33
+      icing_nights: 2
+      fz_nights: 0
+    2019:
+      freezing_precip: 1
+      ice_pellets: 7
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 9
+      icing_nights: 2
+      fz_nights: 1
+    2020:
+      freezing_precip: 0
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 3
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 9
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 9
+      icing_nights: 2
+      fz_nights: 0
+    2022:
+      freezing_precip: 2
+      ice_pellets: 10
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 21
+      icing_nights: 4
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 9
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 8
+      icing: 20
+      icing_nights: 2
+      fz_nights: 1
+MIA:
+  zone: florida
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+MCO:
+  zone: florida
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+TPA:
+  zone: florida
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    ice_pellets:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    freezing_fog:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    icing_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    fz_nights:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2009:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2011:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2013:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2022:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2024:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 0
+      icing_nights: 0
+      fz_nights: 0
+SEA:
+  zone: cascadia
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 2.1
+      p10: 0.0
+      p90: 6.7
+      max: 19
+    ice_pellets:
+      mean: 0.5
+      p10: 0.0
+      p90: 1.1
+      max: 4
+    freezing_fog:
+      mean: 8.4
+      p10: 0.0
+      p90: 19.6
+      max: 28
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 22.0
+      p10: 3.8
+      p90: 45.0
+      max: 57
+    icing:
+      mean: 32.0
+      p10: 10.0
+      p90: 56.9
+      max: 80
+    icing_nights:
+      mean: 5.8
+      p10: 1.9
+      p90: 11.0
+      max: 12
+    fz_nights:
+      mean: 0.3
+      p10: 0.0
+      p90: 1.0
+      max: 2
+  per_year:
+    2006:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 11
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 24
+      icing_nights: 7
+      fz_nights: 0
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 23
+      icing: 27
+      icing_nights: 5
+      fz_nights: 0
+    2008:
+      freezing_precip: 6
+      ice_pellets: 2
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 35
+      icing: 51
+      icing_nights: 11
+      fz_nights: 1
+    2009:
+      freezing_precip: 2
+      ice_pellets: 1
+      freezing_fog: 19
+      unknown_precip: 0
+      wet_snow: 34
+      icing: 56
+      icing_nights: 12
+      fz_nights: 0
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 11
+      icing: 13
+      icing_nights: 2
+      fz_nights: 0
+    2011:
+      freezing_precip: 1
+      ice_pellets: 0
+      freezing_fog: 28
+      unknown_precip: 0
+      wet_snow: 14
+      icing: 42
+      icing_nights: 10
+      fz_nights: 1
+    2012:
+      freezing_precip: 19
+      ice_pellets: 4
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 45
+      icing: 65
+      icing_nights: 8
+      fz_nights: 2
+    2013:
+      freezing_precip: 0
+      ice_pellets: 1
+      freezing_fog: 25
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 30
+      icing_nights: 7
+      fz_nights: 0
+    2014:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 10
+      icing_nights: 2
+      fz_nights: 0
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 8
+      icing_nights: 1
+      fz_nights: 0
+    2016:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 13
+      icing: 13
+      icing_nights: 2
+      fz_nights: 0
+    2017:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 45
+      icing: 46
+      icing_nights: 4
+      fz_nights: 0
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 10
+      icing_nights: 1
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 40
+      icing: 43
+      icing_nights: 4
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 11
+      icing: 11
+      icing_nights: 2
+      fz_nights: 0
+    2021:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 39
+      icing: 42
+      icing_nights: 5
+      fz_nights: 0
+    2022:
+      freezing_precip: 13
+      ice_pellets: 0
+      freezing_fog: 12
+      unknown_precip: 0
+      wet_snow: 57
+      icing: 80
+      icing_nights: 11
+      fz_nights: 1
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 12
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 22
+      icing_nights: 8
+      fz_nights: 0
+    2024:
+      freezing_precip: 1
+      ice_pellets: 1
+      freezing_fog: 13
+      unknown_precip: 0
+      wet_snow: 2
+      icing: 17
+      icing_nights: 5
+      fz_nights: 1
+    2025:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 24
+      icing: 30
+      icing_nights: 8
+      fz_nights: 0
+PDX:
+  zone: cascadia
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 9.9
+      p10: 0.0
+      p90: 26.4
+      max: 56
+    ice_pellets:
+      mean: 1.4
+      p10: 0.0
+      p90: 5.1
+      max: 7
+    freezing_fog:
+      mean: 9.0
+      p10: 1.0
+      p90: 19.5
+      max: 46
+    unknown_precip:
+      mean: 0.0
+      p10: 0.0
+      p90: 0.0
+      max: 0
+    wet_snow:
+      mean: 14.2
+      p10: 0.9
+      p90: 27.3
+      max: 49
+    icing:
+      mean: 34.0
+      p10: 5.9
+      p90: 58.4
+      max: 82
+    icing_nights:
+      mean: 5.3
+      p10: 2.0
+      p90: 9.1
+      max: 16
+    fz_nights:
+      mean: 1.1
+      p10: 0.0
+      p90: 2.0
+      max: 7
+  per_year:
+    2006:
+      freezing_precip: 4
+      ice_pellets: 0
+      freezing_fog: 12
+      unknown_precip: 0
+      wet_snow: 3
+      icing: 19
+      icing_nights: 5
+      fz_nights: 1
+    2007:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 2
+      icing_nights: 0
+      fz_nights: 0
+    2008:
+      freezing_precip: 16
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 27
+      icing: 49
+      icing_nights: 8
+      fz_nights: 2
+    2009:
+      freezing_precip: 1
+      ice_pellets: 0
+      freezing_fog: 24
+      unknown_precip: 0
+      wet_snow: 26
+      icing: 51
+      icing_nights: 16
+      fz_nights: 1
+    2010:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 7
+      icing: 11
+      icing_nights: 3
+      fz_nights: 0
+    2011:
+      freezing_precip: 11
+      ice_pellets: 0
+      freezing_fog: 19
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 40
+      icing_nights: 8
+      fz_nights: 1
+    2012:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 17
+      icing: 23
+      icing_nights: 5
+      fz_nights: 0
+    2013:
+      freezing_precip: 1
+      ice_pellets: 0
+      freezing_fog: 46
+      unknown_precip: 0
+      wet_snow: 9
+      icing: 56
+      icing_nights: 8
+      fz_nights: 0
+    2014:
+      freezing_precip: 17
+      ice_pellets: 7
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 5
+      icing: 37
+      icing_nights: 3
+      fz_nights: 2
+    2015:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 0
+      icing: 6
+      icing_nights: 2
+      fz_nights: 0
+    2016:
+      freezing_precip: 30
+      ice_pellets: 2
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 21
+      icing: 54
+      icing_nights: 5
+      fz_nights: 2
+    2017:
+      freezing_precip: 56
+      ice_pellets: 1
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 19
+      icing: 82
+      icing_nights: 9
+      fz_nights: 7
+    2018:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 27
+      icing: 27
+      icing_nights: 3
+      fz_nights: 0
+    2019:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 12
+      unknown_precip: 0
+      wet_snow: 30
+      icing: 41
+      icing_nights: 6
+      fz_nights: 0
+    2020:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 4
+      icing: 5
+      icing_nights: 3
+      fz_nights: 0
+    2021:
+      freezing_precip: 26
+      ice_pellets: 5
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 49
+      icing: 80
+      icing_nights: 10
+      fz_nights: 2
+    2022:
+      freezing_precip: 21
+      ice_pellets: 4
+      freezing_fog: 13
+      unknown_precip: 0
+      wet_snow: 7
+      icing: 42
+      icing_nights: 6
+      fz_nights: 2
+    2023:
+      freezing_precip: 0
+      ice_pellets: 0
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 12
+      icing: 15
+      icing_nights: 2
+      fz_nights: 0
+    2024:
+      freezing_precip: 14
+      ice_pellets: 6
+      freezing_fog: 4
+      unknown_precip: 0
+      wet_snow: 1
+      icing: 25
+      icing_nights: 3
+      fz_nights: 2
+    2025:
+      freezing_precip: 1
+      ice_pellets: 2
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 10
+      icing: 15
+      icing_nights: 2
+      fz_nights: 1
+ORD:
+  zone: great_lakes
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 16.1
+      p10: 2.9
+      p90: 32.5
+      max: 47
+    ice_pellets:
+      mean: 5.8
+      p10: 0.9
+      p90: 11.4
+      max: 22
+    freezing_fog:
+      mean: 9.4
+      p10: 1.9
+      p90: 15.1
+      max: 32
+    unknown_precip:
+      mean: 0.2
+      p10: 0.0
+      p90: 1.0
+      max: 1
+    wet_snow:
+      mean: 102.2
+      p10: 62.8
+      p90: 154.3
+      max: 168
+    icing:
+      mean: 128.6
+      p10: 69.8
+      p90: 180.6
+      max: 214
+    icing_nights:
+      mean: 17.4
+      p10: 11.0
+      p90: 23.2
+      max: 31
+    fz_nights:
+      mean: 3.4
+      p10: 1.0
+      p90: 5.2
+      max: 7
+  per_year:
+    2006:
+      freezing_precip: 2
+      ice_pellets: 3
+      freezing_fog: 2
+      unknown_precip: 0
+      wet_snow: 15
+      icing: 18
+      icing_nights: 3
+      fz_nights: 0
+    2007:
+      freezing_precip: 46
+      ice_pellets: 9
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 157
+      icing: 214
+      icing_nights: 23
+      fz_nights: 7
+    2008:
+      freezing_precip: 12
+      ice_pellets: 22
+      freezing_fog: 14
+      unknown_precip: 0
+      wet_snow: 168
+      icing: 204
+      icing_nights: 31
+      fz_nights: 5
+    2009:
+      freezing_precip: 17
+      ice_pellets: 11
+      freezing_fog: 7
+      unknown_precip: 0
+      wet_snow: 132
+      icing: 161
+      icing_nights: 18
+      fz_nights: 3
+    2010:
+      freezing_precip: 8
+      ice_pellets: 1
+      freezing_fog: 25
+      unknown_precip: 0
+      wet_snow: 123
+      icing: 154
+      icing_nights: 20
+      fz_nights: 3
+    2011:
+      freezing_precip: 11
+      ice_pellets: 2
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 72
+      icing: 92
+      icing_nights: 16
+      fz_nights: 5
+    2012:
+      freezing_precip: 3
+      ice_pellets: 0
+      freezing_fog: 10
+      unknown_precip: 1
+      wet_snow: 91
+      icing: 102
+      icing_nights: 14
+      fz_nights: 1
+    2013:
+      freezing_precip: 24
+      ice_pellets: 10
+      freezing_fog: 14
+      unknown_precip: 1
+      wet_snow: 131
+      icing: 167
+      icing_nights: 21
+      fz_nights: 4
+    2014:
+      freezing_precip: 2
+      ice_pellets: 2
+      freezing_fog: 4
+      unknown_precip: 1
+      wet_snow: 64
+      icing: 70
+      icing_nights: 11
+      fz_nights: 1
+    2015:
+      freezing_precip: 31
+      ice_pellets: 15
+      freezing_fog: 32
+      unknown_precip: 0
+      wet_snow: 86
+      icing: 147
+      icing_nights: 15
+      fz_nights: 4
+    2016:
+      freezing_precip: 9
+      ice_pellets: 5
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 76
+      icing: 93
+      icing_nights: 17
+      fz_nights: 3
+    2017:
+      freezing_precip: 6
+      ice_pellets: 5
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 52
+      icing: 68
+      icing_nights: 11
+      fz_nights: 2
+    2018:
+      freezing_precip: 14
+      ice_pellets: 2
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 122
+      icing: 146
+      icing_nights: 25
+      fz_nights: 4
+    2019:
+      freezing_precip: 47
+      ice_pellets: 5
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 107
+      icing: 162
+      icing_nights: 19
+      fz_nights: 7
+    2020:
+      freezing_precip: 20
+      ice_pellets: 0
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 154
+      icing: 178
+      icing_nights: 21
+      fz_nights: 5
+    2021:
+      freezing_precip: 9
+      ice_pellets: 3
+      freezing_fog: 11
+      unknown_precip: 0
+      wet_snow: 118
+      icing: 130
+      icing_nights: 17
+      fz_nights: 2
+    2022:
+      freezing_precip: 9
+      ice_pellets: 2
+      freezing_fog: 6
+      unknown_precip: 1
+      wet_snow: 71
+      icing: 88
+      icing_nights: 17
+      fz_nights: 3
+    2023:
+      freezing_precip: 9
+      ice_pellets: 11
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 133
+      icing: 148
+      icing_nights: 21
+      fz_nights: 3
+    2024:
+      freezing_precip: 23
+      ice_pellets: 7
+      freezing_fog: 1
+      unknown_precip: 0
+      wet_snow: 90
+      icing: 119
+      icing_nights: 16
+      fz_nights: 4
+    2025:
+      freezing_precip: 20
+      ice_pellets: 1
+      freezing_fog: 12
+      unknown_precip: 0
+      wet_snow: 81
+      icing: 110
+      icing_nights: 13
+      fz_nights: 2
+DTW:
+  zone: great_lakes
+  years: 2006-2025
+  summary:
+    freezing_precip:
+      mean: 14.4
+      p10: 5.7
+      p90: 26.2
+      max: 48
+    ice_pellets:
+      mean: 4.4
+      p10: 0.9
+      p90: 11.2
+      max: 14
+    freezing_fog:
+      mean: 10.8
+      p10: 3.0
+      p90: 23.6
+      max: 34
+    unknown_precip:
+      mean: 0.2
+      p10: 0.0
+      p90: 1.0
+      max: 1
+    wet_snow:
+      mean: 113.0
+      p10: 70.3
+      p90: 156.4
+      max: 169
+    icing:
+      mean: 139.1
+      p10: 100.6
+      p90: 179.6
+      max: 206
+    icing_nights:
+      mean: 21.4
+      p10: 14.9
+      p90: 25.2
+      max: 31
+    fz_nights:
+      mean: 2.9
+      p10: 1.0
+      p90: 4.1
+      max: 8
+  per_year:
+    2006:
+      freezing_precip: 9
+      ice_pellets: 0
+      freezing_fog: 6
+      unknown_precip: 0
+      wet_snow: 73
+      icing: 88
+      icing_nights: 15
+      fz_nights: 2
+    2007:
+      freezing_precip: 6
+      ice_pellets: 0
+      freezing_fog: 10
+      unknown_precip: 1
+      wet_snow: 15
+      icing: 32
+      icing_nights: 9
+      fz_nights: 2
+    2008:
+      freezing_precip: 14
+      ice_pellets: 14
+      freezing_fog: 23
+      unknown_precip: 0
+      wet_snow: 145
+      icing: 185
+      icing_nights: 31
+      fz_nights: 4
+    2009:
+      freezing_precip: 8
+      ice_pellets: 5
+      freezing_fog: 4
+      unknown_precip: 1
+      wet_snow: 99
+      icing: 116
+      icing_nights: 20
+      fz_nights: 2
+    2010:
+      freezing_precip: 10
+      ice_pellets: 1
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 105
+      icing: 126
+      icing_nights: 18
+      fz_nights: 4
+    2011:
+      freezing_precip: 16
+      ice_pellets: 13
+      freezing_fog: 13
+      unknown_precip: 1
+      wet_snow: 118
+      icing: 158
+      icing_nights: 23
+      fz_nights: 5
+    2012:
+      freezing_precip: 1
+      ice_pellets: 3
+      freezing_fog: 8
+      unknown_precip: 0
+      wet_snow: 122
+      icing: 132
+      icing_nights: 21
+      fz_nights: 0
+    2013:
+      freezing_precip: 13
+      ice_pellets: 3
+      freezing_fog: 10
+      unknown_precip: 1
+      wet_snow: 120
+      icing: 146
+      icing_nights: 22
+      fz_nights: 4
+    2014:
+      freezing_precip: 8
+      ice_pellets: 3
+      freezing_fog: 29
+      unknown_precip: 0
+      wet_snow: 97
+      icing: 121
+      icing_nights: 21
+      fz_nights: 2
+    2015:
+      freezing_precip: 20
+      ice_pellets: 7
+      freezing_fog: 34
+      unknown_precip: 0
+      wet_snow: 46
+      icing: 103
+      icing_nights: 18
+      fz_nights: 2
+    2016:
+      freezing_precip: 9
+      ice_pellets: 11
+      freezing_fog: 10
+      unknown_precip: 0
+      wet_snow: 156
+      icing: 174
+      icing_nights: 23
+      fz_nights: 1
+    2017:
+      freezing_precip: 3
+      ice_pellets: 3
+      freezing_fog: 8
+      unknown_precip: 1
+      wet_snow: 96
+      icing: 110
+      icing_nights: 19
+      fz_nights: 1
+    2018:
+      freezing_precip: 14
+      ice_pellets: 3
+      freezing_fog: 16
+      unknown_precip: 0
+      wet_snow: 121
+      icing: 151
+      icing_nights: 25
+      fz_nights: 2
+    2019:
+      freezing_precip: 48
+      ice_pellets: 1
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 106
+      icing: 159
+      icing_nights: 25
+      fz_nights: 8
+    2020:
+      freezing_precip: 6
+      ice_pellets: 5
+      freezing_fog: 7
+      unknown_precip: 0
+      wet_snow: 160
+      icing: 174
+      icing_nights: 25
+      fz_nights: 3
+    2021:
+      freezing_precip: 15
+      ice_pellets: 3
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 147
+      icing: 163
+      icing_nights: 27
+      fz_nights: 4
+    2022:
+      freezing_precip: 14
+      ice_pellets: 2
+      freezing_fog: 3
+      unknown_precip: 0
+      wet_snow: 83
+      icing: 102
+      icing_nights: 14
+      fz_nights: 3
+    2023:
+      freezing_precip: 37
+      ice_pellets: 3
+      freezing_fog: 5
+      unknown_precip: 0
+      wet_snow: 169
+      icing: 206
+      icing_nights: 25
+      fz_nights: 3
+    2024:
+      freezing_precip: 13
+      ice_pellets: 3
+      freezing_fog: 0
+      unknown_precip: 0
+      wet_snow: 140
+      icing: 156
+      icing_nights: 23
+      fz_nights: 2
+    2025:
+      freezing_precip: 25
+      ice_pellets: 5
+      freezing_fog: 9
+      unknown_precip: 0
+      wet_snow: 143
+      icing: 179
+      icing_nights: 24
+      fz_nights: 3

@@ -423,19 +423,22 @@ Built (src/mnmaglev/demand.py, `mnmaglev demand-data`, report section "Ridership
   fitted to the Hiawatha's actual FY25 riders (632 k) plus a maglev premium (half of CA HSR's
   asserted HSR-over-rail gap, 175 min; the biggest assumption). Air side: constant and scale fitted
   to nine observed HSR shares of the rail + air market (Paris - Lyon 91% at 2 h ... Tokyo - Fukuoka
-  11% at 4.9 h). Only trips at least half the station-to-station distance count (placeholder rule).
+  11% at 4.9 h). Only trips at least half the station-to-station distance count (placeholder rule),
+  and only market pairs whose stations are 50+ miles apart (intercity scope, added with the corridor
+  screen: the constants don't shrink with distance, so 25-45 mile commuter pairs got ~18% shares,
+  e.g. Ames - Des Moines 2.2 M riders).
 - **Benefits** (USDOT BCA guidance, Dec 2025): consumer surplus (logsum gain), fare revenue, car
   costs drivers don't weigh, car externalities; 30 years at 7% after 8 years of building, residual
   value; transport only (the fusion fleet is a separate investment).
 
 First run (forecast year 2045, most likely values): phase 1 **2.6 M riders**/yr, $175 M fares vs
-$312 M O&M (56% farebox); full network **33.9 M**, $3.3 bn fares, 115% farebox, 3.9 trains/h needed
-on the busiest hop (2 assumed). **Benefit-cost ratio 0.095 (phase 1) to 0.139 (full network)** at 7%
-on the expected capital; 0.25-0.33 at 3.1%; 0.07-0.21 across the sensitivity sweep (maglev premium
-0-350 min moves riders 19-59 M). Present values, full network at 7%: benefits $64 bn + residual
+$312 M O&M (56% farebox); full network **30.7 M**, $3.2 bn fares, 110% farebox, 3.9 trains/h needed
+on the busiest hop (2 assumed). **Benefit-cost ratio 0.095 (phase 1) to 0.134 (full network)** at 7%
+on the expected capital; 0.25-0.32 at 3.1%; 0.07-0.19 across the sensitivity sweep (maglev premium
+0-350 min moves riders 17-52 M). Present values, full network at 7%: benefits $62 bn + residual
 $35 bn vs capital $700 bn + O&M $22 bn. The busiest pairs are short and dense (Omaha - Lincoln,
-Milwaukee - Chicago, Ames - Des Moines, St. Cloud) plus Twin Cities - Chicago (2h11, 54% of the
-market, 1.6 M from air).
+Milwaukee - Chicago, St. Cloud, Rochester) plus Twin Cities - Chicago (2h11, 54% of the market,
+1.6 M from air). (Before the 50-mile intercity rule: 33.9 M riders, BCR 0.139; phase 1 unchanged.)
 
 Next: feed trains per hour back into fleet, energy and fusion sizing; per-line ridership and
 incremental BCR (which lines pay least badly); demand Monte Carlo; funding scenarios; the
@@ -459,15 +462,106 @@ runs one). Two research agents sourced them; every figure used re-checked.
 - Checks: upgraded rail gives Twin Cities - Duluth 2h31 (NLX plan ~2.5 h) and Twin Cities - Chicago
   7h30 (Borealis today 7h31).
 
-Result, through phase 4 (2000 samples; capital mean, 7%): maglev $903 bn, 33.9 M riders, **BCR
-0.139**; HSR $439 bn, 31.5 M riders, **0.208**; upgraded rail $37 bn, 6.1 M riders, **0.261**. Phase
-1 (spine): 0.095 / 0.132 / 0.250. At 3.1%: 0.33 / 0.44 / 0.50. HSR keeps ~93% of maglev's riders for
-~49% of its capital (25-35% slower trips); upgraded rail costs ~4% of maglev but is 3-4x slower and
-carries ~18% of the riders, and Amtrak-level O&M ($48/train-km) eats its benefits (farebox 34-46%).
+Result, through phase 4 (2000 samples; capital mean, 7%; re-run with the 50-mile intercity rule):
+maglev $903 bn, 30.7 M riders, **BCR 0.134**; HSR $439 bn, 28.4 M riders, **0.198**; upgraded rail
+$37 bn, 5.4 M riders, **0.241**. Phase 1 (spine): 0.095 / 0.132 / 0.250. At 3.1%: 0.32 / 0.42 /
+0.46. HSR keeps ~92% of maglev's riders for ~49% of its capital (25-35% slower trips); upgraded rail
+costs ~4% of maglev but is 3-4x slower and carries ~18% of the riders, and Amtrak-level O&M
+($48/train-km) eats its benefits (farebox 34-45%).
 None reaches 1 on these corridors: the problem is the market (one 3.8 M metro, mid-size cities
 100-300 miles out), not only the technology. Caveats in out/compare.md: HSR on maglev alignments
 (10% grades, maglev curves) is a little optimistic; HSR energy is understated (no rolling
 resistance); upgraded rail is a sketch and its on-time performance isn't in the demand model.
+
+### US corridor screen (2026-11-05, Jon: "let's do the corridor screen")
+
+`mnmaglev screen-data` then `mnmaglev screen` (-> out/screen.md; `--built-up high` for the
+sensitivity run) put ten US corridors and Minnesota through the whole model, for maglev, HSR and
+upgraded rail. Method, all for Jon to check:
+- **Corridors** (network/screen/corridors.yaml): planner-level lines like Minnesota's before the GIS
+  phase. Station sites are city centres or the stations real projects chose. Waypoints keep the
+  straight legs off the water (SF Bay, Lake Michigan, Puget Sound, Long Island Sound). Mountain
+  tunnels follow CA HSR's plans; the urban approach km, their tunnel share, detours and long bridges
+  are planner estimates.
+- **Built-up km** are measured from Census 2020 urban areas along the straight legs, and 0.25 of them
+  are priced as urban viaduct (`screen.built_up_factor`). That factor is calibrated on the Minnesota
+  spine: the screen method then gives 28.6 urban-viaduct km against the GIS alignment's 27.4 (route
+  372 vs 359 km). The rest of the urban-area km is the dodging a real route does by following
+  freeways and railroads. high = 1.0, every urban-area km on viaduct.
+- **Prices**: construction items (guideway, bridges, stations, switches, depot) scale by the DoD
+  area cost factor of the corridor's cities over Minnesota's (UFS 3-701-01, 2026). Texas 0.82,
+  Piedmont 0.87, Florida 0.87, Northeast 1.15, Mojave 1.17, California 1.21, against Minnesota 1.12.
+  No local supply, no second-system reserve, no fusion fleet.
+- **Climate**: one zone per corridor from NOAA 1991-2020 normals and 20 years of ASOS icing hours
+  (scripts/climate_normals.py, scripts/icing_hours.py --set screen). Guideway heating runs where the
+  stations average 5+ icing nights a year (Northeast, Cascadia, the Chicago corridors).
+- **Market**: NHTS 2022 trips between the corridors' CBSAs, with their NHTS zones found from the
+  counties. Connecticut is left out because Census now reports planning regions the NHTS lookup
+  doesn't know. The mode choice keeps its Minnesota calibration (Hiawatha).
+- **Intercity scope**: the first run handed ~20% of 25-45 mile commuter markets to the train (LA -
+  Inland Empire 94 M riders a year, SF - San Jose 33 M, Washington - Baltimore 36 M; Ames - Des
+  Moines 2.2 M in Minnesota). So market pairs under 50 miles apart are now left out everywhere
+  (`demand.market.min_pair_miles`). That moved the Minnesota network from 33.9 to 30.7 M riders and
+  its BCR from 0.139 to 0.134; the spine is unchanged.
+
+Checks:
+- The screen method on Minnesota gives BCR 0.10 / 0.15 / 0.25 (maglev / HSR / upgraded rail),
+  against 0.10 / 0.14 / 0.24 from the measured GIS spine.
+- Riders against published forecasts (HSR): Texas Central 9.8 M (sponsor 6 M in 2029, 13 M in 2050),
+  Atlanta - Charlotte 5.7 M (FRA ROD 5.4-6.3 M in 2050), Cascadia without Vancouver 3.1 M (WSDOT
+  1.7-3 M with it), Brightline West route extended to LA 11.8 M (8.6 M without LA), California 19.2 M
+  (CA HSR 24-31 M with Merced, Anaheim and the Bay Area commuter pairs), NEC 49 M (NEC FUTURE Alt 3
+  ~39 M intercity).
+- Capital (HSR, expected value with cost growth): Texas Central $37.5 bn (published "more than $30
+  billion", "north of $40 billion"). California $220 bn (P50 $167 bn) against CA HSR's $106-126 bn
+  estimates; the 2026 staff re-estimate of $231 bn is for the full build-out. NEC $181 bn against NEC
+  FUTURE's new spine at $267-308 bn (2014 $), which had far more tunnel than our 43 km, so ours is
+  low. Brightline West's $21.5 bn for 218 mi in the I-15 median is below our $54 bn for 414 km with
+  the LA approach.
+
+Result (1,000 samples per run, 7%, capital mean; 3.1% in brackets):
+
+| Corridor | Maglev | HSR | Upgraded rail |
+|---|---|---|---|
+| Minnesota spine (screen method) | 0.10 (0.26) | 0.15 (0.33) | 0.25 (0.48) |
+| Dallas - Houston | 0.34 (0.68) | 0.65 (1.21) | 1.24 (2.06) |
+| San Antonio - Austin - Dallas | 0.40 (0.79) | 0.72 (1.32) | 1.41 (2.34) |
+| SF - Fresno - LA | 0.20 (0.45) | 0.26 (0.55) | 0.52 (0.94) |
+| LA - Las Vegas | 0.31 (0.65) | 0.59 (1.10) | 1.13 (1.94) |
+| Washington - New York - Boston | 0.48 (0.94) | 0.66 (1.26) | 2.04 (3.45) |
+| Atlanta - Charlotte | 0.18 (0.41) | 0.30 (0.60) | 0.70 (1.20) |
+| Miami - Orlando - Tampa | 0.32 (0.65) | 0.52 (0.99) | 1.14 (1.91) |
+| Seattle - Portland | 0.13 (0.31) | 0.19 (0.42) | 0.48 (0.86) |
+| Chicago - Detroit | 0.11 (0.28) | 0.16 (0.36) | 0.27 (0.52) |
+| Chicago - St. Louis | 0.12 (0.30) | 0.19 (0.41) | 0.27 (0.50) |
+
+With every urban-area km on viaduct (`--built-up high`), maglev / HSR: NEC 0.39 / 0.43, Texas
+0.32-0.35 / 0.50-0.52, LA - Las Vegas 0.28 / 0.41, Minnesota 0.10 / 0.13.
+
+Reading:
+- Minnesota is at the bottom of the ranking, with the Chicago corridors and Cascadia.
+- The best corridors do 3-5x better than Minnesota for maglev and about 4-5x for HSR: Texas (two big
+  metros 240 miles apart, cheap construction), the NEC (the market) and LA - Las Vegas. That is the
+  value of a denser market.
+- Under USDOT's 7% no high-speed option reaches 1 anywhere. At 3.1% HSR passes 1 in Texas, on the NEC
+  and on LA - Las Vegas.
+- HSR beats maglev on every corridor. It keeps 94-97% of maglev's riders for 43-67% of the capital.
+- Upgraded rail scores above 1 on several corridors, but it is the weakest part of the screen. It
+  assumes freight track that can take more passenger trains at an all-in $5 M/km. The NEC already has
+  that service and more (Acela, Northeast Regional), which the model counts as a new mode, so that
+  row is meaningless. And Chicago - St. Louis already runs at 110 mph.
+
+Caveats: the screen's corridors are planner sketches with no grades, alignments or crossings
+designed. Land and buildings use Minnesota's prices (land is ~1% of capital in Minnesota, more in
+the NEC and California). O&M wages aren't regionalized. Existing intercity rail is treated as part
+of the ground market, not as an alternative the new line must beat. Missing markets: Vancouver
+BC, Connecticut, and the Merced and Anaheim branches.
+
+Next, if Jon wants:
+- a Texas Triangle network run (Dallas - Houston + I-35 + Houston - San Antonio);
+- a GIS alignment for the best corridor;
+- the existing NEC service as the base case;
+- a proper upgraded-rail costing on real freight lines.
 
 ## Phase 8: materials supply chain
 

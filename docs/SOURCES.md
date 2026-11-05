@@ -142,3 +142,19 @@ derived market totals. All US government works, public domain.
 | Upgraded rail | MnDOT NLX pages, MnDOT/Quandel Milwaukee - Twin Cities alternatives (2011), TxDOT Minnesota summary, IDOT (2023), NCDOT Piedmont, WisDOT TCMC booklet | capital per km |
 | Schedules | [Amtrak GTFS](https://content.amtrak.com/content/gtfs/GTFS.zip) (4 Nov 2026) | end-to-end run times; Amtrak's terms of use apply, we keep only derived times |
 | Route financials | Amtrak Monthly Performance Report Sept 2025, Table 8 | O&M per train-km, fares, seats |
+
+## US corridor screen (`mnmaglev screen-data`, `mnmaglev screen`)
+
+Raw files in `data/raw/screen/`, `data/raw/noaa_normals/`, `data/raw/noaa_asos/` (gitignored); the
+committed files hold derived values only (network/screen/measured.yaml, network/screen/demand_base.yaml,
+reference/climate_screen.yaml, reference/icing_screen.yaml). All US government works, public domain,
+except the IEM archive (free, cite it).
+
+| Data | Source | Notes |
+|---|---|---|
+| Urban areas (2020 criteria) | [Census TIGER/Line 2023 UAC20](https://www2.census.gov/geo/tiger/TIGER2023/UAC/tl_2023_us_uac20.zip) (74 MB) | read with a small shapefile reader + shapely; built-up km along each straight leg |
+| Travel market | the NHTS OD, county -> zone lookup and Census Vintage 2025 files above | CBSA counties -> NHTS zones; Connecticut's planning regions don't match the lookup |
+| Construction cost by region | [DoD UFS 3-701-01 Facilities Pricing Guide](https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_06_2026.pdf) (6 June 2026), [data tables](https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx) Table 4-1 CONUS | MILCON area cost factors, 96-base-city average = 1.00 |
+| Climate normals | [NOAA NCEI U.S. Climate Normals 1991-2020](https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/), monthly, per station | scripts/climate_normals.py |
+| Icing hours | ASOS hourly reports 2006-2025 (NWS/FAA) via the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml) | scripts/icing_hours.py --set screen; the archive rate-limits (HTTP 429), the script backs off |
+| Real-project comparators | Texas Tribune / ENR (Texas Central), CHSRA Peer Review Group letter (2024), Brightline West press, FRA NEC FUTURE Final EIS and ROD, FRA/MDOT SCMaglev DEIS (2021), GDOT Atlanta - Charlotte FEIS/ROD (2021), WSDOT UHSGT business case (2019), Illinois Governor (2023), America 2050 (2011) | reference/screen_comparators.yaml; several agency sites block scripts, those figures are from press (marked secondary) |

@@ -14,7 +14,8 @@ STATION_TYPES = ("terminal_major", "airport", "city")
 # waypoint: shapes the planner route only; via: the GIS route must also pass through it
 POINT_TYPES = STATION_TYPES + ("waypoint", "via")
 CORRIDOR = "existing_corridor"  # land class priced as a share of the land around it
-STRUCTURES = ("elevated", "at_grade", "urban_viaduct")  # urban_viaduct here = built-up km outside the urban ends
+STRUCTURES = ("elevated", "at_grade", "urban_viaduct", "tunnel")  # urban_viaduct here = built-up km outside the
+# urban ends; tunnel = mountain tunnels in the rural km (screen corridors)
 
 
 @dataclass(frozen=True)

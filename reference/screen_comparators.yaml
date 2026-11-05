@@ -1,0 +1,74 @@
+# Real projects on the screen's corridors, to read the screen's HSR numbers against (`mnmaglev screen`
+# prints them beside its own). Not model inputs. Gathered 2026-11-05 by a research agent; "secondary"
+# = the agency page refused automated access and the figure is from press or another report.
+# Costs are as published (year-of-expenditure or the stated year), not converted to 2026 USD.
+
+texas_central:
+  project: Texas Central (Dallas - Houston, Shinkansen N700S)
+  route_miles: 236
+  travel_time: 90 min
+  cost: "'from $12 billion to more than $30 billion' (ENR, 28 Aug 2023); DOT 'north of $40 billion' (Texas Tribune, 14 Apr 2025)"
+  riders: "~6 M/yr by 2029, >13 M by 2050 (sponsor forecast, L.E.K. 2019; secondary)"
+  structure: "'over 50% of the alignment being on viaduct and the remaining on embankment' (H-GAC TPC amendment, Jan 2019; secondary)"
+  status: "USDOT cancelled a $63.9 M planning grant and Amtrak withdrew (Apr 2025); private investors lead"
+  url: https://www.texastribune.org/2025/04/14/texas-high-speed-rail-planning-grant-cut/
+
+california:
+  project: California HSR phase 1 (San Francisco - Los Angeles / Anaheim)
+  route_miles: 494
+  travel_time: "2 h 40 min statutory target SF - LA"
+  cost: "Draft 2024 Business Plan P50 '$106 billion' YOE (CHSRA Peer Review Group letter, 8 Mar 2024); 2026 Business Plan '$126.20 billion total' at P65 (California Policy Center, 1 Mar 2026; secondary)"
+  riders: "28.4 M in 2040 (Draft 2024 Business Plan, via the Peer Review Group letter); 23.6-30.6 M (2026 plan; secondary)"
+  structure: "tunnels: Pacheco Pass ~15 mi, Bakersfield - Palmdale 'more than 10 miles', Palmdale - Burbank ~28 mi (secondary)"
+  url: https://stran.senate.ca.gov/sites/stran.senate.ca.gov/files/HSR%20PRG%20Letter%202024%20Business%20Plan.pdf
+
+socal_vegas:
+  project: Brightline West (Las Vegas - Rancho Cucamonga, 200 mph, in the I-15 median)
+  route_miles: 218
+  travel_time: about 2 h
+  cost: "$21.5 B (Bloomberg, 1 Oct 2025; up from ~$12 B; secondary)"
+  riders: "5.8 M in 2029, 8.6 M by 2031 (bond offering documents, via KTNV; secondary)"
+  status: "service expected late 2029; heavy construction not begun (Las Vegas Review-Journal, 26 Oct 2026)"
+  url: https://www.brightlinewest.com/media/press-releases/2024/signed-sealed-and-delivered-3-billion-grant-agreement-for-brightline-west-project-officially-signed
+
+northeast:
+  project: NEC FUTURE (FRA Tier 1, Washington - Boston)
+  route_miles: 457
+  cost: "Selected Alternative '$120-$150 billion over 25+ years (in current dollars)' (ROD highlights, July 2017); Alternative 3, a new high-speed spine, $267-308 B (2014 $, Final EIS Vol. 2 Table S-6, Dec 2016)"
+  riders: "2040 intercity trips: No Action 19.3 M, Alt 1 33.7 M, Alt 2 37.1 M, Alt 3 ~39.0 M (Final EIS summary)"
+  maglev: "Baltimore - Washington SCMaglev DEIS (Jan 2021): 33-36 mi, ~75% tunnel; 16.1-17.9 M riders in 2030; FRA rescinded the NOI 4 Aug 2025 ('not feasible')"
+  url: https://www.fra.dot.gov/necfuture/pdfs/feis/volume_2/summary.pdf
+
+piedmont:
+  project: Atlanta - Charlotte passenger rail, Greenfield (220 mph) alternative (FRA / GDOT Tier 1 FEIS / ROD, June 2021)
+  route_miles: 274
+  travel_time: "2 h 06 min (electric)"
+  cost: "$6.2-8.4 B (Table 3-3; dollar year not stated; read from a jumbled table extract)"
+  riders: "5.38-6.30 M in 2050 (Table 3-3)"
+  url: https://www.dot.ga.gov/InvestSmart/Rail/EIS/Atlanta-Charlotte%20FEIS-ROD%20SIGNED.pdf
+
+florida:
+  project: Brightline (Miami - Orlando, 125 mph, operating)
+  riders: "3.1 M passengers in 2025 against an original 6.6 M forecast, revenue $214 M (Commercial Observer, 20 Feb 2026, citing a bond filing; secondary)"
+  status: "parent entities filed Chapter 11 on 24-25 Sep 2026; the operating railroad did not"
+
+cascadia:
+  project: Cascadia ultra-high-speed ground transportation (Vancouver BC - Seattle - Portland; WSDOT business case, July 2019)
+  cost: "$24-42 B (2017 $)"
+  riders: "1.7-3 M trips a year by 2040"
+  travel_time: "under 1 h between each pair of major cities, 220 mph"
+  url: https://wsdot.wa.gov/sites/default/files/2021-11/Ultra-High-Speed-Ground-Transportation-Study-Business-Case-Analysis-Executive-Summary-2019.pdf
+
+chicago_st_louis:
+  project: Chicago - St. Louis 110 mph upgrade (Lincoln Service)
+  cost: "'$1.96 billion'; 110 mph since 26 Jun 2023, ~30 min faster (Illinois Governor's press release, 12 Jun 2023)"
+  url: https://gov.illinois.gov/news/press-release.26577.html
+
+chicago_detroit:
+  project: Chicago - Detroit / Pontiac 110 mph program (Tier 1 Draft EIS, Sep 2014)
+  cost: "'$2.4 billion to $2.98 billion'; 2.8 M riders by 2035; 5:38 to 3:46 (Bond Buyer, 29 Oct 2014; secondary); no Final EIS will be issued"
+
+ranking:
+  source: "America 2050 / Regional Plan Association, High-Speed Rail in America (Jan 2011), Table 4 (score 0-20.15)"
+  scores: {Washington - New York: 20.15, Boston - New York: 19.87, Los Angeles - San Francisco: 17.98, Portland - Seattle: 17.68, Los Angeles - Las Vegas: 16.94, Chicago - Minneapolis: 16.66, Chicago - St. Louis: 16.19, Dallas - Houston: 16.12, Atlanta - Charlotte: 15.68, Tampa - Miami: 13.93}
+  url: https://libraryarchives.metro.net/DPGTL/harvested/2011_america_2050_high_speed_rail_in_america.pdf

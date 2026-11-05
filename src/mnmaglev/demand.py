@@ -253,15 +253,18 @@ def rail_constant(markets: dict, base: dict, cities: dict[str, City], P) -> floa
     return (lo + hi) / 2
 
 
-def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=None) -> dict:
-    """Riders, diversion, revenue and benefits per market pair for the lines given, in the forecast year."""
+def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=None, calib=None) -> dict:
+    """Riders, diversion, revenue and benefits per market pair for the lines given, in the forecast year.
+    calib: (markets, base, cities) to calibrate the rail constant and gravity model on (default: the
+    market itself; the corridor screen calibrates on Minnesota's, which has the Hiawatha)."""
     if markets is None:
         markets, base = load_market()
+    cal_m, cal_b, cal_c = calib or (markets, base, cities)
     mc, bn = "demand.mode_choice.", "demand.benefits."
     theta = P[mc + "ivt_coefficient"]
-    asc = rail_constant(markets, base, cities, P) + theta * P[mc + "maglev_premium"]
+    asc = rail_constant(cal_m, cal_b, cal_c, P) + theta * P[mc + "maglev_premium"]
     asc_air, air_scale = air_constant(P)
-    fit = gravity_fit(markets, base, cities)
+    fit = gravity_fit(cal_m, cal_b, cal_c)
     od = station_graph(lines, P)
     served = {s for (s, _) in od}
     grow = (1 + P["demand.market.growth"]) ** (P["demand.market.forecast_year"] - 2022)
@@ -275,6 +278,8 @@ def ridership(lines: list[Line], cities: dict[str, City], P, markets=None, base=
         s1, s2 = min(itertools.product(sa, sb), key=lambda st: od[st]["minutes"])
         trip = od[(s1, s2)]
         straight = _miles(cities[s1], cities[s2])
+        if straight < P["demand.market.min_pair_miles"]:
+            continue  # a commuter market, outside the intercity model's scope
         centre = straight * P[mc + "road_detour"]
         gc_mag, door_mag, fare = maglev_gc(trip["minutes"], trip["changes"], centre, P)
         t = pair_bands(a, b, markets, base, cities, fit)
@@ -391,23 +396,28 @@ def benefit_cost(benefits_musd: float, capital_musd: float, opex_musd: float, P,
 # ---------------------------------------------------------------- network summary for the report
 SENSITIVITY = ("demand.mode_choice.maglev_premium", "demand.mode_choice.fare_per_mile",
                "demand.mode_choice.maglev_access", "demand.mode_choice.value_of_time",
-               "demand.mode_choice.induced_share", "demand.market.growth", "demand.market.min_trip_share")
+               "demand.mode_choice.induced_share", "demand.market.growth", "demand.market.min_trip_share",
+               "demand.market.min_pair_miles")
 
 
-def network_demand(results: list[dict], params: dict, P0) -> dict:
+def network_demand(results: list[dict], params: dict, P0, market=None, sweep: bool = True) -> dict:
     """Ridership, revenue and benefit-cost for each build-out (lines through phase p), the transport
     line items only (capital mean and P50 of the lines; the fusion fleet is a separate investment,
-    O&M at P50 with grid power), plus a low / high sweep of the main demand assumptions."""
+    O&M at P50 with grid power), plus a low / high sweep of the main demand assumptions.
+    market: (cities, markets, base) for another market than Minnesota's (the corridor screen); the
+    rail constant and gravity model stay calibrated on Minnesota's."""
     from .network import load_cities
 
-    cities = load_cities()
-    markets, base = load_market()
+    mn_cities = load_cities()
+    mn_markets, mn_base = load_market()
+    cities, markets, base = market or (mn_cities, mn_markets, mn_base)
+    calib = (mn_markets, mn_base, mn_cities)
     bn = "demand.benefits."
     out: dict = {"phases": {}, "sensitivity": []}
 
     def evaluate(P, ph):
         sub = [r for r in results if r["line"].phase <= ph]
-        res = ridership([r["line"] for r in sub], cities, P, markets, base)
+        res = ridership([r["line"] for r in sub], cities, P, markets, base, calib)
         ab = annual_benefits(res, P)
         cap = sum(r["capS"]["total"] for r in sub)
         cap_mean, cap_p50 = float(np.mean(cap)), float(np.percentile(cap, 50))
@@ -424,7 +434,7 @@ def network_demand(results: list[dict], params: dict, P0) -> dict:
             "bcr_p50": benefit_cost(ab["total_musd"], cap_p50, opex, P0),
             "bcr_alt": benefit_cost(ab["total_musd"], cap_mean, opex, P0, rate=P0[bn + "discount_rate_alt"]),
         }
-    for name in SENSITIVITY:
+    for name in SENSITIVITY if sweep else ():
         p = params[name]
         row = {"param": name, "low": p.low, "high": p.high, "value": p.value}
         for ph in (phases[0], phases[-1]):

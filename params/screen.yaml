@@ -1,0 +1,84 @@
+# The US corridor screen (src/mnmaglev/screen.py, `mnmaglev screen`). Not sampled: these shape the
+# corridors' geometry and prices before the Monte Carlo runs.
+
+built_up_factor:
+  value: 0.25
+  low: 0.25
+  high: 1.0
+  unit: share of the Census urban-area km on the straight line that are priced as urban viaduct
+  conf: low
+  source: "calibrated on the Minnesota spine: the screen method's straight lines run 59 km through Census 2020 urban areas outside the station approaches, the measured GIS alignment (least-cost route, NLCD impervious surface with roads left out) 14.4 km of built-up land, ratio 0.24 (tests/test_screen.py). One corridor; a real route also dodges built-up land by following freeways and railroads, which the factor carries. high = every urban-area km on viaduct (the screen's sensitivity run)"
+
+# Construction prices (guideway, bridges, stations, switches, depot) scale by the region's area cost
+# factor / Minnesota's. Systems, vehicles, land and O&M don't (bought nationally, priced per acre, wages).
+area_cost_factor:
+  minnesota:
+    value: 1.12
+    low: 1.11
+    high: 1.13
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Minneapolis 1.13, Fort Snelling 1.13, Rochester 1.12, Duluth 1.11; value = mean of the station cities, low/high = their range"
+  texas:
+    value: 0.818
+    low: 0.79
+    high: 0.84
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Dallas 0.84, Fort Worth 0.84, Houston 0.82, Austin 0.82, Waco 0.82, College Station 0.82, San Antonio 0.79; value = mean of the station cities, low/high = their range"
+  california:
+    value: 1.21
+    low: 1.11
+    high: 1.32
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: San Francisco 1.32, San Jose 1.32, Fresno 1.23, Bakersfield 1.17, Palmdale 1.11, Los Angeles 1.11; value = mean of the station cities, low/high = their range"
+  mojave:
+    value: 1.174
+    low: 1.11
+    high: 1.21
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Los Angeles 1.11, Ontario 1.21, Victorville 1.21, Barstow 1.21, Las Vegas 1.13; value = mean of the station cities, low/high = their range"
+  northeast:
+    value: 1.146
+    low: 0.94
+    high: 1.32
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Washington DC 1.02, Baltimore 0.94, Philadelphia 1.17, Newark 1.18, New York City 1.32, New Haven 1.09, Providence 1.17, Boston 1.28; value = mean of the station cities, low/high = their range"
+  piedmont:
+    value: 0.865
+    low: 0.81
+    high: 0.89
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Atlanta 0.89, Greenville 0.88, Spartanburg 0.88, Charlotte 0.81; value = mean of the station cities, low/high = their range"
+  florida:
+    value: 0.866
+    low: 0.85
+    high: 0.87
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Miami 0.87, West Palm Beach 0.87, Orlando 0.87, Lakeland 0.87, Tampa 0.85; value = mean of the station cities, low/high = their range"
+  cascadia:
+    value: 1.133
+    low: 1.1
+    high: 1.19
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Seattle 1.12, Tacoma 1.12, Olympia 1.10, Portland 1.19; value = mean of the station cities, low/high = their range"
+  chicago_detroit:
+    value: 1.09
+    low: 1.04
+    high: 1.21
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Chicago 1.21, Kalamazoo 1.04, Ann Arbor 1.04, Detroit 1.07; value = mean of the station cities, low/high = their range"
+  chicago_st_louis:
+    value: 1.058
+    low: 0.98
+    high: 1.21
+    unit: construction cost index (DoD area cost factor; only ratios to minnesota are used)
+    conf: medium
+    source: "DoD UFS 3-701-01 Facilities Pricing Guide (6 June 2026), data tables Table 4-1 CONUS, MILCON 'AREA COST FACTOR' (96-base-city average = 1.00; 2025 surveys, 'current as of October 1, 2025'), https://legacy.wbdg.org/FFC/DOD/UFC/ufs_3_701_01_2026_Data_Tables.xlsx: Chicago 1.21, Bloomington 1.02, Springfield 1.02, St. Louis 0.98; value = mean of the station cities, low/high = their range"

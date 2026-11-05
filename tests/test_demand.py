@@ -114,3 +114,14 @@ def test_benefit_cost_matches_annuity_closed_form(world):
     assert out["pv_capital"] == pytest.approx(1000.0 * (1 + r) ** -0.5)
     life = P["demand.benefits.service_life"]
     assert out["pv_residual"] == pytest.approx(1000.0 * (1 - n / life) * (1 + r) ** -(1 + n))
+
+
+def test_commuter_pairs_are_left_out(world):
+    """Market pairs whose stations are closer than demand.market.min_pair_miles are not served
+    (Ames - Des Moines, ~30 miles); with the cutoff at 0 they come back."""
+    P, cities, lines, markets, base = world
+    res = D.ridership(lines, cities, P, markets, base)
+    assert min(p["miles"] for p in res["pairs"]) >= P["demand.market.min_pair_miles"]
+    assert not any({p["a"], p["b"]} == {"ames", "des_moines"} for p in res["pairs"])
+    res0 = D.ridership(lines, cities, {**P, "demand.market.min_pair_miles": 0.0}, markets, base)
+    assert any({p["a"], p["b"]} == {"ames", "des_moines"} for p in res0["pairs"])

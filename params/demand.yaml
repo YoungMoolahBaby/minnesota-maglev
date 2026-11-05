@@ -169,6 +169,13 @@ market:
     unit: shortest trip counted, as a share of the road distance between the two stations
     conf: placeholder
     source: "our assumption: a station-to-station service doesn't serve zone-edge trips much shorter than the line between its stations (Amtrak's Hiawatha averages 81 of 86 route miles per rider, MPR Sept 2025 Table 8: 51.1 M passenger-miles / 632.0 k riders). Without it the logit, whose time sensitivity is weak (California HSR 0.0035-0.0065 per minute), sends ~8% of 18-minute car trips to a 90-minute maglev trip"
+  min_pair_miles:
+    value: 50
+    low: 0
+    high: 75
+    unit: straight-line miles between the stations of a market pair, shortest pair served
+    conf: low
+    source: "intercity scope (2026-11-05, corridor screen): the mode choice is calibrated on an 86-mile intercity service (Hiawatha, 81 miles per rider) and California's intercity HSR model, whose constants don't shrink with distance, so on 25-45 mile commuter pairs it hands ~16-20% of a very large market to the train: Ames - Des Moines 2.2 M riders a year (18%), and in the screen Los Angeles - Inland Empire 94 M, San Francisco - San Jose 33 M, Washington - Baltimore 36 M, against all of Metrolink, Caltrain or MARC carrying under ~20 M. Those are commuter-rail markets the model doesn't represent. low = no cutoff (the model before the screen)"
   peak_hour_share:
     value: 0.10
     low: 0.08

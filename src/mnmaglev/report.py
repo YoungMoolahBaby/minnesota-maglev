@@ -51,7 +51,9 @@ def sensitivity(params: dict[str, Param], samples: dict[str, np.ndarray], total:
 
 def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed: int = 1,
                 local_supply: bool = False, fusion: str = "none", heating: str = "none",
-                security: str = "none") -> dict:
+                security: str = "none", market=None, sensitivity_runs: bool = True) -> dict:
+    """market: (cities, markets, base) for the demand model when the lines aren't Minnesota's.
+    sensitivity_runs=False skips the capital and demand sensitivity sweeps (the corridor screen)."""
     P0 = nominal(params)
     PS = sample(params, n, seed)
     seen: set[str] = set()
@@ -89,11 +91,11 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
         net_total = net_total + fusion_cum[max(fusion_cum)]
     return {
         "P0": P0, "results": results, "n": n, "seed": seed,
-        "demand": network_demand(results, params, P0),
-        "sensitivity": sensitivity(params, PS, net_total),
+        "demand": network_demand(results, params, P0, market, sensitivity_runs),
+        "sensitivity": sensitivity(params, PS, net_total) if sensitivity_runs else [],
         # the cost-growth draw swamps everything else, so also rank against the total with it divided out
         "sensitivity_base": sensitivity({k: p for k, p in params.items() if k != "costs.soft.contingency"}, PS,
-                                        net_total / (1 + PS["costs.soft.contingency"])),
+                                        net_total / (1 + PS["costs.soft.contingency"])) if sensitivity_runs else [],
         "phase_totals": {
             ph: _pct(sum(r["capS"]["total"] for r in results if r["line"].phase <= ph)
                      + (fusion_cum[ph] if own else 0.0))
@@ -191,7 +193,9 @@ def _demand_section(net: dict) -> list[str]:
              "asserted gap) is the biggest single assumption. Only trips at least "
              f"{P0['demand.market.min_trip_share']:.0%} as long as the road distance between the stations count "
              "(a placeholder rule; the logit's weak time sensitivity would otherwise send ~8% of short car trips to a "
-             "much slower maglev trip). Station access time has no effect because the Hiawatha calibration uses the "
+             "much slower maglev trip). Market pairs whose stations are under "
+             f"{P0['demand.market.min_pair_miles']:g} miles apart are left out: they are commuter markets (Ames - "
+             "Des Moines) the intercity mode choice would hand ~18% of. Station access time has no effect because the Hiawatha calibration uses the "
              "same access time, so its constant absorbs it. Trips inside one NHTS zone (Duluth - Iron Range, "
              "Rochester - Winona, Owatonna - Albert Lea, Brainerd - Bemidji) are a gravity estimate. Rail ridership "
              "forecasts have historically come in at about half of forecast (Flyvbjerg 2005), which calibrating to "

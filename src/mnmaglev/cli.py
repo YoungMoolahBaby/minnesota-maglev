@@ -8,7 +8,7 @@ from pathlib import Path
 
 from . import ROOT
 from .network import check_network, list_variants, load_cities, load_lines, load_settings
-from .params import check_params, load_params
+from .params import TECHNOLOGIES, check_params, load_params
 
 
 def _load(phase: int | None, only: list[str] | None, variant: str | None = None, measured: bool = True):
@@ -150,6 +150,35 @@ def cmd_compare(args) -> int:
     return 0
 
 
+def cmd_screen_data(args) -> int:
+    from .screen_data import build
+
+    for path in build(min_miles=args.min_miles):
+        print(f"wrote {path}")
+    return 0
+
+
+def cmd_screen(args) -> int:
+    from .screen import load_corridors, load_measured, screen_cities, corridor_lines, run_screen
+
+    params = load_params()
+    cfg = load_corridors()
+    cities = screen_cities(cfg)
+    lines = [l for cid in cfg["corridors"]
+             for l in corridor_lines(cfg, cid, cities, load_measured(), params["screen.built_up_factor"].value)]
+    problems = check_params(params) + check_network(lines, cities, set(params))
+    if problems:
+        for p in problems:
+            print("PROBLEM", p)
+        return 1
+    only = args.corridors.split(",") if args.corridors else None
+    techs = args.technologies.split(",") if args.technologies else TECHNOLOGIES
+    path = run_screen(params, n=args.n, seed=args.seed, out=ROOT / "out", techs=techs, only=only,
+                      security=load_settings()["security"], built_up=args.built_up)
+    print(f"wrote {path}")
+    return 0
+
+
 def cmd_demand_data(args) -> int:
     from .demand_data import build
 
@@ -204,6 +233,17 @@ def main(argv: list[str] | None = None) -> int:
     dp = sub.add_parser("demand-data", help="build network/demand_base.yaml from NHTS OD 2022 and Census 2025 (~40 MB download)")
     dp.add_argument("--min-miles", type=float, default=10.0, help="lowest distance band kept (NHTS bands start at 0, 10, 25, 50 ...)")
     dp.set_defaults(fn=cmd_demand_data)
+    sp = sub.add_parser("screen-data", help="screen corridors: built-up km (Census urban areas, ~75 MB) and NHTS markets")
+    sp.add_argument("--min-miles", type=float, default=10.0)
+    sp.set_defaults(fn=cmd_screen_data)
+    sc = sub.add_parser("screen", help="the model on other US corridors, maglev / HSR / upgraded rail -> out/screen.md")
+    sc.add_argument("--n", type=int, default=1000, help="Monte Carlo samples per run")
+    sc.add_argument("--seed", type=int, default=1)
+    sc.add_argument("--corridors", default=None, help="comma-separated corridor ids (default all)")
+    sc.add_argument("--technologies", default=None, help="comma-separated, from maglev,hsr,conventional")
+    sc.add_argument("--built-up", choices=["value", "high"], default="value",
+                    help="screen.built_up_factor end: value (calibrated on Minnesota) or high (all urban-area km on viaduct)")
+    sc.set_defaults(fn=cmd_screen)
     args = ap.parse_args(argv)
     return args.fn(args)
 

@@ -1,0 +1,178 @@
+# NOAA NCEI U.S. Climate Normals 1991-2020 (monthly), written by scripts/climate_normals.py.
+# winter = Nov-Mar mean of monthly TAVG, summer = Apr-Oct; snowfall = sum of monthly normals.
+DFW:
+  zone: texas
+  ghcn: USW00003927
+  name: DALLAS FT WORTH AP, TX US
+  winter_mean_temp_c: 11.1
+  summer_mean_temp_c: 25.0
+  snowfall_in: 1.6
+  snowfall_cm: 4
+IAH:
+  zone: texas
+  ghcn: USW00012960
+  name: HOUSTON INTERCONT AP, TX US
+  winter_mean_temp_c: 14.7
+  summer_mean_temp_c: 26.1
+  snowfall_in: 0.1
+  snowfall_cm: 0
+AUS:
+  zone: texas
+  ghcn: USW00013904
+  name: AUSTIN BERGSTROM AP, TX US
+  winter_mean_temp_c: 12.9
+  summer_mean_temp_c: 25.4
+  snowfall_in: 0.2
+  snowfall_cm: 1
+SJC:
+  zone: california
+  ghcn: USW00023293
+  name: SAN JOSE, CA US
+  winter_mean_temp_c: 11.8
+  summer_mean_temp_c: 18.9
+  snowfall_in: null
+  snowfall_cm: null
+FAT:
+  zone: california
+  ghcn: USW00093193
+  name: FRESNO YOSEMITE INTL AP, CA US
+  winter_mean_temp_c: 11.1
+  summer_mean_temp_c: 23.5
+  snowfall_in: 0.0
+  snowfall_cm: 0
+LAX:
+  zone: california
+  ghcn: USW00023174
+  name: LOS ANGELES INTL AP, CA US
+  winter_mean_temp_c: 15.0
+  summer_mean_temp_c: 19.4
+  snowfall_in: null
+  snowfall_cm: null
+LAS:
+  zone: mojave
+  ghcn: USW00023169
+  name: LAS VEGAS MCCARRAN AP, NV US
+  winter_mean_temp_c: 12.1
+  summer_mean_temp_c: 27.6
+  snowfall_in: 0.2
+  snowfall_cm: 1
+DAG:
+  zone: mojave
+  ghcn: USW00023161
+  name: BARSTOW DAGGETT AP, CA US
+  winter_mean_temp_c: 11.6
+  summer_mean_temp_c: 26.0
+  snowfall_in: 0.2
+  snowfall_cm: 1
+BWI:
+  zone: northeast
+  ghcn: USW00093721
+  name: BALTIMORE WASH INTL AP, MD US
+  winter_mean_temp_c: 4.5
+  summer_mean_temp_c: 19.8
+  snowfall_in: 19.3
+  snowfall_cm: 49
+PHL:
+  zone: northeast
+  ghcn: USW00013739
+  name: PHILADELPHIA INTL AP, PA US
+  winter_mean_temp_c: 4.4
+  summer_mean_temp_c: 20.0
+  snowfall_in: 23.1
+  snowfall_cm: 59
+LGA:
+  zone: northeast
+  ghcn: USW00014732
+  name: NEW YORK LAGUARDIA AP, NY US
+  winter_mean_temp_c: 4.8
+  summer_mean_temp_c: 20.2
+  snowfall_in: 29.8
+  snowfall_cm: 76
+BOS:
+  zone: northeast
+  ghcn: USW00014739
+  name: BOSTON LOGAN INTL AP, MA US
+  winter_mean_temp_c: 2.3
+  summer_mean_temp_c: 17.3
+  snowfall_in: 49.2
+  snowfall_cm: 125
+ATL:
+  zone: piedmont
+  ghcn: USW00013874
+  name: ATLANTA HARTSFIELD INTL AP, GA US
+  winter_mean_temp_c: 10.0
+  summer_mean_temp_c: 22.9
+  snowfall_in: 2.2
+  snowfall_cm: 6
+GSP:
+  zone: piedmont
+  ghcn: USW00003870
+  name: GREER, SC US
+  winter_mean_temp_c: 8.6
+  summer_mean_temp_c: 21.8
+  snowfall_in: 3.9
+  snowfall_cm: 10
+CLT:
+  zone: piedmont
+  ghcn: USW00013881
+  name: CHARLOTTE DOUGLAS AP, NC US
+  winter_mean_temp_c: 8.5
+  summer_mean_temp_c: 21.9
+  snowfall_in: 3.5
+  snowfall_cm: 9
+MIA:
+  zone: florida
+  ghcn: USW00012839
+  name: MIAMI INTL AP, FL US
+  winter_mean_temp_c: 22.0
+  summer_mean_temp_c: 27.5
+  snowfall_in: 0.0
+  snowfall_cm: 0
+MCO:
+  zone: florida
+  ghcn: USW00012815
+  name: ORLANDO INTL AP, FL US
+  winter_mean_temp_c: 18.1
+  summer_mean_temp_c: 26.1
+  snowfall_in: 0.0
+  snowfall_cm: 0
+TPA:
+  zone: florida
+  ghcn: USW00012842
+  name: TAMPA INTL AP, FL US
+  winter_mean_temp_c: 18.9
+  summer_mean_temp_c: 27.0
+  snowfall_in: 0.0
+  snowfall_cm: 0
+SEA:
+  zone: cascadia
+  ghcn: USW00024233
+  name: SEATTLE TACOMA INTL AP, WA US
+  winter_mean_temp_c: 6.9
+  summer_mean_temp_c: 15.7
+  snowfall_in: 6.3
+  snowfall_cm: 16
+PDX:
+  zone: cascadia
+  ghcn: USW00024229
+  name: PORTLAND INTL AP, OR US
+  winter_mean_temp_c: 7.0
+  summer_mean_temp_c: 17.0
+  snowfall_in: 4.2
+  snowfall_cm: 11
+ORD:
+  zone: great_lakes
+  ghcn: USW00094846
+  name: CHICAGO OHARE INTL AP, IL US
+  winter_mean_temp_c: 0.5
+  summer_mean_temp_c: 18.0
+  snowfall_in: 38.4
+  snowfall_cm: 98
+DTW:
+  zone: great_lakes
+  ghcn: USW00094847
+  name: DETROIT METRO AP, MI US
+  winter_mean_temp_c: 0.4
+  summer_mean_temp_c: 17.4
+  snowfall_in: 45.0
+  snowfall_cm: 114

@@ -1,0 +1,302 @@
+# The US corridor screen (docs/PLAN.md): the same model on other US corridors, so Minnesota's
+# benefit-cost ratio can be read against places with denser travel markets.
+#
+# A screen corridor is a planner-level line, like the Minnesota lines before the GIS phase, with one
+# thing measured: the built-up km between the stations (Census 2020 urban areas, `mnmaglev
+# screen-data`), priced as urban viaduct the way the GIS prices built-up land on measured lines.
+# Everything else here is a PLANNER ESTIMATE (Claude, 2026-11-05, for Jon to check): station sites
+# (city centres or the stations real projects chose), urban approach km and their tunnel share,
+# detours, long bridges, mountain tunnels. Construction cost scales by each region's DoD area cost
+# factor relative to Minneapolis (params/screen.yaml); the climate zones are in params/climate.yaml.
+#
+# Station fields: name, lat, lon, type (terminal_major | airport | city | waypoint),
+#   approach_km  km of speed-limited urban structure on each side of the station
+#   tunnel       share of those approach km in tunnel (dense cores: Manhattan, downtown SF, ...)
+# Corridor fields: name, region (cost factor), zone (climate), heating (targeted | none: targeted where
+#   the ASOS stations average 5+ icing nights a year, reference/icing_screen.yaml),
+#   lines (each: id, points, optional per-segment overrides keyed "a-b": detour, zone, bridges
+#   [{name, length_m}], tunnel_km (mountain tunnels in the rural km)), markets (id: cbsa, stations).
+# Markets are Census CBSAs (2023 delineation, Vintage 2025 populations); their NHTS zones are found
+# from the CBSA's counties. Connecticut is left out: Census now reports its planning regions, which
+# the NHTS zone lookup (old counties) doesn't know, so New Haven, Bridgeport-Stamford and Hartford
+# get no station (an understatement of the Northeast Corridor's market).
+
+defaults:
+  detour: 1.10
+  structure: {elevated: 0.75, at_grade: 0.25}
+  corridor_share: 0.2    # share of the rural route beside a freeway or railroad (land, adders)
+  floodplain: 0.05
+  peat: 0.02
+
+stations:
+  # Minnesota (same sites as network/cities.yaml)
+  duluth:        {name: Duluth,                    lat: 46.7867, lon: -92.1005,  type: terminal_major, approach_km: 1.0, tunnel: 0.0}
+  hinckley:      {name: Hinckley (waypoint),       lat: 46.0110, lon: -92.9440,  type: waypoint}
+  midway_hub:    {name: Midway hub,                lat: 44.9558, lon: -93.1668,  type: terminal_major, approach_km: 4.0, tunnel: 0.0}
+  msp:           {name: MSP Airport,               lat: 44.8848, lon: -93.2223,  type: airport, approach_km: 2.5, tunnel: 0.25}
+  rochester:     {name: Rochester,                 lat: 44.0121, lon: -92.4802,  type: terminal_major, approach_km: 1.0, tunnel: 0.0}
+  # Texas (Texas Central's Dallas, Brazos Valley and Houston sites)
+  dallas:        {name: Dallas (Cedars),           lat: 32.7686, lon: -96.7975,  type: terminal_major, approach_km: 4.0, tunnel: 0.0}
+  brazos_valley: {name: Brazos Valley,             lat: 30.5900, lon: -96.0200,  type: city, approach_km: 0.5, tunnel: 0.0}
+  houston:       {name: Houston (Northwest),       lat: 29.8060, lon: -95.4570,  type: terminal_major, approach_km: 4.0, tunnel: 0.0}
+  waco:          {name: Waco,                      lat: 31.5493, lon: -97.1467,  type: city, approach_km: 1.5, tunnel: 0.0}
+  austin:        {name: Austin,                    lat: 30.2672, lon: -97.7431,  type: terminal_major, approach_km: 3.0, tunnel: 0.25}
+  san_antonio:   {name: San Antonio,               lat: 29.4241, lon: -98.4936,  type: terminal_major, approach_km: 3.0, tunnel: 0.0}
+  # California (CA HSR phase 1 stations, Merced and Anaheim left out)
+  san_francisco: {name: San Francisco (Salesforce Transit Center), lat: 37.7897, lon: -122.3972, type: terminal_major, approach_km: 3.0, tunnel: 1.0}
+  san_jose:      {name: San Jose Diridon,          lat: 37.3297, lon: -121.9026, type: terminal_major, approach_km: 3.0, tunnel: 0.0}
+  redwood_city:  {name: Redwood City (waypoint), lat: 37.4852, lon: -122.2364, type: waypoint}
+  gilroy:        {name: Gilroy (waypoint),         lat: 37.0058, lon: -121.5683, type: waypoint}
+  chowchilla:    {name: Chowchilla wye (waypoint), lat: 37.1200, lon: -120.2600, type: waypoint}
+  fresno:        {name: Fresno,                    lat: 36.7378, lon: -119.7871, type: city, approach_km: 2.0, tunnel: 0.0}
+  bakersfield:   {name: Bakersfield,               lat: 35.3733, lon: -119.0187, type: city, approach_km: 2.0, tunnel: 0.0}
+  tehachapi:     {name: Tehachapi Pass (waypoint), lat: 35.1300, lon: -118.4500, type: waypoint}
+  palmdale:      {name: Palmdale,                  lat: 34.5794, lon: -118.1165, type: city, approach_km: 1.5, tunnel: 0.0}
+  los_angeles:   {name: Los Angeles Union Station, lat: 34.0560, lon: -118.2365, type: terminal_major, approach_km: 4.0, tunnel: 0.25}
+  # Southern California - Las Vegas (Brightline West's I-15 route, extended to Los Angeles)
+  rancho_cucamonga: {name: Rancho Cucamonga,       lat: 34.1000, lon: -117.5900, type: city, approach_km: 1.5, tunnel: 0.0}
+  victorville:   {name: Victorville (waypoint),    lat: 34.5000, lon: -117.3000, type: waypoint}
+  barstow:       {name: Barstow (waypoint),        lat: 34.8958, lon: -117.0173, type: waypoint}
+  las_vegas:     {name: Las Vegas (south Strip),   lat: 36.0890, lon: -115.1730, type: terminal_major, approach_km: 2.0, tunnel: 0.0}
+  # Northeast Corridor
+  washington:    {name: Washington Union Station,  lat: 38.8973, lon: -77.0063,  type: terminal_major, approach_km: 4.0, tunnel: 0.5}
+  baltimore:     {name: Baltimore Penn Station,    lat: 39.3073, lon: -76.6156,  type: terminal_major, approach_km: 4.0, tunnel: 0.75}
+  philadelphia:  {name: Philadelphia 30th Street,  lat: 39.9557, lon: -75.1820,  type: terminal_major, approach_km: 4.0, tunnel: 0.5}
+  new_york:      {name: New York Penn Station,     lat: 40.7506, lon: -73.9935,  type: terminal_major, approach_km: 6.0, tunnel: 1.0}
+  stamford:      {name: Stamford (waypoint),      lat: 41.0470, lon: -73.5410,  type: waypoint}
+  new_haven:     {name: New Haven (waypoint),      lat: 41.2973, lon: -72.9266,  type: waypoint}
+  providence:    {name: Providence,                lat: 41.8295, lon: -71.4134,  type: city, approach_km: 2.0, tunnel: 0.25}
+  boston:        {name: Boston South Station,      lat: 42.3519, lon: -71.0552,  type: terminal_major, approach_km: 4.0, tunnel: 0.5}
+  # Atlanta - Charlotte (the FRA / GDOT Tier 1 corridor)
+  atlanta:       {name: Atlanta (downtown),        lat: 33.7537, lon: -84.3918,  type: terminal_major, approach_km: 4.0, tunnel: 0.25}
+  greenville:    {name: Greenville SC,             lat: 34.8526, lon: -82.3940,  type: city, approach_km: 1.5, tunnel: 0.0}
+  spartanburg:   {name: Spartanburg,               lat: 34.9496, lon: -81.9320,  type: city, approach_km: 1.0, tunnel: 0.0}
+  charlotte:     {name: Charlotte,                 lat: 35.2271, lon: -80.8431,  type: terminal_major, approach_km: 3.0, tunnel: 0.25}
+  # Florida (Brightline's route, Orlando - Tampa added)
+  miami:         {name: Miami (MiamiCentral),      lat: 25.7783, lon: -80.1952,  type: terminal_major, approach_km: 3.0, tunnel: 0.0}
+  west_palm:     {name: West Palm Beach,           lat: 26.7130, lon: -80.0590,  type: city, approach_km: 1.5, tunnel: 0.0}
+  cocoa:         {name: Cocoa (waypoint),          lat: 28.3772, lon: -80.7900,  type: waypoint}
+  orlando:       {name: Orlando Airport,           lat: 28.4312, lon: -81.3081,  type: airport, approach_km: 1.5, tunnel: 0.0}
+  lakeland:      {name: Lakeland,                  lat: 28.0395, lon: -81.9498,  type: city, approach_km: 1.0, tunnel: 0.0}
+  tampa:         {name: Tampa,                     lat: 27.9506, lon: -82.4572,  type: terminal_major, approach_km: 2.0, tunnel: 0.0}
+  # Cascadia (Vancouver BC is outside the NHTS data)
+  seattle:       {name: Seattle (King Street),     lat: 47.5984, lon: -122.3301, type: terminal_major, approach_km: 4.0, tunnel: 0.25}
+  federal_way:   {name: Federal Way (waypoint),   lat: 47.3100, lon: -122.3100, type: waypoint}
+  dupont:        {name: DuPont (waypoint),        lat: 47.1000, lon: -122.6400, type: waypoint}
+  olympia:       {name: Olympia,                   lat: 47.0379, lon: -122.9007, type: city, approach_km: 1.0, tunnel: 0.0}
+  portland:      {name: Portland Union Station,    lat: 45.5289, lon: -122.6768, type: terminal_major, approach_km: 3.0, tunnel: 0.0}
+  # Chicago hub
+  chicago:       {name: Chicago Union Station,     lat: 41.8789, lon: -87.6403,  type: terminal_major, approach_km: 5.0, tunnel: 0.25}
+  hammond:       {name: Hammond IN (waypoint),     lat: 41.6200, lon: -87.5000,  type: waypoint}
+  porter:        {name: Porter IN (waypoint),      lat: 41.5800, lon: -87.0000,  type: waypoint}
+  kalamazoo:     {name: Kalamazoo,                 lat: 42.2953, lon: -85.5847,  type: city, approach_km: 1.0, tunnel: 0.0}
+  ann_arbor:     {name: Ann Arbor,                 lat: 42.2876, lon: -83.7432,  type: city, approach_km: 1.0, tunnel: 0.0}
+  detroit:       {name: Detroit,                   lat: 42.3314, lon: -83.0458,  type: terminal_major, approach_km: 3.0, tunnel: 0.0}
+  bloomington:   {name: Bloomington-Normal,        lat: 40.5098, lon: -88.9846,  type: city, approach_km: 1.0, tunnel: 0.0}
+  springfield:   {name: Springfield IL,            lat: 39.8017, lon: -89.6436,  type: city, approach_km: 1.0, tunnel: 0.0}
+  st_louis:      {name: St. Louis Gateway,         lat: 38.6242, lon: -90.2041,  type: terminal_major, approach_km: 2.0, tunnel: 0.0}
+
+corridors:
+  minnesota:
+    name: Duluth - Twin Cities - Rochester (Minnesota spine, screen method)
+    region: minnesota
+    zone: central
+    heating: targeted
+    lines:
+      - id: mn_spine
+        points: [duluth, hinckley, midway_hub, msp, rochester]
+        segments:
+          duluth-hinckley: {zone: north, detour: 1.06, bridges: [{name: St. Louis River, length_m: 450}, {name: Kettle River, length_m: 250}]}
+          midway_hub-msp: {detour: 1.04, bridges: [{name: Mississippi River gorge, length_m: 450}]}
+          msp-rochester: {zone: south, detour: 1.04, bridges: [{name: Minnesota River valley, length_m: 1500}, {name: Cannon River, length_m: 300}, {name: Zumbro River, length_m: 200}]}
+    markets:
+      twin_cities: {cbsa: "33460", stations: [midway_hub, msp]}
+      duluth:      {cbsa: "20260", stations: [duluth]}
+      rochester:   {cbsa: "40340", stations: [rochester]}
+
+  texas_central:
+    name: Dallas - Houston (Texas Central route)
+    region: texas
+    zone: texas
+    heating: none
+    lines:
+      - id: dallas_houston
+        points: [dallas, brazos_valley, houston]
+        segments:
+          dallas-brazos_valley: {detour: 1.07, bridges: [{name: Trinity River floodway, length_m: 2000}]}
+          brazos_valley-houston: {detour: 1.07}
+    markets:
+      dallas:          {cbsa: "19100", stations: [dallas]}
+      college_station: {cbsa: "17780", stations: [brazos_valley]}
+      houston:         {cbsa: "26420", stations: [houston]}
+
+  texas_i35:
+    name: San Antonio - Austin - Waco - Dallas (I-35)
+    region: texas
+    zone: texas
+    heating: none
+    lines:
+      - id: i35
+        points: [san_antonio, austin, waco, dallas]
+        segments:
+          san_antonio-austin: {detour: 1.08}
+          austin-waco: {detour: 1.06, bridges: [{name: Brazos River, length_m: 300}]}
+          waco-dallas: {detour: 1.06, bridges: [{name: Trinity River floodway, length_m: 1500}]}
+    markets:
+      san_antonio: {cbsa: "41700", stations: [san_antonio]}
+      austin:      {cbsa: "12420", stations: [austin]}
+      waco:        {cbsa: "47380", stations: [waco]}
+      dallas:      {cbsa: "19100", stations: [dallas]}
+
+  california:
+    name: San Francisco - San Jose - Fresno - Bakersfield - Los Angeles (CA HSR phase 1 route)
+    region: california
+    zone: california
+    heating: none
+    # mountain tunnels as CA HSR plans them (a maglev's 10% grades might need fewer): Pacheco Pass ~15 mi
+    # (2022 Final EIR/EIS), Bakersfield - Palmdale nine tunnels 'more than 10 miles', Palmdale - Burbank
+    # ~28 mi (CHSRA tunneling fact sheet Nov 2024; secondary sources, docs/SOURCES.md)
+    lines:
+      - id: ca_hsr
+        points: [san_francisco, redwood_city, san_jose, gilroy, chowchilla, fresno, bakersfield, tehachapi, palmdale, los_angeles]
+        segments:
+          san_francisco-redwood_city: {detour: 1.05}
+          redwood_city-san_jose: {detour: 1.05}
+          gilroy-chowchilla: {detour: 1.12, tunnel_km: 24, bridges: [{name: San Joaquin River and floodway, length_m: 1500}]}
+          bakersfield-tehachapi: {detour: 1.25, tunnel_km: 8}
+          tehachapi-palmdale: {detour: 1.15, tunnel_km: 8}
+          palmdale-los_angeles: {detour: 1.15, tunnel_km: 45}
+    markets:
+      san_francisco: {cbsa: "41860", stations: [san_francisco]}
+      san_jose:      {cbsa: "41940", stations: [san_jose]}
+      fresno:        {cbsa: "23420", stations: [fresno]}
+      bakersfield:   {cbsa: "12540", stations: [bakersfield]}
+      los_angeles:   {cbsa: "31080", stations: [palmdale, los_angeles]}
+
+  socal_vegas:
+    name: Los Angeles - Rancho Cucamonga - Las Vegas (I-15, Brightline West route extended to LA)
+    region: mojave
+    zone: mojave
+    heating: none
+    lines:
+      - id: la_vegas
+        points: [los_angeles, rancho_cucamonga, victorville, barstow, las_vegas]
+        segments:
+          los_angeles-rancho_cucamonga: {detour: 1.10}
+          rancho_cucamonga-victorville: {detour: 1.20}
+          barstow-las_vegas: {detour: 1.08}
+    markets:
+      los_angeles:     {cbsa: "31080", stations: [los_angeles]}
+      inland_empire:   {cbsa: "40140", stations: [rancho_cucamonga]}
+      las_vegas:       {cbsa: "29820", stations: [las_vegas]}
+
+  northeast:
+    name: Washington - Baltimore - Philadelphia - New York - Providence - Boston (a new line beside the NEC)
+    region: northeast
+    zone: northeast
+    heating: targeted
+    lines:
+      - id: nec
+        points: [washington, baltimore, philadelphia, new_york, stamford, new_haven, providence, boston]
+        segments:
+          washington-baltimore: {detour: 1.08}
+          baltimore-philadelphia: {detour: 1.08, bridges: [{name: Susquehanna River, length_m: 1300}, {name: Gunpowder and Bush rivers, length_m: 1200}]}
+          philadelphia-new_york: {detour: 1.06, tunnel_km: 6, bridges: [{name: Delaware River, length_m: 600}, {name: Hackensack and Passaic meadows, length_m: 3000}]}
+          new_york-stamford: {detour: 1.08, tunnel_km: 10}
+          stamford-new_haven: {detour: 1.08, bridges: [{name: Housatonic and Norwalk rivers, length_m: 1000}]}
+          new_haven-providence: {detour: 1.12, bridges: [{name: Connecticut River, length_m: 1000}, {name: Thames River, length_m: 800}]}
+          providence-boston: {detour: 1.06}
+    markets:
+      washington:   {cbsa: "47900", stations: [washington]}
+      baltimore:    {cbsa: "12580", stations: [baltimore]}
+      philadelphia: {cbsa: "37980", stations: [philadelphia]}
+      new_york:     {cbsa: "35620", stations: [new_york]}
+      providence:   {cbsa: "39300", stations: [providence]}
+      boston:       {cbsa: "14460", stations: [boston]}
+
+  piedmont:
+    name: Atlanta - Greenville - Spartanburg - Charlotte
+    region: piedmont
+    zone: piedmont
+    heating: none
+    lines:
+      - id: atl_clt
+        points: [atlanta, greenville, spartanburg, charlotte]
+        segments:
+          atlanta-greenville: {detour: 1.10, bridges: [{name: Lake Hartwell / Savannah River, length_m: 1500}]}
+          spartanburg-charlotte: {detour: 1.08, bridges: [{name: Broad and Catawba rivers, length_m: 800}]}
+    markets:
+      atlanta:     {cbsa: "12060", stations: [atlanta]}
+      greenville:  {cbsa: "24860", stations: [greenville]}
+      spartanburg: {cbsa: "43900", stations: [spartanburg]}
+      charlotte:   {cbsa: "16740", stations: [charlotte]}
+
+  florida:
+    name: Miami - West Palm Beach - Orlando - Lakeland - Tampa (Brightline's route)
+    region: florida
+    zone: florida
+    heating: none
+    lines:
+      - id: fl
+        points: [miami, west_palm, cocoa, orlando, lakeland, tampa]
+        segments:
+          miami-west_palm: {detour: 1.05}
+          west_palm-cocoa: {detour: 1.05}
+          cocoa-orlando: {detour: 1.10, bridges: [{name: St. Johns River floodplain, length_m: 2000}]}
+          orlando-lakeland: {detour: 1.08}
+          lakeland-tampa: {detour: 1.05}
+    markets:
+      miami:    {cbsa: "33100", stations: [miami, west_palm]}
+      orlando:  {cbsa: "36740", stations: [orlando]}
+      lakeland: {cbsa: "29460", stations: [lakeland]}
+      tampa:    {cbsa: "45300", stations: [tampa]}
+
+  cascadia:
+    name: Seattle - Olympia - Portland (Cascadia, without Vancouver BC)
+    region: cascadia
+    zone: cascadia
+    heating: targeted
+    lines:
+      - id: sea_pdx
+        points: [seattle, federal_way, dupont, olympia, portland]
+        segments:
+          federal_way-dupont: {detour: 1.06, bridges: [{name: Puyallup River, length_m: 400}]}
+          dupont-olympia: {detour: 1.06, bridges: [{name: Nisqually River delta, length_m: 1000}]}
+          olympia-portland: {detour: 1.08, bridges: [{name: Cowlitz River, length_m: 300}, {name: Columbia River, length_m: 1800}]}
+    markets:
+      seattle:  {cbsa: "42660", stations: [seattle]}
+      olympia:  {cbsa: "36500", stations: [olympia]}
+      portland: {cbsa: "38900", stations: [portland]}
+
+  chicago_detroit:
+    name: Chicago - Kalamazoo - Ann Arbor - Detroit
+    region: chicago_detroit
+    zone: great_lakes
+    heating: targeted
+    lines:
+      - id: chi_det
+        points: [chicago, hammond, porter, kalamazoo, ann_arbor, detroit]
+        segments:
+          chicago-hammond: {detour: 1.08, bridges: [{name: Calumet rivers and harbor, length_m: 1000}]}
+    markets:
+      chicago:   {cbsa: "16980", stations: [chicago]}
+      kalamazoo: {cbsa: "28020", stations: [kalamazoo]}
+      ann_arbor: {cbsa: "11460", stations: [ann_arbor]}
+      detroit:   {cbsa: "19820", stations: [detroit]}
+
+  chicago_st_louis:
+    name: Chicago - Bloomington-Normal - Springfield - St. Louis
+    region: chicago_st_louis
+    zone: great_lakes
+    heating: targeted
+    lines:
+      - id: chi_stl
+        points: [chicago, bloomington, springfield, st_louis]
+        segments:
+          chicago-bloomington: {detour: 1.06, bridges: [{name: Des Plaines and Illinois rivers, length_m: 800}]}
+          springfield-st_louis: {detour: 1.06, bridges: [{name: Mississippi River, length_m: 1500}]}
+    markets:
+      chicago:     {cbsa: "16980", stations: [chicago]}
+      bloomington: {cbsa: "14010", stations: [bloomington]}
+      springfield: {cbsa: "44100", stations: [springfield]}
+      st_louis:    {cbsa: "41180", stations: [st_louis]}

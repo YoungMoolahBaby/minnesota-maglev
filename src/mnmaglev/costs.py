@@ -83,7 +83,7 @@ def segment_quantities(s: Segment) -> dict[str, float]:
         "at_grade_km": rural * s.structure.get("at_grade", 0.0),
         # urban ends, plus built-up km between them (suburbs) where the GIS measured them
         "urban_viaduct_km": s.urban_km * (1 - s.urban_tunnel) + rural * s.structure.get("urban_viaduct", 0.0),
-        "tunnel_km": s.urban_km * s.urban_tunnel,
+        "tunnel_km": s.urban_km * s.urban_tunnel + rural * s.structure.get("tunnel", 0.0),
         "bridge_m": s.bridge_km * 1000.0,
         "route_km": s.length_km,
     }

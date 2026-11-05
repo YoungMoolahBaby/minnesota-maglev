@@ -321,6 +321,20 @@ works), date, details. One section per tool.
   hangs curl (GTFS and media.amtrak.com work); web.archive.org rate-limits; YAML colons again.
   Result (full network, 7%): maglev 0.139, HSR 0.208, upgraded rail 0.261; none near 1.
 
+- 2026-11-05, US corridor screen: ten corridors as planner lines with the built-up km measured from
+  Census urban areas (a ~40-line shapefile reader instead of a GIS dependency; even-odd rule over all
+  rings handles holes), calibrated on the GIS spine (0.25 of urban-area km are viaduct). The first
+  run said LA - Las Vegas pays (BCR 1.6) and the NEC nearly does. Most of it was commuter pairs: the
+  intercity constants don't shrink with distance, so LA - Inland Empire got 94 M riders a year. Pairs
+  under 50 miles are now out everywhere, which moved Minnesota's network from 33.9 to 30.7 M riders
+  (Ames - Des Moines was the same artifact). Straight legs crossed water (SF Bay, Lake Michigan,
+  Puget Sound): waypoints. Connecticut can't be a market (planning regions vs NHTS's county lookup).
+  Friction: IEM's ASOS archive returns HTTP 429 after a few dozen requests (backoff added; ~2 h for
+  22 stations x 20 years); NCEI has no normals for Victorville (Daggett instead); the Bash tool
+  turned "\n" in heredoc Python into real newlines again. Result: Minnesota is at the bottom (maglev
+  0.10, HSR 0.15). The best corridors (Texas, NEC, LA - Las Vegas) reach maglev 0.31-0.48 and HSR
+  0.59-0.72 at 7%; HSR beats maglev everywhere; nothing high-speed reaches 1 at 7%.
+
 ## OSRD
 
 ## Calliope
