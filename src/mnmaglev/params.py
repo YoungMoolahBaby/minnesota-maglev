@@ -7,11 +7,14 @@ prefixed by the file stem, e.g. ``costs.guideway.elevated`` or ``climate.north.s
 Monte Carlo draws are triangular(low, value, high). A leaf may instead give ``quantiles``, a
 table {cumulative probability: value} from 0 to 1 (a reference-class curve); then draws follow
 that curve (linear between the points), ``value`` is its median and low / high its ends.
+
+Technologies (params/technology.yaml): a leaf with ``overrides: <parameter name>`` replaces that
+parameter when the model runs as that technology (``apply_technology``).
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import zlib
 from pathlib import Path
 
@@ -34,6 +37,7 @@ class Param:
     source: str
     note: str = ""
     quantiles: tuple[tuple[float, float], ...] = ()  # ((p, value), ...), p from 0 to 1
+    overrides: str = ""  # technology leaves: the parameter this one replaces
 
     @property
     def varies(self) -> bool:
@@ -66,6 +70,7 @@ def _walk(node: dict, prefix: str, out: dict[str, Param]) -> None:
                 source=str(child.get("source", "")),
                 note=str(child.get("note", "")),
                 quantiles=tuple(sorted((float(k), float(v)) for k, v in (child.get("quantiles") or {}).items())),
+                overrides=str(child.get("overrides", "")),
             )
         elif isinstance(child, dict):
             _walk(child, name, out)
@@ -101,7 +106,27 @@ def check_params(params: dict[str, Param]) -> list[str]:
                 problems.append(f"{p.name}: quantile values must not decrease")
             if (qs[0], qs[-1]) != (p.low, p.high) or abs(float(np.interp(0.5, ps, qs)) - p.value) > 1e-9:
                 problems.append(f"{p.name}: with quantiles, low / value / high must be the 0 / 0.5 / 1 points")
+        if p.overrides and p.overrides not in params:
+            problems.append(f"{p.name}: overrides unknown parameter {p.overrides}")
     return problems
+
+
+TECHNOLOGIES = ("maglev", "hsr", "conventional")
+
+
+def apply_technology(params: dict[str, Param], tech: str) -> dict[str, Param]:
+    """Parameters for a run as `tech`: maglev is the model as built; for the others each
+    technology.<tech>.* leaf with `overrides` replaces that parameter (value, range, source)."""
+    if tech not in TECHNOLOGIES:
+        raise ValueError(f"unknown technology {tech!r}; one of {TECHNOLOGIES}")
+    out = dict(params)
+    if tech == "maglev":
+        return out
+    prefix = f"technology.{tech}."
+    for name, p in params.items():
+        if name.startswith(prefix) and p.overrides:
+            out[p.overrides] = replace(p, name=p.overrides, overrides="")
+    return out
 
 
 def nominal(params: dict[str, Param]) -> dict[str, float]:

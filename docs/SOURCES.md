@@ -131,3 +131,14 @@ derived market totals. All US government works, public domain.
 | Air fares, 2025Q2-2026Q1 | [USDOT Consumer Airfare Report Table 6](https://data.transportation.gov/resource/yj5y-b2ir) (Socrata) | `demand.mode_choice.air_fare` |
 | Calibration | Amtrak Monthly Performance Report Sept 2025 (Table 8), NLX Tier 2 EA App. C (2017), JR Central Integrated Report 2025, CNMC rail report 2024, CRS R42584, Börjesson (2012) | `reference/demand_calibration.yaml`, `params/demand.yaml` |
 | Model weights and BCA values | California HSR BPM-V3 model documentation (Cambridge Systematics 2016), CA HSR 2024 Ridership and Revenue report, USDOT Benefit-Cost Analysis Guidance (Dec 2025), OECD/ITF Round Table 155 | quotes in `params/demand.yaml` |
+
+## Technology comparison (params/technology.yaml)
+
+| Data | Source | Notes |
+|---|---|---|
+| HSR unit prices | CA HSR San Jose - Merced and LA - Anaheim PEPD capital cost reports (CEQA copies, files.ceqanet.opr.ca.gov; hsr.ca.gov), 2024 Basis of Estimate, O&M cost memo (2016 BP) | at-grade trackbed, overcrossings, track, viaducts, trainsets, O&M |
+| HSR standards | EU TSI INF (1299/2014), TSI HS RST (2008/232/EC); CA HSR TM 2.1.2 | grades, cant, acceleration |
+| Rolling stock | Siemens / DB ICE 3neo release (2022), Siemens datasheets (Velaro E, Velaro RUS) | prices, seats |
+| Upgraded rail | MnDOT NLX pages, MnDOT/Quandel Milwaukee - Twin Cities alternatives (2011), TxDOT Minnesota summary, IDOT (2023), NCDOT Piedmont, WisDOT TCMC booklet | capital per km |
+| Schedules | [Amtrak GTFS](https://content.amtrak.com/content/gtfs/GTFS.zip) (4 Nov 2026) | end-to-end run times; Amtrak's terms of use apply, we keep only derived times |
+| Route financials | Amtrak Monthly Performance Report Sept 2025, Table 8 | O&M per train-km, fares, seats |

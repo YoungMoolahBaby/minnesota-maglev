@@ -107,9 +107,12 @@ def run_leg(segs: list[Segment], P: dict[str, float]) -> LegResult:
     for season in ("winter", "summer"):
         dt, elec, v = leg_power_cells(segs, P, season)
         out[season] = float((elec * dt).sum()) / 3.6e6
+    length_km = sum(s.length_km for s in segs)
+    schedule = float(np.mean(P["system.vehicle.schedule_speed"]))  # a fixed switch, not sampled
+    time_s = length_km / schedule * 3600.0 if schedule > 0 else float(dt.sum())
     return LegResult(
         start=segs[0].a.id, end=segs[-1].b.id,
-        length_km=sum(s.length_km for s in segs), time_s=float(dt.sum()),
+        length_km=length_km, time_s=time_s,
         energy_kwh_winter=out["winter"], energy_kwh_summer=out["summer"],
         top_speed_kmh=float(v.max() * 3.6),
     )

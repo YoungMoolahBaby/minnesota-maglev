@@ -441,6 +441,34 @@ Next: feed trains per hour back into fleet, energy and fusion sizing; per-line r
 incremental BCR (which lines pay least badly); demand Monte Carlo; funding scenarios; the
 wider-economy benefits USDOT doesn't count (agglomeration) as a separate, clearly-labelled view.
 
+### Technology comparison (2026-11-05, Jon: "let's compare technologies on the same corridors")
+
+`mnmaglev compare` (-> out/compare.md) runs the whole model three times on the same corridors,
+stations, demand model, cost growth and benefit-cost rules; params/technology.yaml holds each
+technology's overrides (`overrides: <parameter>`; `mnmaglev report --technology hsr|conventional`
+runs one). Two research agents sourced them; every figure used re-checked.
+- **Dedicated HSR**, 320 km/h, 0.40 m/s^2: 85% of the rural route at grade instead of 34% (CA HSR
+  Central Valley 89%, Spanish AVE 93-95%), at-grade civil $13 M/km incl. road overcrossings (CA HSR
+  San Jose - Merced unit prices), viaduct $62 M/km (LA - Anaheim), track and systems $11 M/km,
+  $60 M trainsets of 440 seats, no first-of-kind premium, O&M from CA HSR's cost model.
+- **Upgraded conventional rail**, 79-110 mph on freight track: all-in $5.0 M per route-km (NLX $2.3,
+  Minnesota 2009 rail plan $4.7-6.0, Quandel 2011 $7.4, 2026 USD, contingency removed), no new
+  right-of-way, 92 km/h schedule speed incl. stops (Amtrak GTFS: Hiawatha, Lincoln Service, Borealis
+  all run 84-96 km/h end to end, the 2004 MWRRI plan's ~120 never came), 4 round trips a day,
+  $48 per train-km O&M (Amtrak FY25 Table 8), Amtrak Midwest fares, no maglev premium.
+- Checks: upgraded rail gives Twin Cities - Duluth 2h31 (NLX plan ~2.5 h) and Twin Cities - Chicago
+  7h30 (Borealis today 7h31).
+
+Result, through phase 4 (2000 samples; capital mean, 7%): maglev $903 bn, 33.9 M riders, **BCR
+0.139**; HSR $439 bn, 31.5 M riders, **0.208**; upgraded rail $37 bn, 6.1 M riders, **0.261**. Phase
+1 (spine): 0.095 / 0.132 / 0.250. At 3.1%: 0.33 / 0.44 / 0.50. HSR keeps ~93% of maglev's riders for
+~49% of its capital (25-35% slower trips); upgraded rail costs ~4% of maglev but is 3-4x slower and
+carries ~18% of the riders, and Amtrak-level O&M ($48/train-km) eats its benefits (farebox 34-46%).
+None reaches 1 on these corridors: the problem is the market (one 3.8 M metro, mid-size cities
+100-300 miles out), not only the technology. Caveats in out/compare.md: HSR on maglev alignments
+(10% grades, maglev curves) is a little optimistic; HSR energy is understated (no rolling
+resistance); upgraded rail is a sketch and its on-time performance isn't in the demand model.
+
 ## Phase 8: materials supply chain
 
 From taconite to guideway: Mesabi pellets -> which steel mills (rebar, strand, plate, electrical

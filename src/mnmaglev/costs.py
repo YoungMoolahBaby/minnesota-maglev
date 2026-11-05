@@ -108,7 +108,8 @@ def segment_capital(s: Segment, P) -> dict:
         + q["bridge_m"] * P[g + "bridge_per_m"]
     )
     # piers taller than the elevated price covers (ravine and valley crossings for the grade limit)
-    tall_piers = tall_pier_excess(s, P) * P[g + "tall_pier_per_m"]
+    new_row = P["system.corridor.new_right_of_way"]  # 0: an existing railroad, nothing new to buy or dig
+    tall_piers = tall_pier_excess(s, P) * P[g + "tall_pier_per_m"] * new_row
     civil = civil + tall_piers
     # the frost zone is a fixed flag (low == high), so its mean is the flag in both modes
     frost_key = "frost_north" if float(np.mean(P[f"climate.{s.zone}.frost"])) >= 0.5 else "frost_south"
@@ -117,7 +118,7 @@ def segment_capital(s: Segment, P) -> dict:
         + P["costs.adders.peat_soft_ground"] * s.peat
         + P["costs.adders.highway_corridor"] * s.land.get(CORRIDOR, 0.0)
         + P[f"costs.adders.{frost_key}"]
-    )
+    ) * new_row
     systems = q["route_km"] * P["costs.systems.propulsion_power_control"]
 
     # land: surface width per structure type (tunnels and bridges take little surface land)
@@ -129,7 +130,7 @@ def segment_capital(s: Segment, P) -> dict:
     )
     acres = width_km_m * 1000.0 / ACRE_M2
     price = land_price_per_acre(s, P)
-    land = acres * price * P["land.acquisition_multiplier"]
+    land = acres * price * P["land.acquisition_multiplier"] * new_row
     public_land = land * public_land_factor(s, P)
 
     wet_share = s.land.get("wetland", 0.0)
@@ -137,10 +138,10 @@ def segment_capital(s: Segment, P) -> dict:
         q["elevated_km"] * P["land.row_width.elevated"] * P["land.wetlands.impact_fraction_elevated"]
         + q["at_grade_km"] * P["land.row_width.at_grade"] * P["land.wetlands.impact_fraction_at_grade"]
     )
-    wetlands = filled_acres * P["land.wetlands.replacement_ratio"] * P["land.wetlands.credit_price"]
+    wetlands = filled_acres * P["land.wetlands.replacement_ratio"] * P["land.wetlands.credit_price"] * new_row
 
     taken, taken_m2 = building_takes(s, {typ: P[f"land.row_width.{w}"] for typ, w in TAKE_WIDTHS})
-    buildings = building_cost(taken, taken_m2, P)
+    buildings = building_cost(taken, taken_m2, P) * new_row
 
     return {
         "quantities": q,
@@ -212,8 +213,8 @@ def line_reserve(line: Line, P, new_stations: list, construction, soft_rate, con
         "bridge_provision": total("bridge_provision"),
         "station_provision": stations,
         "review": review,
-        "contingency": base * contingency_rate,
-        "total": base * (1 + contingency_rate),
+        "contingency": base * contingency_rate * P["system.corridor.new_right_of_way"],
+        "total": base * (1 + contingency_rate) * P["system.corridor.new_right_of_way"],
         "lease_income": total("lease_income"),
     }
 
@@ -292,7 +293,7 @@ def line_operating(line: Line, P, trains, kwh_per_train_km: float, reserve_lease
     """Annual operating cost, MUSD/year. reserve_lease: farm lease income from a held reserve."""
     train_km = 2 * P["system.service.trains_per_hour"] * P["system.service.service_hours"] * 365 * line.length_km
     energy = (train_km * kwh_per_train_km + heating_mwh * 1000.0) * P["costs.operations.energy_price"] / 1e6
-    om = line.length_km * P["costs.operations.om_per_km_year"]
+    om = line.length_km * P["costs.operations.om_per_km_year"] + train_km * P["costs.operations.per_train_km"] / 1e6
     winter = sum(
         s.length_km * P["costs.operations.winter_per_km_year"] * P[f"climate.{s.zone}.snowfall"] / 130.0
         for s in line.segments

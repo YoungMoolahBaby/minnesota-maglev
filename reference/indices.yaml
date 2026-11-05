@@ -19,7 +19,7 @@ enr_cci:
 
 cpi:
   source: BLS CPI-U US city average all items (CUUR0000SA0), annual averages; 2025 has 11 months (Oct 2025 not collected); 2026 = Sep 2026 (BLS release 2026-10-14)
-  annual: {2000: 172.2, 2004: 188.9, 2008: 215.303, 2014: 236.736, 2021: 270.970, 2024: 313.689, 2025: 321.943, 2026: 336.940}
+  annual: {2000: 172.2, 2004: 188.9, 2008: 215.303, 2014: 236.736, 2015: 237.017, 2021: 270.970, 2024: 313.689, 2025: 321.943, 2026: 336.940}
 
 usd_per:
   source: Federal Reserve G.5A annual average exchange rates

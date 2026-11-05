@@ -225,6 +225,13 @@ operations:
     unit: USD/kWh
     conf: "medium"
     source: "EIA Electric Power Monthly table 5.6.B: Minnesota industrial 9.78 c/kWh Jan-Aug 2026 (9.26 in 2025); transportation sector 13.51 c (high end); Transrapid peak demand 2-3x rail implies demand charges"
+  per_train_km:
+    value: 0
+    low: 0
+    high: 0
+    unit: USD per train-km (operating cost charged per train-km; 0 for maglev, whose O&M is per route-km, staff and energy)
+    conf: high
+    source: "model switch for the technology comparison: upgraded conventional rail is costed like Amtrak state-supported routes, per train-mile (params/technology.yaml)"
   om_per_km_year:
     value: 0.6
     low: 0.35

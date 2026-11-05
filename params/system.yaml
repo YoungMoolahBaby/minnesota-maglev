@@ -94,6 +94,23 @@ vehicle:
     conf: placeholder
     source: cooling and base loads
 
+  schedule_speed:
+    value: 0
+    low: 0
+    high: 0
+    unit: km/h average along the route incl. stops and speed restrictions; 0 = run the kinematics
+    conf: high
+    source: "model switch: maglev and dedicated HSR run the kinematics on the measured alignment; upgraded conventional rail on freight track runs to a schedule speed from real services (params/technology.yaml)"
+
+corridor:
+  new_right_of_way:
+    value: 1
+    low: 1
+    high: 1
+    unit: 1 = a new corridor (land, wetlands, buildings, tall piers, ground adders, second-system reserve are bought or built), 0 = an existing railroad
+    conf: high
+    source: "model switch for the technology comparison (params/technology.yaml)"
+
 geometry:
   superelevation_max:
     value: 12

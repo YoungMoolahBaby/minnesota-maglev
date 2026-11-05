@@ -284,3 +284,18 @@ sensitivity table):
   as reported by the research agent, not re-checked) on ~2.6 bn car-miles avoided at an assumed
   ~0.35-0.40 kg CO2 per vehicle-mile (not checked) would be ~1 Mt/yr, ~$0.25-0.35 bn/yr on the full
   network (our arithmetic, not in the model): small next to the capital.
+
+## Technology comparison (2026-11-05)
+
+`mnmaglev compare`; parameters in params/technology.yaml. Open:
+- **HSR alignments**: route HSR on its own geometry (2.5-3.5% grades, ~5.5 km radius at 320 km/h;
+  CA HSR TM 2.1.2, TSI INF) with the GIS router instead of reusing the maglev's; the Duluth descent
+  and the maglev's tall-pier crossings are where it changes most.
+- **HSR energy**: add rolling resistance and wheel-rail drag (CA HSR uses ~37 kWh per trainset-mile).
+- **Upgraded rail**: route it on the actual freight lines (BNSF to Duluth, CPKC to Chicago, UP to Des
+  Moines) instead of our route km; host-railroad capacity and on-time performance; a 125 mph
+  dedicated-track option (Brightline Florida class) between upgraded rail and HSR.
+- **Frequency**: 2 trains/h for maglev and HSR, 4 round trips a day for upgraded rail are inputs; the
+  ridership each would carry at other frequencies (the demand model has the headway term).
+- **Other corridors**: a US corridor screen on NextGen NHTS (Texas Triangle, Atlanta - Charlotte, the
+  Northeast Corridor, California, Chicago hub) with the same model, ranking break-even cost per km.

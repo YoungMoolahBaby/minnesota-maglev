@@ -1,0 +1,374 @@
+# Technology comparison (`mnmaglev compare`, `mnmaglev report --technology ...`). The model as built is
+# the maglev. Each leaf here with `overrides: <parameter>` replaces that parameter (value, range,
+# source) when the model runs as that technology; leaves without it are read by the technology code.
+# Same corridors, stations, demand model, cost growth and benefit-cost rules for all three.
+# 2026 USD: construction from the FHWA highway index (2021 -> 2026 x1.522, 2023 x1.040, 2022 x1.205,
+# 2024 x0.968), O&M from CPI-U (2015 -> 2026 x1.422), as in reference/indices.yaml.
+# Checked 2026-11-05 against the documents saved in that session (docs/PLAN.md, technology comparison).
+
+hsr:
+  # Dedicated, electrified high-speed rail (Texas Central / California HSR class), ~320 km/h.
+  elevated_to_at_grade:
+    value: 0.77
+    low: 0.55
+    high: 0.89
+    unit: share of the maglev's rural elevated km that HSR builds at grade (embankment, cut)
+    conf: medium
+    source: "brings the rural route from 34% to ~85% at grade (our maglev network: 2,015 km elevated, 1,024 km at grade); CA HSR 2024 BoE Table 20, Merced - Bakersfield: '2.1.1 At grade or on embankment 177 20 53 km ... 2.1.4 On aerial structure 11 11 5 km' (250 of 282 km at grade, 89%); Spanish AVE lines 93-95% (AIReF Spending Review 2020, Cuadro 16). low / high = 70% / 93% at grade"
+    note: a structure change, not sampled (the lines are rebuilt at the value)
+  at_grade:
+    overrides: costs.guideway.at_grade
+    value: 13
+    low: 8
+    high: 24
+    unit: MUSD/km (dual track; trackbed, drainage, fencing, culverts, road overcrossings; track and systems separate)
+    conf: medium
+    source: "CA HSR San Jose - Merced PEPD Capital Cost Estimate (Dec 2021, 2021 Q4 $, allocated contingency included): '10.06.210 At-Grade Track Bed in Fill - 2 Track ... 4,096,740.41 /R M' ($2.5 M/km), closed drainage $4.4 M/km, cut $5.0 M/km; road overcrossings 'Rdwy Overxing HSR (Delta Rd) ... 26,999,657.44 /EA' ($27-31 M each), ~$8.7 M/km at one every 2 miles of the section-line grid; together ~$10 M/km (6-18), x1.522 to 2026, /1.15 for CA's allocated contingency (rate not itemised for at-grade; assumed like viaducts). Cross-checks: CA HSR CP4 bid $15.8 M/mi civil (2016, ENR), LGV PACA 'generalement inferieurs a 10 MEUR/km' (2004), Spain platform EUR 5-15 M/km"
+  elevated:
+    overrides: costs.guideway.elevated
+    value: 62
+    low: 36
+    high: 114
+    unit: MUSD/km (dual-track viaduct, civil only)
+    conf: medium
+    source: "CA HSR LA - Anaheim PEPD Basis of Estimate (2025, 2023 $): 2-track elevated, 20-60 ft piers, $93-174 M per route-mile ($58-108 M/km), x1.04 to 2026; HS2 viaduct and CA HSR San Jose comparators in reference/benchmarks.yaml (pass 3); the maglev beam guideway is 75"
+  track_and_systems:
+    overrides: costs.systems.propulsion_power_control
+    value: 11
+    low: 7
+    high: 16
+    unit: "MUSD/km (dual track: track, catenary and traction power, signalling, communications)"
+    conf: medium
+    source: "track: CA HSR SJ-M '10.09.120 Ballasted Track - 2 Track ... 4,644,098.76 /R M' (2021 Q4, contingency incl.) = $2.9 M/km -> $3.8 M in 2026; systems: CA HSR 2024 BoE App. E SCC 50/60 ~$9 M/route-km and HS2 rail systems contracts ~$4.8 M/route-km (reference/benchmarks.yaml, pass 4); the maglev's long stator, substations and control are 21"
+  first_of_kind:
+    overrides: costs.soft.first_of_kind
+    value: 0
+    low: 0
+    high: 0.2
+    unit: extra cost growth on systems, vehicles and switches
+    conf: medium
+    source: "proven technology: the rail reference-class curve (costs.soft.contingency, OGP 2020, incl. high-speed rail) already carries its cost growth; high end for a first US high-speed line (CA HSR)"
+  trainset_price:
+    overrides: costs.vehicles.per_section
+    value: 60
+    low: 44
+    high: 94
+    unit: MUSD per trainset (2026)
+    conf: medium
+    source: "CA HSR 2024 BoE Table 23: 'Each Revenue service set $ 39,409,361' (2022 base year) -> $47.5 M; DB ICE 3neo 2022: '43 additional trains ... for around 1.5 billion euros' (~EUR 35 M each, 439 seats) -> ~$44 M; CHSRA Siemens contract Oct 2026: $281.7 M for the first three trainsets incl. design ($93.9 M each)"
+  sets_per_train:
+    overrides: costs.vehicles.sections_per_train
+    value: 1
+    low: 1
+    high: 1
+    unit: trainsets per train (the trainset is the unit)
+    conf: high
+    source: "an 8-car HSR trainset runs as one unit (CA HSR O&M model: 'eight-car high-speed trainset')"
+  seats:
+    overrides: system.vehicle.seats_per_section
+    value: 440
+    low: 386
+    high: 604
+    unit: seats per trainset
+    conf: medium
+    source: "ICE 3neo '439 seats' (Siemens/DB 2022); Velaro E 'Sitzplaetze 405'; Avelia Liberty 386 (Amtrak); Velaro RUS 604 (10 cars, 250 m)"
+  mass:
+    overrides: system.vehicle.section_mass
+    value: 425
+    low: 400
+    high: 480
+    unit: t per trainset, loaded
+    conf: low
+    source: "Velaro E ~425 t (Wikipedia, not checked against Siemens); Velaro RUS 662-678 t loaded for 10 cars (Siemens datasheet)"
+  levitation:
+    overrides: system.vehicle.levitation_power
+    value: 0
+    low: 0
+    high: 0
+    unit: kW/t
+    conf: high
+    source: "wheels: no levitation power (rolling resistance is not in the energy model, which understates HSR energy a little)"
+  cruise_speed:
+    overrides: system.vehicle.cruise_speed
+    value: 320
+    low: 300
+    high: 354
+    unit: km/h
+    conf: high
+    source: "ICE 3neo 'top speed of 320 km/h'; Velaro E 350; CA HSR 220 mph (354) design; Avelia Liberty 300 km/h"
+  accel:
+    overrides: system.vehicle.accel
+    value: 0.40
+    low: 0.32
+    high: 0.72
+    unit: m/s^2 (mean)
+    conf: medium
+    source: "TSI HS RST 2008/232/EC Table 20: class 1 minimum mean 0.40 m/s^2 (0-40 km/h), 0.32 (0-120); Velaro RUS 'Average acceleration up to 60 km/h 0.43 m/s2'; N700 0.72 (trade press). Our kinematics use one rate to cruise, which flatters HSR above ~200 km/h"
+  om_per_train_km:
+    overrides: costs.operations.per_train_km
+    value: 17.7
+    low: 13
+    high: 25
+    unit: USD per train-km (crew, vehicle maintenance, stations, admin; energy and track separate)
+    conf: medium
+    source: "CA HSR O&M cost memo (2016 Business Plan, 2015 $, LAA EIR App. 6-A): Phase 1 2040 medium 'Total Cost $227 $730 $874' M with 'Maintenance of Infrastructure ... $122' M, 34.5 M trainset-miles; energy 811.5 GWh x $0.074/kWh = ~$60 M; (874 - 122 - 60) / 55.5 M train-km = $12.5 -> x1.422 CPI = $17.7"
+  crew_per_train:
+    overrides: costs.operations.staff_per_train_year
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD/train/year (crew is in the per-train-km cost)
+    conf: high
+    source: "CA HSR O&M model: 'one train engineer, one conductor, two assistant conductors' per trainset, inside its train operations cost"
+  om_per_km:
+    overrides: costs.operations.om_per_km_year
+    value: 0.216
+    low: 0.12
+    high: 0.30
+    unit: MUSD per route-km per year (infrastructure maintenance)
+    conf: medium
+    source: "CA HSR O&M memo: 'Maintenance of Infrastructure ... $122' M (2040, 2015 $) for ~500 route-miles = $0.152 M/km -> x1.422; Spain 'una cifra mayor de 110.000 euros por kilometro' a year (Congreso answer, 2025/26)"
+
+conventional:
+  # Upgraded conventional rail, 79-110 mph on existing freight railroads (shared track, sidings,
+  # signals and PTC, crossings, stations): costed like real US programs, timed by their schedules.
+  new_right_of_way:
+    overrides: system.corridor.new_right_of_way
+    value: 0
+    low: 0
+    high: 0
+    unit: existing railroad (no land, buildings, wetlands, tall piers, ground adders or second-system reserve)
+    conf: high
+    source: "runs on host freight railroads, e.g. NLX on 'approximately 152 miles of existing BNSF railway track' (MnDOT NLX fact sheet 2017)"
+  all_in_per_km:
+    overrides: costs.guideway.at_grade
+    value: 5.0
+    low: 2.3
+    high: 7.5
+    unit: MUSD per route-km, all-in (track and signal upgrades, sidings / second track, crossings, PTC, stations; no rolling stock), before contingency
+    conf: medium
+    source: "2026 USD, contingency removed: NLX (Minneapolis - Duluth, 90 mph) 'The most recent cost estimate is $718.9 million' / 152 mi = $2.94 M/km, /1.3 = $2.3 M (MnDOT NLX FAQ); Minnesota State Rail Plan (2009) Twin Cities - Duluth 110 mph '$4.5 - $5.8' M/mile (TxDOT summary; +10% engineering, +30% contingency) -> $4.7-6.0 M/km; Quandel for MnDOT (2011) Milwaukee - Twin Cities Route 1 'Total Cost 2,395,049,054' for '337.1 miles' (2010 $, 30% contingency) -> $7.4 M/km; Piedmont (NC) $520 M for 173 mi (2010-18) -> ~$3.5 M/km; Chicago - St. Louis '$1.96 billion' for 284 mi incl. new trainsets (IDOT 2023)"
+  all_in_elevated:
+    overrides: costs.guideway.elevated
+    value: 5.0
+    low: 2.3
+    high: 7.5
+    unit: MUSD per route-km (the same all-in; there is no new structure)
+    conf: medium
+    source: "as technology.conventional.all_in_per_km: every kind of maglev structure km is a km of upgraded railroad"
+  all_in_urban:
+    overrides: costs.guideway.urban_viaduct
+    value: 5.0
+    low: 2.3
+    high: 7.5
+    unit: MUSD per route-km
+    conf: medium
+    source: "as technology.conventional.all_in_per_km (urban approaches use the existing terminals, e.g. St. Paul Union Depot, Chicago Union Station)"
+  all_in_tunnel:
+    overrides: costs.guideway.tunnel
+    value: 5.0
+    low: 2.3
+    high: 7.5
+    unit: MUSD per route-km
+    conf: medium
+    source: "as technology.conventional.all_in_per_km"
+  bridges:
+    overrides: costs.guideway.bridge_per_m
+    value: 0.005
+    low: 0.0023
+    high: 0.0075
+    unit: MUSD per m of route on bridges (the same all-in rate per km; existing bridges)
+    conf: medium
+    source: "as technology.conventional.all_in_per_km / 1000: bridge km are carved out of the route km, so they carry the same all-in rate"
+  systems:
+    overrides: costs.systems.propulsion_power_control
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD/km (signals and PTC are in the all-in cost; diesel, no electrification)
+    conf: high
+    source: "Midwest state-supported trains are diesel (Siemens Charger); signal, CTC and PTC upgrades are in the all-in per-km cost"
+  stations:
+    overrides: costs.stations.terminal_major
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD each (in the all-in cost)
+    conf: medium
+    source: "NLX's estimate 'includes ... new train stations and the expansion of existing stations' (MnDOT NLX about page)"
+  stations_city:
+    overrides: costs.stations.city
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD each (in the all-in cost)
+    conf: medium
+    source: "as technology.conventional.stations"
+  stations_airport:
+    overrides: costs.stations.airport
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD each (in the all-in cost)
+    conf: medium
+    source: "as technology.conventional.stations"
+  switches:
+    overrides: costs.guideway.switch_each
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD each (crossovers and sidings are in the all-in cost)
+    conf: medium
+    source: "Quandel 2011 unit costs include crossovers (#33 crossover $1,285 k each, 2010 $) inside the route totals"
+  depot:
+    overrides: costs.depot.per_line
+    value: 0
+    low: 0
+    high: 50
+    unit: MUSD per line
+    conf: low
+    source: "Amtrak maintains state-supported equipment at existing facilities; the TCMC (Borealis) program's $53.3 M included the St. Paul Midway facility work (WisDOT TCMC booklet 2021)"
+  first_of_kind:
+    overrides: costs.soft.first_of_kind
+    value: 0
+    low: 0
+    high: 0
+    unit: extra cost growth
+    conf: high
+    source: "established technology; the rail reference-class curve carries its cost growth"
+  heaters:
+    overrides: winter.heating.heater_capex_per_km
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD/km (no guideway heating; switch heaters are in the all-in cost)
+    conf: high
+    source: "guideway ice warming is a maglev measure (docs/PLAN.md, winter ice)"
+  heater_power:
+    overrides: winter.heating.w_per_m2
+    value: 0
+    low: 0
+    high: 0
+    unit: W per m2 (no guideway heating)
+    conf: high
+    source: "as technology.conventional.heaters"
+  schedule_speed:
+    overrides: system.vehicle.schedule_speed
+    value: 92
+    low: 84
+    high: 98
+    unit: km/h average along the route incl. stops and speed restrictions
+    conf: high
+    source: "Amtrak GTFS (4 Nov 2026), end-to-end times we recomputed: Hiawatha Chicago - Milwaukee 86 mi in 89-102 min, Lincoln Service Chicago - St. Louis 284 mi in 286-305 min (110 mph since 2023), Borealis Chicago - St. Paul 411 mi in 451 min = 84-96 km/h; NLX planned ~2.5 h for 152 mi (98 km/h). MWRRI (2004) planned ~120 km/h (Chicago - St. Paul '5 hr 31 min'), never reached"
+  dwell:
+    overrides: system.vehicle.dwell
+    value: 0
+    low: 0
+    high: 0
+    unit: s (stops are inside the schedule speed)
+    conf: high
+    source: "the schedule speed is end to end, stops included"
+  frequency:
+    overrides: system.service.trains_per_hour
+    value: 0.22
+    low: 0.11
+    high: 0.56
+    unit: trains/h/direction (4 round trips a day over 18 h; 2 to 10)
+    conf: medium
+    source: "NLX plan 'four roundtrips per day' (MnDOT); Borealis + Empire Builder 2 a day; Hiawatha up to 'ten daily round trips' after the Muskego Yard bypass (WisDOT 2024)"
+  trainset_price:
+    overrides: costs.vehicles.per_section
+    value: 40
+    low: 30
+    high: 55
+    unit: MUSD per trainset (2026)
+    conf: medium
+    source: "Siemens Charger '$225 million contract to build 32 diesel-electric locomotives' (2014) + Venture cars '$371 million ... 137 single-level passenger railcars' (2017): 1 locomotive + 5 cars ~$20.6 M -> ~$39 M in 2026; Amtrak Airo 'Program Total Cost: $3.909B' for 83 trainsets ($47 M) (press and Amtrak pages, not re-checked)"
+  sets_per_train:
+    overrides: costs.vehicles.sections_per_train
+    value: 1
+    low: 1
+    high: 1
+    unit: trainsets per train
+    conf: high
+    source: "one locomotive-hauled set per train"
+  seats:
+    overrides: system.vehicle.seats_per_section
+    value: 300
+    low: 240
+    high: 330
+    unit: seats per train
+    conf: medium
+    source: "Amtrak MPR Sept 2025 Table 8 seat-miles / train-miles: Borealis ~243, Hiawatha ~281, Lincoln ~325, Wolverine ~282 (our arithmetic); Airo 'up to 300 passengers'"
+  om_per_train_km:
+    overrides: costs.operations.per_train_km
+    value: 48
+    low: 43
+    high: 51
+    unit: USD per train-km, fully allocated (crew, fuel, equipment, stations, host railroad payments, overhead)
+    conf: high
+    source: "Amtrak Monthly Performance Report Sept 2025 Table 8 operating expense / (frequencies x route miles): 'Borealis ... 21.8 ... 717.0' = $46.0/train-km, 'Chicago-St.Louis ... 46.5 ... 2,473.1' = $41.1, 'Hiawathas ... 28.2 ... 4,168.0' = $48.9, 'Wolverines ... 46.5 ... 1,962.0' = $48.4; x1.047 CPI FY25 -> 2026"
+  om_per_km:
+    overrides: costs.operations.om_per_km_year
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD per route-km per year (the host railroad maintains the track; payments are in the per-train-km cost)
+    conf: high
+    source: "Amtrak OIG-A-2022-005: third-party costs, incl. 'payments to other railroads for the maintenance they perform on tracks that Amtrak uses', were ~16% of state partners' FY2019 payments"
+  staff:
+    overrides: costs.operations.staff_per_train_year
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD/train/year (in the per-train-km cost)
+    conf: high
+    source: "Amtrak's route operating expense includes crews"
+  energy:
+    overrides: costs.operations.energy_price
+    value: 0
+    low: 0
+    high: 0
+    unit: USD per kWh (diesel fuel is in the per-train-km cost)
+    conf: high
+    source: "Amtrak's route operating expense includes fuel"
+  winter_ops:
+    overrides: costs.operations.winter_per_km_year
+    value: 0
+    low: 0
+    high: 0
+    unit: MUSD per km per year (the host railroad clears its track)
+    conf: medium
+    source: "host railroad maintenance, in the per-train-km cost"
+  premium:
+    overrides: demand.mode_choice.maglev_premium
+    value: 0
+    low: 0
+    high: 0
+    unit: minutes (it is conventional rail; the Hiawatha-calibrated constant applies as is)
+    conf: high
+    source: "the demand model's rail constant is fitted to the Hiawatha, a conventional service"
+  station_time:
+    overrides: demand.mode_choice.maglev_wait_terminal
+    value: 18
+    low: 10
+    high: 25
+    unit: minutes at the station before boarding
+    conf: medium
+    source: "BPM-V3 Table 6-22: conventional rail wait 15 + terminal 3 min"
+  fare_boarding:
+    overrides: demand.mode_choice.fare_boarding
+    value: 15
+    low: 10
+    high: 20
+    unit: USD per trip
+    conf: medium
+    source: "least-squares fit to Amtrak FY25 Table 8 gross ticket revenue per rider and trip length (Borealis $51.7 for 241 mi, Lincoln $41.5 for 205, Hiawatha $28.5 for 81, Wolverine $61.4 for 220): $14.7 + $0.103 per km (research agent's fit, not re-done)"
+  fare_per_mile:
+    overrides: demand.mode_choice.fare_per_mile
+    value: 0.17
+    low: 0.13
+    high: 0.35
+    unit: USD per straight-line mile x road detour
+    conf: medium
+    source: "$0.103 per passenger-km (fit above) = $0.166 per mile; Amtrak FY25 ticket revenue per passenger-mile Borealis $0.214, Lincoln $0.202, Hiawatha $0.352"

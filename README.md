@@ -193,6 +193,12 @@ USDOT's benefit-cost rules (7%, Dec 2025) the benefit-cost ratio is **~0.1** (0.
 0.14 for the full network; 0.25-0.33 at 3.1%; 0.07-0.21 across the sensitivity sweep): travel
 benefits of a few billion dollars a year against hundreds of billions of capital.
 
+**Technology comparison** (`mnmaglev compare`, params/technology.yaml): the same corridors and
+demand model as dedicated high-speed rail (320 km/h, mostly at grade) and as upgraded 110-mph rail
+on freight track. Full network at 7%: maglev BCR 0.14 ($903 bn, 34 M riders), HSR 0.21 ($439 bn,
+32 M riders), upgraded rail 0.26 ($37 bn, 6 M riders, at the 84-96 km/h real Midwest services
+deliver). None is close to 1 on these corridors: the market is thin, whatever runs on it.
+
 ## How it fits together
 
 | Piece | Role | Status |

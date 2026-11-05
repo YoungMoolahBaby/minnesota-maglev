@@ -311,6 +311,16 @@ works), date, details. One section per tool.
 " into real line breaks twice (write edit scripts to files instead).
   Result: phase 1 2.6 M riders, BCR 0.095 at 7%; full network 33.9 M riders, BCR 0.139.
 
+- 2026-11-05, technology comparison: two research agents (HSR unit costs and operations; 110-mph
+  upgrades), figures re-checked in the saved files; schedule speeds recomputed from Amtrak's GTFS
+  feed ourselves. Built as parameter overrides (`overrides:` in params/technology.yaml) so one model
+  run covers each technology, plus three switches with inert maglev defaults (new right-of-way,
+  schedule speed, O&M per train-km); maglev results came out identical to the cent. A test caught
+  bridge km left at zero cost for upgraded rail (bridges are carved out of the route km). Friction:
+  hsr.ca.gov downloads came through WebFetch this time (ceqanet attachments with curl); amtrak.com
+  hangs curl (GTFS and media.amtrak.com work); web.archive.org rate-limits; YAML colons again.
+  Result (full network, 7%): maglev 0.139, HSR 0.208, upgraded rail 0.261; none near 1.
+
 ## OSRD
 
 ## Calliope

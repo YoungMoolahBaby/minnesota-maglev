@@ -47,7 +47,12 @@ def cmd_report(args) -> int:
         for p in problems:
             print("PROBLEM", p)
         return 1
-    out = Path(args.out) if args.out else ROOT / "out" / (args.variant or "")
+    if args.technology != "maglev":
+        from .technology import prepare
+
+        params, lines = prepare(params, lines, args.technology)
+    out = Path(args.out) if args.out else ROOT / "out" / (args.variant or "") / (
+        "" if args.technology == "maglev" else f"tech_{args.technology}")
     out.mkdir(parents=True, exist_ok=True)
     settings = load_settings()
     local = settings["local_supply"] if args.local_supply is None else args.local_supply == "on"
@@ -128,6 +133,23 @@ def cmd_gis(args) -> int:
     return 0
 
 
+def cmd_compare(args) -> int:
+    from .technology import run_all
+
+    params, cities, lines = _load(None, None, args.variant, True)
+    problems = check_params(params) + check_network(lines, cities, set(params))
+    if problems:
+        for p in problems:
+            print("PROBLEM", p)
+        return 1
+    settings = load_settings()
+    path = run_all(params, lines, n=args.n, seed=args.seed, out=ROOT / "out" / (args.variant or ""),
+                   local_supply=settings["local_supply"], fusion="none", heating=settings["winter_heating"],
+                   security=settings["security"])
+    print(f"wrote {path}")
+    return 0
+
+
 def cmd_demand_data(args) -> int:
     from .demand_data import build
 
@@ -157,6 +179,8 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--n", type=int, default=5000, help="Monte Carlo samples")
     rp.add_argument("--seed", type=int, default=1)
     rp.add_argument("--out", default=None, help="output folder (default out/ or out/<variant>/)")
+    rp.add_argument("--technology", choices=["maglev", "hsr", "conventional"], default="maglev",
+                    help="run as dedicated high-speed rail or upgraded conventional rail (params/technology.yaml)")
     rp.set_defaults(fn=cmd_report)
     sub.add_parser("benchmarks", help="sourced cost benchmarks in 2026 USD vs parameter ranges").set_defaults(fn=cmd_benchmarks)
     gp = sub.add_parser("gis", help="route a line on elevation + land cover and measure it (needs --extra gis)")
@@ -172,6 +196,11 @@ def main(argv: list[str] | None = None) -> int:
     tp.add_argument("--no-transfers", action="store_true", help="ignore connections at the Midway hub")
     tp.add_argument("--seed", type=int, default=1)
     tp.set_defaults(fn=cmd_timetable)
+    cp = sub.add_parser("compare", help="maglev vs dedicated HSR vs upgraded rail on the same corridors -> out/compare.md")
+    cp.add_argument("--n", type=int, default=2000, help="Monte Carlo samples per technology")
+    cp.add_argument("--seed", type=int, default=1)
+    cp.add_argument("--variant", default=None)
+    cp.set_defaults(fn=cmd_compare)
     dp = sub.add_parser("demand-data", help="build network/demand_base.yaml from NHTS OD 2022 and Census 2025 (~40 MB download)")
     dp.add_argument("--min-miles", type=float, default=10.0, help="lowest distance band kept (NHTS bands start at 0, 10, 25, 50 ...)")
     dp.set_defaults(fn=cmd_demand_data)
