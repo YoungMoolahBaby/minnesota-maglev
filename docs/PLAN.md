@@ -88,8 +88,15 @@ from the one before with measurements.
   starts at or passes the hub must connect within 5-12 minutes both ways). Peaks: spine 123 -> 75 MW,
   phase 2 246 -> 137, all 485 -> 237. Fusion fleet 5/8/14 -> 4/6/10 units; the fleet must also cover
   overnight ice warming, which now sets the full network's size.
+- **2026-11-05, cost growth from the reference class** (Jon): contingency is no longer a flat 40%;
+  `costs.soft.contingency` is sampled along the rail reference-class curve at the earliest business-
+  case stage (median +19%, P80 +121%, mean ~+66%), plus a first-of-kind premium on the maglev-
+  specific items (systems, vehicles, switches), full on phase 1 and ~30% of it on later lines. The
+  report gives the mean (expected cost) and P80 next to P10 / P50 / P90. Why: rail cost growth is
+  skewed (most projects overrun a little, some double), and the flat 40% got the middle about right
+  but not the tail. Budget on the mean (as UK appraisal does) or P80; FTA funds at P65.
 
-## Phase 1: research pass (in progress; passes 1-4 done 2026-11-05)
+## Phase 1: research pass (in progress; passes 1-5 done 2026-11-05)
 
 Pass 1 sourced the top cost drivers (docs/RESEARCH.md items 1-5, reference/benchmarks.yaml,
 `mnmaglev benchmarks`); the spine went from $77 bn to $101 bn P50. The benchmarks file and
@@ -131,6 +138,24 @@ $98.3 bn, phase 2 $241.9 bn, phase 3 $467.7 bn, through phase 4 $779.7 bn (P10 6
 Open: older electrical anchors are inflated with the highway construction index (~3.2x since 2002);
 BLS producer prices rose 3.2x for transformers, 2.2x for motors and generators, 1.4x for electrical
 machinery as a whole, so an electrical blend would put them ~15-25% lower (docs/RESEARCH.md).
+Pass 5 (2026-11-05, contingency and cost growth; three research agents: maglev and HSR cost
+histories, the reference-class literature, US and Minnesota projects; every figure used checked
+against its source). Evidence, cost growth from an early estimate: rail reference class at the UK's
+earliest business-case stage (OGP for DfT 2020, n=355) median +19%, mean +56%, P80 +121%, 7 in 10
+overran; US New Starts from entry to preliminary engineering (FTA 2020, 29 projects, our recount)
+median 1.18, mean 1.54, P80 1.68, but ~1.00 from the funding agreement; FTA's minimum contingency
+40% at 15% design (P65); Flyvbjerg (2006) rail 40% at P50, 57% at P80 from the decision to build.
+Maglev and new HSR: Chuo 5.52 -> 11.0 trillion yen on the same route (1.58-1.76x after JR Central's
+own price items; the growth came from ground, seismic design, spoil and prices), Munich Transrapid
+1.85 -> 3.4 bn EUR in six months before cancellation, HS2 Phase One 35-45 -> 70.9-82.2 bn GBP (2019
+prices) since the 2020 notice to proceed, Shanghai 1.12x (8.9 -> 9.943 bn RMB, the only low case).
+Minnesota: Southwest LRT 1.25 -> 2.86 bn (2.29x YOE, +38% after the start of construction, OLA);
+Central Corridor and Northstar came in under their funding agreements. The model now samples cost
+growth along that rail curve and adds a first-of-kind premium (decision above). Effect: through
+phase 4 P50 $779.7 -> $706.3 bn, but the mean is **$932.5 bn**, P80 $1,284.9 bn, P90 $1,775.6 bn
+(was P90 $906.7 bn); spine P50 $93.6 bn, mean $121.6 bn, P80 $166.5 bn. Cost growth now dominates
+the uncertainty (+0.96); the report also ranks parameters against the base estimate, where the
+elevated guideway (+0.67) and systems (+0.51) still lead.
 
 Work through docs/RESEARCH.md from the top of the sensitivity table down: replace placeholders with
 sourced numbers, tighten ranges, add `params/benchmarks.yaml` (real projects as checks: Shanghai,

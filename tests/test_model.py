@@ -613,3 +613,53 @@ def test_a_measured_piece_across_a_via_point_inherits_the_segment_into_its_end(w
     line = next(l for l in lines if l.id == "heartland")
     seg = next(s for s in line.segments if s.a.id == "den" and s.b.id == "denver")
     assert seg.urban_tunnel == pytest.approx(0.3)
+
+
+def test_quantile_parameter_follows_its_curve(world):
+    # costs.soft.contingency is sampled along the rail reference-class curve (OGP 2020, SOBC):
+    # median 19%, P80 121%, 7 in 10 projects overrun, trimmed P5-P95 mean 56%
+    params, _, _ = world
+    p = params["costs.soft.contingency"]
+    assert p.quantiles
+    d = sample({p.name: p}, 200_000, seed=7)[p.name]
+    assert np.median(d) == pytest.approx(0.19, abs=0.01)
+    assert np.percentile(d, 80) == pytest.approx(1.21, abs=0.02)
+    assert np.mean(d > 0) == pytest.approx(0.70, abs=0.01)
+    lo, hi = np.percentile(d, [5, 95])
+    assert d[(d >= lo) & (d <= hi)].mean() == pytest.approx(0.56, abs=0.02)
+    assert d.min() >= p.low and d.max() <= p.high
+
+
+def test_check_flags_bad_quantile_tables():
+    from mnmaglev.params import Param
+
+    good = Param("x", 0.5, 0.0, 1.0, "u", "low", "s", quantiles=((0.0, 0.0), (0.5, 0.5), (1.0, 1.0)))
+    assert check_params({"x": good}) == []
+    falling = Param("x", 0.5, 0.0, 1.0, "u", "low", "s", quantiles=((0.0, 0.0), (0.5, 0.5), (0.7, 0.4), (1.0, 1.0)))
+    assert any("must not decrease" in m for m in check_params({"x": falling}))
+    off_median = Param("x", 0.3, 0.0, 1.0, "u", "low", "s", quantiles=((0.0, 0.0), (0.5, 0.5), (1.0, 1.0)))
+    assert any("0 / 0.5 / 1" in m for m in check_params({"x": off_median}))
+
+
+def test_first_of_kind_premium_is_full_on_phase_one_only(world):
+    from dataclasses import replace
+
+    params, _, lines = world
+    P0 = nominal(params)
+    spine = next(l for l in lines if l.id == "spine")
+    assert spine.phase == 1
+    t = line_summary(spine, P0)["end_to_end_s"]
+    first = line_capital(spine, P0, spine.stations, t)
+    later = line_capital(replace(spine, phase=2), P0, spine.stations, t)
+    items = (first["systems"] + first["vehicles"] + first["switches"]) * (1 + P0["costs.soft.engineering_admin"])
+    assert first["first_of_kind"] == pytest.approx(items * P0["costs.soft.first_of_kind"])
+    assert later["first_of_kind"] == pytest.approx(first["first_of_kind"] * P0["costs.soft.first_of_kind_later"])
+    assert first["total_without_reserve"] - later["total_without_reserve"] == pytest.approx(
+        first["first_of_kind"] - later["first_of_kind"])
+
+
+def test_report_module_imports():
+    # no other test touches report.py, so a syntax slip there would pass the suite unnoticed
+    import importlib
+
+    importlib.import_module("mnmaglev.report")

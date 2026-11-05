@@ -42,15 +42,17 @@ uv run pytest
   and back to iron pellets, crude taconite (Mesabi Range) and copper ore (Duluth Complex grades).
 - **Map**: `out/map.html`, the network on OpenStreetMap with costs and times in the popups.
 
-After research passes 1-4 (2026-11-03/05; cost, Minnesota and Transrapid parameters sourced, see
-`reference/benchmarks.yaml`; still concept-stage, see the report for the caveats):
+After research passes 1-5 (2026-11-03/05; cost, Minnesota and Transrapid parameters sourced, see
+`reference/benchmarks.yaml`; still concept-stage, see the report for the caveats). Cost growth over
+the estimate follows the rail reference class (most projects overrun a little, some double), so the
+expected cost (mean) sits well above the median:
 
-| | Route km | End to end | Capital P50 (P10 - P90) |
-|---|---|---|---|
-| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $98.3 bn ($85 - 114 bn) |
-| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $242 bn ($208 - 282 bn) |
-| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $468 bn ($402 - 543 bn) |
-| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $780 bn ($668 - 907 bn) |
+| | Route km | End to end | Capital P50 (P10 - P90) | Expected (mean) |
+|---|---|---|---|---|
+| Spine (GIS-measured route): Duluth - Midway hub - MSP - Rochester, with reserve, local supply, winter heating, robot security patrols, staggered timetable and 3 fusion units | 359 | 1 h 02 | $94 bn ($64 - 227 bn) | $122 bn |
+| Network through phase 2, all GIS-measured (6 fusion units) | 966 | | $223 bn ($151 - 554 bn) | $293 bn |
+| Through phase 3, incl. Chicago, all GIS-measured (9 fusion units) | 1,881 | | $425 bn ($289 - 1,065 bn) | $561 bn |
+| Through phase 4, incl. Denver via Des Moines and Omaha, all GIS-measured (15 fusion units) | 3,318 | MSP - Denver 4 h 12 | $706 bn ($479 - 1,776 bn) | $933 bn |
 
 (2026-11-04: GIS slices 1-6, i.e. elevation, land cover, floods, suburbs and freeways, peat,
 buildings and parcels, public and tribal land; out of state with Minnesota land prices.)
@@ -58,13 +60,13 @@ buildings and parcels, public and tribal land; out of state with Minnesota land 
 The spine holds room for a **sibling system** right beside it, so the next generation can be
 built while this one runs, then they alternate. The two sit ~70 m apart centre to centre (a 50 m
 construction separation), far enough that work on one needs no slow orders on the other; the
-shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $7.8 bn of the spine. The
+shared hazards are designed for once, for both (docs/HAZARDS.md). P50 $7.0 bn of the spine. The
 land is cheap (~$1.3 bn with contingency); most of it is building city structures and stations
 for two from day one. Every other line shows what its reserve would cost in the report.
 
 **Local supply** (on by default): Minnesota-made guideway beams and stator packs, taconite aggregate
 near the Range, and long-term supply contracts with Minnesota mines and mills. It saves the spine
-~$1.7 bn P50 (~1.7%), mostly from the price hedge of supply contracts (1 contingency point) and one
+~$1.6 bn P50 (~1.7%), mostly from the price hedge of supply contracts (1 contingency point) and one
 beam plant serving the whole network; taconite aggregate saves little. Materials are only ~4% of
 construction (the report's materials bill), so cheap ore can't move the total much; the ore
 pays ~$2.3 M of production tax to the Range on the spine. `--local-supply off` shows it without.
@@ -175,11 +177,11 @@ $248 bn. Monte Carlo noise at 5,000 samples is about +-$0.3 bn on the spine (see
 $97.3-97.7 bn); each parameter has its own random stream, so adding one doesn't reshuffle the rest. Still not seen: buildings and parcels one by one,
 public and tribal land.
 
-The spine works out to ~$251 M per route-km for the line itself (with 24% soft costs, 40% contingency and the
-second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
+The spine works out to ~$248 M per route-km at P50 for the line itself, ~$321 M expected (with 24% soft
+costs, reference-class cost growth, the first-of-kind premium and the second-system reserve). For scale, in 2026 USD: Shanghai's maglev ~$123 M/km (2004, Chinese costs,
 incl. trains and stations); the 2001 Baltimore-Washington Transrapid estimate ~$187 M/km (incl. 40%
-contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Early estimates of rail projects have
-overrun ~45% on average, which closes most of the gap. The biggest single driver of the range is
+contingency); FRA's 2005 range for US maglev ~$59-147 M/km. Those are estimates before any overrun; the model's
+cost growth is what rail projects did after such estimates (research pass 5). The biggest single driver of the range is
 still the elevated guideway cost per km.
 
 ## How it fits together

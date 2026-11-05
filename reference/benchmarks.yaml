@@ -754,3 +754,32 @@ benchmarks:
 #   Flyvbjerg, Holm & Buhl (2003): rail cost escalation averages 44.7% (SD 38.4, n=58), 9 in 10 overrun.
 #   CA HSR 2024 BOE: allocated contingency 10-50% by category (viaduct 20, tunnel 31, systems 11),
 #     unallocated 5%; FTA/FRA fund to P65 (OP-40).
+
+# Cost growth (pass 5, 2026-11-05; costs.soft.contingency curve and costs.soft.first_of_kind).
+# Ratios are out-turn or latest / earlier estimate; checked against the documents saved in that pass.
+#   OGP for DfT (2020), Updating the evidence behind the optimism bias uplifts, Table 5: rail n=355,
+#     FBC mean 30 / RCF50 19 / RCF80 60%; OBC 33 / 19 / 77; SOBC 56 / 19 / 121 (means trimmed P5-P95);
+#     7 in 10 overran (Table 2). https://assets.publishing.service.gov.uk/media/6093d448e90e0726f52fc54c/updating-the-evidence-behind-the-optimism-bias-uplifts-for-transport-appraisals.pdf
+#   DfT TAG A1.2 (May 2025) Table 7: rail 56 / 33 / 30% by stage; TAG A5.3 (Nov 2025): novel or complex
+#     schemes may use higher values, "a 120% uplift at PACE stage 1 provides a starting point".
+#   Flyvbjerg (2006), PMJ 37(3): rail mean 44.7% (SD 38.4); required uplift 40% at P50, 57% at P80,
+#     68% at P90, from the decision to build (n=46).
+#   HM Treasury, Supplementary Green Book Guidance: Optimism Bias, Table 1 (capex upper / lower):
+#     non-standard civil 66 / 6%, equipment/development 200 / 10%.
+#   Merrow, Phillips & Myers (1981), RAND R-2569-DOE: earliest estimates for pioneer process plants
+#     "averaged less than one-half of actual costs".
+#   FTA Oversight Procedure 40 (Oct 2023), App. N: minimum contingency 40% at 15% design, 33% at 30%,
+#     26% at 60%, 20% pre-bid, at P65.
+#   FTA, Predicted vs. Actual Impacts of CIG Projects 2020, Table 2.1-1 (29 projects, YOE; our
+#     recount): actual / estimate at PE entry median 1.18, mean 1.54, P80 1.68; actual / FFGA ~1.00.
+#   FTA (2008), Predicted and Actual Impacts of New Starts Projects 2007: +40.2% vs alternatives
+#     analysis, +11.8% vs final design entry, +6.2% vs FFGA (constant $, 21 projects).
+#   JR Central: Chuo Shinkansen Shinagawa-Nagoya 5.52 trillion yen (2014/2018) -> 7.04 (Apr 2021:
+#     ground +0.5, seismic +0.6, spoil +0.3) -> 11.0 (Oct 2025: prices +2.3 incl. a 1.0 reserve, ground
+#     +1.2, specification +0.4); same route. https://jr-central.co.jp/news/release/_pdf/000044731.pdf
+#   Bayerischer Landtag Drs. 15/10354 (2008): Transrapid Munich 1.85 -> 3.4 bn EUR, no breakdown given.
+#   Shanghai maglev: budget 8.9 bn RMB, approved 10.0299, final account 9.943 (Sina Finance 2004-09-26).
+#   HS2 Phase One: 35-45 bn GBP (2019 prices, 2020) -> 70.9-82.2 (May 2026, 2019 mixed price base);
+#     two thirds scope missed, under-estimation and delivery, one third inflation (DfT, gov.uk).
+#   Minnesota, OLA: Southwest LRT 1.25 bn (2011) -> 2.86 bn (Jan 2024), YOE; +38% after the start of
+#     construction. FTA 2020: Central Corridor 957 -> 926 M, Northstar 317 -> 309 M (FFGA -> actual).

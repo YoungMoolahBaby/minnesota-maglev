@@ -61,7 +61,8 @@ def cmd_report(args) -> int:
     write_json(net, out / "results.json")
     write_map(net, out / "map.html")
     for ph, t in net["phase_totals"].items():
-        print(f"through phase {ph}: P50 ${t['p50'] / 1000:,.1f} bn (P10 {t['p10'] / 1000:,.1f}, P90 {t['p90'] / 1000:,.1f})")
+        print(f"through phase {ph}: P50 ${t['p50'] / 1000:,.1f} bn (P10 {t['p10'] / 1000:,.1f}, P90 {t['p90'] / 1000:,.1f}), "
+              f"mean ${t['mean'] / 1000:,.1f} bn, P80 {t['p80'] / 1000:,.1f}")
     print(f"wrote {out / 'report.md'}, results.json, map.html")
     return 0
 

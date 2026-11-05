@@ -250,10 +250,14 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
     land = total("land") + total("wetlands") + total("buildings") + total("public_land")
     base = construction + soft + land
     contingency = base * contingency_rate
+    # first-of-kind premium: extra growth on the maglev-specific items, full on phase 1 and partly
+    # on later lines once the technology runs (params costs.soft.first_of_kind*)
+    fok_rate = P["costs.soft.first_of_kind"] * (1.0 if line.phase == 1 else P["costs.soft.first_of_kind_later"])
+    first_of_kind = (total("systems") + vehicles + switches) * (1 + P["costs.soft.engineering_admin"]) * fok_rate
     # the reserve is priced for every line; it counts in the total only where the line opts in
     reserve = line_reserve(line, P, new_stations, construction,
                            P["costs.soft.engineering_admin"], contingency_rate)
-    without = base + contingency
+    without = base + contingency + first_of_kind
     return {
         "segments": segs,
         "guideway": total("guideway"),
@@ -273,6 +277,7 @@ def line_capital(line: Line, P, new_stations: list, end_to_end_s: float, local_s
         "buildings": total("buildings"),
         "public_land": total("public_land"),
         "contingency": contingency,
+        "first_of_kind": first_of_kind,
         "reserve": reserve,
         "reserve_included": line.reserve,
         "local_supply": local,

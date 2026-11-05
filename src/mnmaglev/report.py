@@ -27,7 +27,7 @@ from .params import Param, nominal, sample
 def _pct(x) -> dict[str, float]:
     a = np.asarray(x, dtype=float)
     return {"p10": float(np.percentile(a, 10)), "p50": float(np.percentile(a, 50)),
-            "p90": float(np.percentile(a, 90))}
+            "p80": float(np.percentile(a, 80)), "p90": float(np.percentile(a, 90)), "mean": float(a.mean())}
 
 
 def _ranks(a: np.ndarray) -> np.ndarray:
@@ -89,6 +89,9 @@ def run_network(lines: list[Line], params: dict[str, Param], n: int = 5000, seed
     return {
         "P0": P0, "results": results, "n": n, "seed": seed,
         "sensitivity": sensitivity(params, PS, net_total),
+        # the cost-growth draw swamps everything else, so also rank against the total with it divided out
+        "sensitivity_base": sensitivity({k: p for k, p in params.items() if k != "costs.soft.contingency"}, PS,
+                                        net_total / (1 + PS["costs.soft.contingency"])),
         "phase_totals": {
             ph: _pct(sum(r["capS"]["total"] for r in results if r["line"].phase <= ph)
                      + (fusion_cum[ph] if own else 0.0))
@@ -151,8 +154,8 @@ def write_markdown(net: dict, path: Path) -> None:
                "See docs/RESEARCH.md for what to firm up first.\n")
 
     L.append("## Lines\n")
-    L.append("| Line | Phase | Route km | Stations (new) | End to end | Capital P10 / P50 / P90 | P50 per km | Opex P50 / yr | Second-system reserve P50 |")
-    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.append("| Line | Phase | Route km | Stations (new) | End to end | Capital P10 / P50 / P90 | Capital mean | P50 per km | Opex P50 / yr | Second-system reserve P50 |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
     for r in R:
         line, cs, os_ = r["line"], _pct(r["capS"]["total"]), _pct(r["opsS"]["total"])
         rs = _pct(r["capS"]["reserve"]["total"])["p50"]
@@ -160,7 +163,7 @@ def write_markdown(net: dict, path: Path) -> None:
         L.append(
             f"| {line.name} | {line.phase} | {line.length_km:,.0f} | {len(line.stations)} ({len(r['new_stations'])}) "
             f"| {_hm(r['kin']['end_to_end_s'])} | {_bn(cs['p10'])} / {_bn(cs['p50'])} / {_bn(cs['p90'])} "
-            f"| ${cs['p50'] / line.length_km:,.0f} M | ${os_['p50']:,.0f} M "
+            f"| {_bn(cs['mean'])} | ${cs['p50'] / line.length_km:,.0f} M | ${os_['p50']:,.0f} M "
             f"| {_bn(rs)} ({rs / _pct(r['capS']['total_without_reserve'])['p50']:.1%}), {held} |"
         )
     L.append("")
@@ -178,9 +181,12 @@ def write_markdown(net: dict, path: Path) -> None:
         L.append(f"Holding it on the other lines too would add P50 "
                  f"{_bn(_pct(sum(r['capS']['reserve']['total'] for r in other))['p50'])}.")
     L.append("")
-    L.append("Stations shared between lines are costed once, on the earliest phase. Cumulative network capital:\n")
+    L.append("Stations shared between lines are costed once, on the earliest phase. Cumulative network capital "
+             "(cost growth follows a rail reference-class curve, `costs.soft.contingency`, so the mean, i.e. the "
+             "expected cost, sits well above the median; UK appraisal budgets on the mean, FTA funds at P65):\n")
     for ph, t in net["phase_totals"].items():
-        L.append(f"- through phase {ph}: {_bn(t['p10'])} / **{_bn(t['p50'])}** / {_bn(t['p90'])} (P10 / P50 / P90)")
+        L.append(f"- through phase {ph}: {_bn(t['p10'])} / **{_bn(t['p50'])}** / {_bn(t['p90'])} (P10 / P50 / P90); "
+                 f"mean **{_bn(t['mean'])}**, P80 {_bn(t['p80'])}")
     L.append("")
 
     L.append("## What drives the uncertainty\n")
@@ -188,6 +194,13 @@ def write_markdown(net: dict, path: Path) -> None:
     L.append("| Parameter | Correlation | Confidence |")
     L.append("|---|---|---|")
     for k, rho, conf in net["sensitivity"]:
+        L.append(f"| `{k}` | {rho:+.2f} | {conf} |")
+    L.append("")
+    L.append("Cost growth (`costs.soft.contingency`, the reference-class curve) dominates. With its draw divided "
+             "out, this is what drives the base estimate, and the order to research it in:\n")
+    L.append("| Parameter | Correlation with the base estimate | Confidence |")
+    L.append("|---|---|---|")
+    for k, rho, conf in net["sensitivity_base"]:
         L.append(f"| `{k}` | {rho:+.2f} | {conf} |")
     L.append("")
     L.append("## Benchmarks\n")
@@ -211,13 +224,14 @@ def write_markdown(net: dict, path: Path) -> None:
                      f"| {leg.length_km / (leg.time_s / 3600):,.0f} | {leg.energy_kwh_winter:,.0f} / {leg.energy_kwh_summer:,.0f} |")
         L.append(f"\nEnergy: {r['kin']['kwh_per_train_km']:,.1f} kWh per train-km (year-weighted). "
                  f"Fleet: {int(c0['trains'])} trains.\n")
-        L.append("Capital breakdown with every parameter at its most likely value (MUSD). This sum lands "
-                 "near or below the P10: the ranges are skewed high, so stacking most-likely values is "
-                 "optimistic (the classic megaproject trap). Plan with the P50 and P90 above.\n")
+        L.append("Capital breakdown with every parameter at its most likely value (cost growth at the "
+                 "reference-class median, MUSD). This sum lands near or below the P10: the ranges are skewed "
+                 "high, so stacking most-likely values is optimistic (the classic megaproject trap). Plan with "
+                 "the mean and P80 above.\n")
         L.append("| Item | MUSD |")
         L.append("|---|---|")
         for k in ("guideway", "adders", "systems", "stations", "switches", "depot", "vehicles", "heaters", "security",
-                  "soft", "land", "wetlands", "buildings", "public_land", "contingency"):
+                  "soft", "land", "wetlands", "buildings", "public_land", "contingency", "first_of_kind"):
             L.append(f"| {k} | {float(c0[k]):,.0f} |")
         rv = c0["reserve"]
         L.append(f"| second-system reserve ({'held' if line.reserve else 'not held'}) "

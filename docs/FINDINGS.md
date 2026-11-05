@@ -277,6 +277,21 @@ works), date, details. One section per tool.
   year range on GET (last 3 years only) but takes it on POST. YAML: a colon-space or two quoted
   strings in an unquoted value break the whole benchmarks file; the loader error points at it.
   Result: systems 27 -> 21; through phase 4 $802.7 -> $779.7 bn.
+- 2026-11-05, research pass 5 (contingency): three agents (maglev and HSR histories, reference-class
+  literature, US and Minnesota projects), figures re-checked in the saved files, the FTA 2020 table
+  recounted ourselves (the agent's P80 and rail count were slightly off). The useful surprise was
+  structural, not a number: a triangular 30-70% gave the network a P90/P50 of 1.16, while rail outcomes
+  have P80/P50 ~1.86. A triangle can't be skewed enough, hence the quantile-table parameter. Its
+  median (19%) is lower than the old 40%, so the P50 fell while the mean and P80 rose: report the
+  mean, or the headline looks cheaper when the evidence says the opposite. With cost growth at +0.96
+  the sensitivity table stopped ranking anything else, so it now also ranks against the base estimate.
+  Friction: transit.dot.gov, gao.gov and rand.org block automated downloads (Wayback, OSTI and a
+  mirror had copies); hsr.ca.gov now blocks too (it allowed curl in pass 4); web.archive.org rate-limits
+  curl; Chinese pages need GB18030 and Bundestag PDFs Latin-1 before grepping; the auto-mode
+  classifier stops browser-header retries. A heredoc turned "\n" in a Python edit into a real line
+  break and broke report.py without failing pytest (no test imports the report): run
+  `mnmaglev report` after editing it, not just the tests.
+  Result: through phase 4 P50 $779.7 -> $706.3 bn, mean $932.5 bn, P80 $1,284.9 bn.
 
 ## OSRD
 

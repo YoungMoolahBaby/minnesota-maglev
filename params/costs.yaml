@@ -193,12 +193,29 @@ soft:
     conf: medium
     source: "MnDOT MWRRI cost method (Quandel 2011): design 10 + insurance/bonding 2 + program mgmt 4 + construction mgmt 6 + engineering during construction 2 = 24%; TCRP 138 (59 US rail projects) ~20% of capital, 11-54% of construction"
   contingency:
-    value: 0.40
-    low: 0.30
-    high: 0.70
-    unit: fraction of construction + soft
+    value: 0.19
+    low: -0.30
+    high: 4.0
+    quantiles: {0.0: -0.30, 0.05: -0.15, 0.30: 0.0, 0.50: 0.19, 0.80: 1.21, 0.95: 2.71, 1.0: 4.0}
+    unit: fraction of construction + soft + land (cost growth over the base estimate, sampled along a reference-class curve)
     conf: medium
-    source: "AACE 18R-97 class 5 (-20..-50% / +30..+100%); MnDOT MWRRI uses 30% of direct construction; rail projects overran 44.7% on average (Flyvbjerg, Holm & Buhl 2003, SD 38, n=58); FTA/FRA fund to P65"
+    source: "research pass 5 (2026-11-05): rail reference class at the earliest business-case stage (Oxford Global Projects for DfT, 2020, Table 5: rail n=355, 1964-2011, SOBC: median 19%, P80 121%, trimmed P5-P95 mean 56%; 7 in 10 projects overran, Table 2), the basis of UK TAG A1.2's 56% rail uplift at stage 1. Curve: P30 0 and P50 / P80 as published; P95 2.71 solved so the P5-P95 mean is 56%; P0 -0.30, P5 -0.15 and P100 4.0 are our assumptions. Full mean ~66%, P65 ~70%, P90 ~221%. Cross-checks: FTA 2020 (29 US projects, actual vs estimate at entry to preliminary engineering, YOE): median 1.18, mean 1.54, P80 1.68; FTA OP-40 minimum contingency 40% at 15% design (P65); Flyvbjerg (2006) rail uplift 40% at P50, 57% at P80 from the decision to build (n=46)"
+    note: one draw per Monte Carlo sample applies to every line (shared estimating bias, conservative for the network total). Our base is a concept-stage estimate, earlier than an SOBC, and built mostly from other projects' estimates, so the curve applies to it; the few unit costs taken from out-turns already carry their growth. Was a flat 40% (triangular 30-70%) before pass 5.
+  first_of_kind:
+    value: 0.5
+    low: 0.1
+    high: 1.3
+    unit: extra cost growth on the maglev-specific items (systems, vehicles, switches incl. soft costs), added to the contingency
+    conf: low
+    source: "UK TAG A5.3 (Nov 2025): novel or complex schemes may take higher uplifts, 'a 120% uplift at PACE stage 1 provides a starting point' for complex enhancements vs 56% standard (+64 points); HM Treasury Green Book optimism bias, Table 1 (Mott MacDonald 2002, at outline business case): equipment/development upper bound 200% vs non-standard civil 66%, and equipment/development elements 'should be considered as separate projects'; RAND R-2569 (Merrow et al. 1981): the earliest estimates for pioneer plants averaged under half of actual cost. Against: Shanghai, with its systems a fixed German package, grew only 12% overall (initial budget RMB 8.9 bn, final account 9.943 bn; no cause published), and Chuo's growth (5.52 -> 11.0 trillion yen) came from ground, seismic design, spoil and prices, with specification changes (incl. electrical) +0.4 of +5.5"
+    note: full on phase 1, scaled by first_of_kind_later on later phases. Fusion units are not in it (power.fusion.capex_per_kw carries their range).
+  first_of_kind_later:
+    value: 0.3
+    low: 0.1
+    high: 0.7
+    unit: share of the first-of-kind premium left on lines after phase 1
+    conf: placeholder
+    source: "RAND R-2569 regression: poor project definition costs ~6.4 points per level while the technology is still in development vs ~4.0 once proven, so the premium should shrink once phase 1 runs; no rail or maglev data on later lines of a new technology. Later European HSR lines in mature networks still overran 26-38% nominal (ECA 19/2018), which the contingency curve covers"
 
 operations:
   energy_price:

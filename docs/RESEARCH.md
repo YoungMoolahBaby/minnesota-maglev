@@ -16,6 +16,8 @@ reference/indices.yaml, checked by tests/test_benchmarks.py. Spine P50 went $77.
 2. [x] `costs.soft.engineering_admin` 25% -> **24%** (MnDOT MWRRI method: 10+2+4+6+2), and
    `costs.soft.contingency` kept at **40%** (30-70): AACE class 5, MnDOT 30% of direct construction,
    rail overruns average 44.7% (Flyvbjerg 2003). Open: FRA's own contingency table; P65 vs P50.
+   Pass 5 (2026-11-05): contingency is now a reference-class curve plus a first-of-kind premium,
+   see below.
 3. [x] `costs.systems.propulsion_power_control`: 18 -> **27** (17-45). Munich itemised ~27; official
    Berlin-Hamburg planning ~0.57x civil. Cross-check with the cfsem stator sizing (phase 6).
    Pass 4 (2026-11-05): 27 -> **21** (10-40), see below.
@@ -57,6 +59,27 @@ Still open on it:
 - Cross-check the substation count and rating with the timetable demand in power.py (Shanghai: 2
   substations for 30 km; FRA/Volpe: 10-30 km spacing, 29 MVA each on the Florida design), and the
   stator with the cfsem sizing (phase 6).
+
+Research pass 5 (2026-11-05) did contingency (docs/PLAN.md, phase 1 and decisions):
+`costs.soft.contingency` is sampled along the rail reference-class curve (OGP 2020, SOBC), plus
+`costs.soft.first_of_kind` on systems, vehicles and switches. Still open on it:
+- **The curve's ends.** P0 -30%, P5 -15% and P100 +400% are our assumptions; P30 = 0 comes from the
+  FBC frequency ("7 out of 10"). OGP's underlying distribution (Figure / data) would fix them.
+- **Our stage is earlier than SOBC.** A concept estimate built from unit costs; the TAG A5.3 note
+  ("novel or complex ... higher values", 120% at PACE 1 for complex schemes) says the curve may
+  still be light. Flyvbjerg: measured from the real (earlier) decision to build, overruns are larger.
+- **The first-of-kind premium** (50%, 10-130%) rests on UK guidance and RAND's process plants, not
+  on maglev systems data: Chuo's growth came from civil works, ground and prices, and Munich
+  never broke its figure down. Its later-line share (30%) is a placeholder.
+- **One draw for all lines.** Every line gets the same cost-growth draw in a sample (shared bias). In
+  reality some growth is line by line, which would narrow the network total's spread; a split into
+  a shared and a per-line part needs evidence on how correlated overruns are within a programme
+  (CA HSR segments, HS2 phases, Chinese HSR lines).
+- **Base estimate vs out-turn anchors.** Most unit costs come from other projects' estimates, so the
+  curve applies; a few are out-turns (Minnesota river bridges, Honolulu contracts) and carry their
+  growth already. A per-anchor flag could take those out.
+- Not found: Merrow (2011) figures by technology newness, a maglev out-turn other than Shanghai,
+  first-line vs later-line growth in one HSR network, the Shanghai approval document.
 
 Next in this queue (by the new sensitivity table): the elevated guideway again (official sources),
 then the segment shares (elevated vs at grade, urban km), which are planner estimates not sampled
