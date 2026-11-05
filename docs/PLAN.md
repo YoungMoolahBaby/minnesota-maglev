@@ -408,3 +408,17 @@ funding scenarios, phasing.
 From taconite to guideway: Mesabi pellets -> which steel mills (rebar, strand, plate, electrical
 steel); Duluth Complex copper-nickel permitting reality vs market copper; aluminium (imported);
 cement and aggregate (taconite tailings as aggregate?); embodied carbon per km.
+
+## Phase 9: value engineering (later, after design development)
+
+Jon (2026-11-05): bring the price down at the value-engineering stage with the Boltzmann trade model
+from cortenforge-play (`src/trade`: closed giving loops where everyone comes out ahead, chosen as a
+QUBO and annealed on CortenForge's thermostat). Two fits:
+- Design options as a QUBO: discrete choices per segment (elevated / at grade, span type, station
+  layout, supply source, alignment variants) with the interactions the model already prices (shared
+  beam plant and depots, the sibling-system corridor, phasing); anneal for the cheapest consistent set.
+- In-kind trades with other parties: excavated spoil and taconite tailings to road and fill projects
+  (Chuo's spoil alone cost 0.3 trillion yen), land swaps and MnDOT right-of-way, fusion surplus power,
+  farm leasebacks or crossing rights; multi-party haves and wants, as in the laundromat.
+Keep the reference-class cost growth on top of a value-engineered base, so the savings don't make the
+expected cost optimistic again. Use CortenForge as an end user (published crates).
